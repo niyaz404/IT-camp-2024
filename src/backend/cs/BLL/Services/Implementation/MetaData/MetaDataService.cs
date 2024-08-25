@@ -5,22 +5,22 @@ namespace BLL.Services.Implementation.MetaData;
 
 public class MetaDataService : IMetaDataService
 {
-    public Task Save(MetaDataModel metaData)
+    public async Task Save(MetaDataModel metaData)
     {
         return;
     }
 
-    public Task<MetaDataModel> Get(string metaDataId)
+    public async Task<MetaDataModel> Get(string metaDataId)
     {
         return;
     }
 
-    public Task<IEnumerable<MetaDataModel>> GetAll()
+    public async Task<IEnumerable<MetaDataModel>> GetAll()
     {
         return;
     }
 
-    public Task Delete(string metaDataId)
+    public async Task Delete(string metaDataId)
     {
         return;
     }
