@@ -1,0 +1,6 @@
+.toolbar {
+  display: flex;
+  width: 100vw;
+  height: 6rem;
+  border-bottom: 0.1rem solid var(--color-bg-secondary);
+}

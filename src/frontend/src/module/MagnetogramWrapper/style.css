@@ -1,0 +1,19 @@
+.magnetogramWrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  height: calc(100vh - 18rem);
+  min-width: 100vw;
+  overflow-x: auto;
+}
+
+.edges {
+  position: absolute;
+  display: inline;
+  height: 100%;
+}
+
+.edgesContent {
+  position: relative;
+}

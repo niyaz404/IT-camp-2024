@@ -1,0 +1,1 @@
+export { ReportTableData } from "./types";
