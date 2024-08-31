@@ -4,10 +4,10 @@ export type MagnetogramElement = {
   id: string; // идентификатор
   description: string; // наименование магнитограммы
   type: MagnetogramElementType; // тип элемента
-  leftCoordinateX: number; // Левая координа по оси Х
-  rightCoordinateX: number; // Правая координа по оси Х
+  coordinateX: number; // координата по оси Х
   leftNeighbour?: MagnetogramElement | null; // Ближайший левый элементы
   rightNeighbour?: MagnetogramElement | null; // Ближайший правый элементы
+  markerColor: string;
 };
 
 export type Magnetogram = {

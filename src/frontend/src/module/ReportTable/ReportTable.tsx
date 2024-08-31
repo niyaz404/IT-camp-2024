@@ -13,9 +13,6 @@ import { useNavigate } from "react-router-dom";
 export const ReportTable = () => {
   const navigate = useNavigate();
 
-  console.log("render");
-  console.log(mockReportTableData);
-
   const columns: TableColumn<ReportTableData>[] = [
     {
       title: "Наименование",
@@ -47,7 +44,7 @@ export const ReportTable = () => {
     },
     {
       title: "Автор",
-      accessor: "userId",
+      accessor: "createdBy",
       align: "left",
       sortable: true,
       width: 300,
@@ -56,7 +53,7 @@ export const ReportTable = () => {
       title: "Наличие дефектов",
       accessor: "isDefective",
       align: "left",
-      sortable: true, 
+      sortable: true,
       renderCell: (row) => {
         const text = row.isDefective ? "Есть" : "Нет";
         const status = row.isDefective ? "warning" : "success";

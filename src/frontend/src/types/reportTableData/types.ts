@@ -2,6 +2,6 @@ export type ReportTableData = {
   id: string;
   name: string;
   createdAt: string;
-  userId: string;
+  createdBy: string;
   isDefective: boolean;
 };

@@ -10,7 +10,6 @@
   height: 100vh;
 }
 
-
 html {
   font-size: 10px;
 }
@@ -68,7 +67,7 @@ body {
 }
 
 .flex-1 {
-    flex: 1;
+  flex: 1;
 }
 
 .m-h-0 {
@@ -977,4 +976,13 @@ body {
 
 .w-100 {
   width: 100%;
+}
+
+.relative {
+  position: relative;
+  
+}
+
+.absolute {
+  position: absolute;
 }

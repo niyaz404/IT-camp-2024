@@ -1,19 +1,24 @@
 .magnetogramWrapper {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
   position: relative;
   height: calc(100vh - 18rem);
   min-width: 100vw;
   overflow-x: auto;
+  height: inherit;
+  padding: 5rem;
 }
 
-.edges {
+.edgesD {
   position: absolute;
-  display: inline;
-  height: 100%;
+  display: flex;
+  flex-direction: row;
+  height: inherit;
+  top: 4rem;
 }
 
-.edgesContent {
-  position: relative;
+.edgesS {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  height: inherit;
+  top: 3.5rem;
 }
