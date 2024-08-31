@@ -1,31 +1,39 @@
+﻿using FluentMigrator.Runner;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace PostgresMigrator;
 
-public class Program
+class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var services = new ServiceCollection()
+            .AddFluentMigratorCore()
+            .ConfigureRunner(rb => rb
+                .AddPostgres()
+                .WithGlobalConnectionString(GetConnectionString())
+                .ScanIn(typeof(Program).Assembly)
+                .For.All())
+            .BuildServiceProvider();
 
-        // Add services to the container.
-        builder.Services.AddAuthorization();
+        // Применить миграции
+        using var scope = services.CreateScope();
+        var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+        runner.MigrateUp();
+    }
 
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if(app.Environment.IsDevelopment())
+    private static string GetConnectionString()
+    {
+        // Получить строку подключения из переменных среды
+        var connectionString = new Npgsql.NpgsqlConnectionStringBuilder
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+            Host = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "localhost",
+            Port = int.Parse(Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432"),
+            Username = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? "postgres",
+            Password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? "password",
+            Database = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "postgres"
+        };
 
-        app.UseHttpsRedirection();
-
-        app.UseAuthorization();
-
-        app.Run();
+        return connectionString.ToString();
     }
 }
