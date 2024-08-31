@@ -13,6 +13,7 @@
   flex-direction: row;
   height: inherit;
   top: 4rem;
+  cursor: pointer;
 }
 
 .edgesS {
@@ -21,4 +22,9 @@
   flex-direction: row;
   height: inherit;
   top: 3.5rem;
+  cursor: pointer;
+}
+
+.none {
+  display: none;
 }

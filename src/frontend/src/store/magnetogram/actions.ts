@@ -25,6 +25,7 @@ export const addMagnetogramElement =
       type: type,
       coordinateX: coordinateX,
       markerColor: `rgb(${getRandomNum()},${getRandomNum()},${getRandomNum()})`,
+      isEditable: false,
     };
 
     if (type === "defect") {
@@ -57,4 +58,16 @@ export const updateElementCoordinate =
         magnetogramSlice.actions.replaceStructuralElement(newMagnetogramElement)
       );
     }
+  };
+
+export const setIsStructuralElementsVisible =
+  (isVisible: boolean) => (dispatch: AppDispatch) => {
+    dispatch(
+      magnetogramSlice.actions.replaceIsStructuralElementsVisible(isVisible)
+    );
+  };
+
+export const setIsDefectsVisible =
+  (isVisible: boolean) => (dispatch: AppDispatch) => {
+    dispatch(magnetogramSlice.actions.replaceIsDefectsVisible(isVisible));
   };

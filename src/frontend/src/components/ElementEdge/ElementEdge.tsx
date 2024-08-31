@@ -1,5 +1,5 @@
 import { ElementEdgeProps } from "./types";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, MouseEvent } from "react";
 import css from "./style.css";
 import Draggable from "react-draggable";
 import { withTooltip } from "../../hocs";
@@ -32,6 +32,18 @@ export const ElementEdge: FC<ElementEdgeProps> = ({
     );
   });
 
+  const onRightButtonMouseClick = (event: MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    return <>asdsadsasa</>;
+  };
+
+  const defectTooltipText = `Ближайший левый конструктивный элемент: Сварной шов №1. Ближайший правый конструктивный элемент: Сварной шов №2. Координата: ${coordinate}`;
+
+  const structuralElementTooltipText = `Тип конструктивного элемента: Заплатка. Координата: ${coordinate}`;
+
+  const tooltipText =
+    type === "defect" ? defectTooltipText : structuralElementTooltipText;
+
   return (
     <Draggable
       axis="x"
@@ -39,8 +51,8 @@ export const ElementEdge: FC<ElementEdgeProps> = ({
       defaultPosition={{ x: (coordinate - leftOffset) * 4, y: 0 }}
       position={{ x: coordinate * 4, y: 0 }}
     >
-      <div className={css.elementEdge}>
-        <SvgWithTooltip tooltipText={String(coordinate)} />
+      <div className={css.elementEdge} onContextMenu={onRightButtonMouseClick}>
+        <SvgWithTooltip tooltipText={tooltipText} />
       </div>
     </Draggable>
   );

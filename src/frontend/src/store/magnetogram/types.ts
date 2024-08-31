@@ -7,4 +7,6 @@ export type InitialMagnetogramState = {
   originalImage: any;
   processImage: any;
   isLoading: boolean;
+  isDefectsVisible: boolean;
+  isStructuralElementsVisible: boolean;
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { Modal } from "@consta/uikit/Modal";
 import {
   MagnetogramDetailsFooter,
@@ -9,13 +9,27 @@ import {
   AddNewMagnetogramElementForm,
   MagnetogramWrapper,
 } from "../../module";
-import { magnetogramSelector, useAppSelector } from "../../store";
+import {
+  magnetogramSelector,
+  setIsDefectsVisible,
+  setIsStructuralElementsVisible,
+  useAppDispatch,
+  useAppSelector,
+} from "../../store";
+import { Loader } from "@consta/uikit/Loader";
 
 export const MagnetogramDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [newElementCoordinate, setNewElementCoordinate] = useState<number>(0);
 
-  const { defects, structuralElements } = useAppSelector(magnetogramSelector);
+  const {
+    defects,
+    structuralElements,
+    isDefectsVisible,
+    isStructuralElementsVisible,
+  } = useAppSelector(magnetogramSelector);
+
+  const dispatch = useAppDispatch();
 
   const onSave = () => {};
 
@@ -30,19 +44,24 @@ export const MagnetogramDetails = () => {
     setNewElementCoordinate(0);
   };
 
-  const onDefectsSwitchChange = () => {};
+  const onDefectsSwitchChange = (checked: boolean) => {
+    dispatch(setIsDefectsVisible(checked));
+  };
 
-  const onStructuralElementsSwitchChange = () => {};
+  const onStructuralElementsSwitchChange = (checked: boolean) => {
+    dispatch(setIsStructuralElementsVisible(checked));
+  };
 
   return (
     <div className="container-column w-100 h-100">
       <MagnetogramDetailsToolbar
         name={"Название объекта"}
-        isDefectsCheked={false}
-        isStructuralElementsCheked={false}
+        isDefectsCheked={isDefectsVisible}
+        isStructuralElementsCheked={isStructuralElementsVisible}
         onDefectsSwitchChange={onDefectsSwitchChange}
         onStructuralElementsSwitchChange={onStructuralElementsSwitchChange}
         onAddNewElement={onOpenModal}
+        onSave={onSave}
       />
 
       <MagnetogramWrapper
@@ -51,11 +70,13 @@ export const MagnetogramDetails = () => {
           onOpenModal();
         }}
         elements={[...defects, ...structuralElements]}
+        isDefectsCheked={isDefectsVisible}
+        isStructuralElementsCheked={isStructuralElementsVisible}
       >
         <Magnetogram />
       </MagnetogramWrapper>
 
-      <MagnetogramDetailsFooter onSave={onSave} onClear={onClear} />
+      {/* <MagnetogramDetailsFooter onSave={onSave} onClear={onClear} /> */}
       <Modal
         isOpen={isModalOpen}
         hasOverlay

@@ -4,3 +4,7 @@
   height: 6rem;
   border-bottom: 0.1rem solid var(--color-bg-secondary);
 }
+
+.rotate {
+  transform: rotate(45deg);
+}

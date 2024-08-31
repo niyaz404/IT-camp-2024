@@ -8,6 +8,7 @@ export type MagnetogramElement = {
   leftNeighbour?: MagnetogramElement | null; // Ближайший левый элементы
   rightNeighbour?: MagnetogramElement | null; // Ближайший правый элементы
   markerColor: string;
+  isEditable: false;
 };
 
 export type Magnetogram = {

@@ -1,17 +1,15 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState, MouseEvent } from "react";
 import { DraggableEvent } from "react-draggable";
 import { ElementEdge } from "../../components";
-import {
-  addMagnetogramElement,
-  updateElementCoordinate,
-  useAppDispatch,
-} from "../../store";
+import { updateElementCoordinate, useAppDispatch } from "../../store";
 import css from "./style.css";
 import { MagnetogramWrapperProps } from "./types";
 
 export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
   children,
   elements,
+  isDefectsCheked,
+  isStructuralElementsCheked,
   onAddNewElement,
 }) => {
   const magnetogramRef = useRef<HTMLDivElement | null>(null);
@@ -45,15 +43,17 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
     };
   }, [magnetogramRef.current]);
 
+  const onRightButtonMouseClick = (event: MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const coordinate = (event.clientX - leftOffset + scrollOffset) / 4;
+    onAddNewElement(coordinate);
+  };
+
   return (
     <div
       ref={magnetogramRef}
       className={css.magnetogramWrapper}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        const coordinate = (e.clientX - leftOffset + scrollOffset) / 4;
-        onAddNewElement(coordinate)
-      }}
+      onContextMenu={onRightButtonMouseClick}
     >
       {children}
 
@@ -67,8 +67,15 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
 
           return (
             <div
-              className={element.type === "defect" ? css.edgesD : css.edgesS}
-              style={{ cursor: "pointer" }}
+              className={`${
+                element.type === "defect" ? css.edgesD : css.edgesS
+              } ${
+                (isDefectsCheked && element.type === "defect") ||
+                (isStructuralElementsCheked &&
+                  element.type === "structuralElement")
+                  ? ""
+                  : css.none
+              }`}
             >
               <ElementEdge
                 color={element.markerColor}

@@ -4,5 +4,7 @@ export {
   magnetogramSelector,
   addMagnetogramElement,
   updateElementCoordinate,
+  setIsDefectsVisible,
+  setIsStructuralElementsVisible,
 } from "./magnetogram";
 export { authSelector } from "./auth";

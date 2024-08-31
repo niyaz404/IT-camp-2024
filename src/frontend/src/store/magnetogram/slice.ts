@@ -59,6 +59,30 @@ const replaceStructuralElement = (
   ];
 };
 
+/**
+ * Заменяет признак видимости маркеров дефектов
+ * @param state текущее состояние
+ * @param action признак видимости маркеров дефектов
+ */
+const replaceIsDefectsVisible = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<boolean>
+) => {
+  state.isDefectsVisible = action.payload;
+};
+
+/**
+ * Заменяет признак видимости маркеров структурных элементов
+ * @param state текущее состояние
+ * @param action признак видимости маркеров структурных элементов
+ */
+const replaceIsStructuralElementsVisible = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<boolean>
+) => {
+  state.isStructuralElementsVisible = action.payload;
+};
+
 export const magnetogramSlice = createSlice({
   name: "magnetogramSlice",
   initialState: initialState,
@@ -67,6 +91,8 @@ export const magnetogramSlice = createSlice({
     replaceStructuralElements,
     replaceDefect,
     replaceStructuralElement,
+    replaceIsDefectsVisible,
+    replaceIsStructuralElementsVisible,
   },
 });
 
