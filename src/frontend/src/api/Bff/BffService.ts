@@ -123,7 +123,7 @@ export const getReportById = (reportRowId: string) => {
  * Вход пользователя в систему
  * @returns
  */
-export const login = (
+export const loginInSystem = (
   username: string | undefined,
   password: string | undefined
 ) => {

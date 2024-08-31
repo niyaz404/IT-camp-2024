@@ -3,6 +3,8 @@ import { Button } from "@consta/uikit/Button";
 import { Text } from "@consta/uikit/Text";
 import { TextField } from "@consta/uikit/TextField";
 import css from "./style.css";
+import { useAppDispatch } from "../../store";
+import { loginInSystem } from "../../api";
 
 export const Auth: FC = () => {
   const [login, setLogin] = useState<string | null>(null);
@@ -14,7 +16,9 @@ export const Auth: FC = () => {
   const onChangePassword = ({ value }: { value: string | null }) =>
     setPassword(value);
 
-  const onLogin = () => {};
+  const onLogin = () => {
+    loginInSystem(login ?? "", password ?? "");
+  };
 
   return (
     <div className="container-column align-center justify-center w-100 h-100">
