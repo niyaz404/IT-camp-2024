@@ -14,7 +14,7 @@ services:
     volumes:
       - webapi-postgres-data:/var/lib/postgresql/data
     networks:
-      - local_default
+      - itcamp_network
 
   webapi_migrator:
     container_name: webapi_migrator
@@ -30,6 +30,16 @@ services:
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
 
+  webapi:
+    container_name: webapi
+    build:
+      context: /../../
+      dockerfile: /ci/dockerfiles/WebApi.Dockerfile
+    ports:
+      - "${BFF_PORT}:${BFF_PORT}"
+    networks:
+      - itcamp_network
+
   auth_postgres:
     container_name: auth_postgres_db
     build:
@@ -44,7 +54,7 @@ services:
     volumes:
       - auth-postgres-data:/var/lib/postgresql/data
     networks:
-      - auth_network
+      - itcamp_network
 
   auth_migrator:
     container_name: auth_migrator
@@ -60,7 +70,7 @@ services:
       POSTGRES_PASSWORD: $AUTH_POSTGRES_PASSWORD
       POSTGRES_PORT: $POSTGRES_PORT
     networks:
-      - auth_network
+      - itcamp_network
 
 
 volumes:
@@ -68,7 +78,5 @@ volumes:
   auth-postgres-data:
 
 networks:
-  auth_network:
-    driver: bridge
-  local_default:
+  itcamp_network:
     driver: bridge

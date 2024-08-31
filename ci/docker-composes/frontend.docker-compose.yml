@@ -6,9 +6,15 @@ services:
       context: /../../
       dockerfile: /ci/dockerfiles/Frontend.Dockerfile
     environment:
-      NODE_ENV : development
-      REACT_APP_API_URL: 'http://webapi:8000'
+      NODE_ENV: development
+      REACT_APP_APi_HOST: http://${BFF_HOST}:${BFF_PORT}
     ports:
       - "3000:80"
+    networks:
+      - itcamp_network
     volumes:
       - .:/app
+
+networks:
+  itcamp_network:
+    external: true
