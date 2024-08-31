@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace WebApi;
 
@@ -36,12 +37,12 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
             // Получаем путь к XML-документации
             var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             options.IncludeXmlComments(xmlPath);
         });
-        
         
         builder.Services.AddHttpClient(); // Регистрация IHttpClientFactory
         builder.Services.AddTransient<MyCustomService>(); 
@@ -60,6 +61,21 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
+        
+        app.Use(async (context, next) =>
+        {
+            // Запуск следующего middleware
+            await next();
+
+            // Сохраняем swagger.json в файловую систему
+            if (context.Request.Path == "/swagger/v1/swagger.json")
+            {
+                using var reader = new StreamReader(context.Response.Body);
+                var swaggerJson = await reader.ReadToEndAsync();
+                await File.WriteAllTextAsync("swagger.json", swaggerJson);
+            }
+        });
+
 
         app.Run();
     }

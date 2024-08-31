@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]/[action]")]
     public class AuthController : ControllerBase
     {
         private readonly HttpClient _httpClient;
@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
             _configuration = configuration;
         }
         
-        [HttpPost("login")]
+        [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserCredentials userCredentials)
         {
