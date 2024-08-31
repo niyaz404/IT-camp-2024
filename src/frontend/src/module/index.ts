@@ -1,4 +1,5 @@
 export { Magnetogram } from "./Magnetogram";
+export type { MagnetogramProps } from "./Magnetogram";
 export { ReportTable } from "./ReportTable";
 export { Navbar } from "./Navbar";
 export { PrivateRoute } from "./PrivateRoute";

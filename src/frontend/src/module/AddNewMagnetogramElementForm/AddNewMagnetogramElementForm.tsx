@@ -6,25 +6,30 @@ import { IconQuestion } from "@consta/uikit/IconQuestion";
 import { Text } from "@consta/uikit/Text";
 import { TextField } from "@consta/uikit/TextField";
 import { Switch } from "@consta/uikit/Switch";
-
+import { Select } from "@consta/uikit/Select";
+import { structuralElementConfig } from "./structuralElementConfig";
 import css from "./style.css";
 import { addMagnetogramElement, useAppDispatch } from "../../store";
 
 const MAX_MAGNETOGRAM_WIDTH = 4096;
 
+type Item = {
+  label: string;
+  id: number;
+};
+
 export const AddNewMagnetogramElementForm: FC<
   AddNewMagnetogramElementProps
-> = ({ onCloseModal }) => {
-  const [firstPoint, setFirstPoint] = useState<number>(0);
-  const [secondPoint, setSecondPoint] = useState<number>(0);
-  const [isFirstPointHasError, setIsFirstPointHasError] =
+> = ({ onCloseModal, newElenentCoordinate }) => {
+  const [coordinate, setCoordinate] = useState<number>(newElenentCoordinate);
+  const [isCoordinateInvalid, setIsCoordinateInvalid] =
     useState<boolean>(false);
-  const [isSecondPointHasError, setIsSecondPointHasError] =
-    useState<boolean>(false);
-  const [isDefectCheked, setIsDefectCheked] = useState<boolean>(false);
+  const [isDefectCheked, setIsDefectCheked] = useState<boolean>(true);
   const [isStructuralElementCheked, setIsStructuralElementCheked] =
     useState<boolean>(false);
   const [description, setDescription] = useState<string | null>(null);
+  const [structuralElementType, setStructuralElementType] =
+    useState<Item | null>(null);
 
   const dispatch = useAppDispatch();
 
@@ -37,35 +42,31 @@ export const AddNewMagnetogramElementForm: FC<
     setIsStructuralElementCheked(false);
   };
 
-  const onChangeFirstPoint = ({ value }: { value: string | null }) => {
-    setIsFirstPointHasError(Number(value) > MAX_MAGNETOGRAM_WIDTH);
-    setFirstPoint(Number(value));
-  };
-
-  const onChangeSecondPoint = ({ value }: { value: string | null }) => {
-    setIsSecondPointHasError(Number(value) > MAX_MAGNETOGRAM_WIDTH);
-    setSecondPoint(Number(value));
+  const onChangeCoordinate = ({ value }: { value: string | null }) => {
+    setIsCoordinateInvalid(Number(value) > MAX_MAGNETOGRAM_WIDTH);
+    setCoordinate(Number(value));
   };
 
   const onChangeDescription = ({ value }: { value: string | null }) => {
     setDescription(value);
   };
 
+  const onChangeStructuralElementType = ({ value }: { value: Item | null }) => {
+    setStructuralElementType(value);
+  };
+
   const onAddNewMagnetogramElement = () => {
     const type = isDefectCheked ? "defect" : "structuralElement";
-    dispatch(
-      addMagnetogramElement("discrition", type, firstPoint, secondPoint)
-    );
+    dispatch(addMagnetogramElement("discrition", type, coordinate));
     onCloseModal();
   };
 
   const isSaveDisabled =
-    !firstPoint ||
-    !secondPoint ||
-    isFirstPointHasError ||
-    isSecondPointHasError ||
-    !description ||
-    (!isDefectCheked && !isStructuralElementCheked);
+    !coordinate ||
+    isCoordinateInvalid ||
+    (!isDefectCheked && !isStructuralElementCheked) ||
+    (isStructuralElementCheked && !structuralElementType) ||
+    (isDefectCheked && !description);
 
   return (
     <div className={`container-column ${css.addNewReportFormModal} p-8`}>
@@ -82,51 +83,46 @@ export const AddNewMagnetogramElementForm: FC<
         />
       </div>
 
+      {isDefectCheked && (
+        <TextField
+          className="m-r-3 m-b-4"
+          onChange={onChangeDescription}
+          value={description}
+          type="text"
+          label="Описание"
+          required
+          width="full"
+        />
+      )}
+
+      {isStructuralElementCheked && (
+        <Select
+          className="m-r-3 m-b-4"
+          placeholder="Выберите тип структурного элемента"
+          items={structuralElementConfig}
+          value={structuralElementType}
+          onChange={onChangeStructuralElementType}
+          label="Тип структурного элемента"
+          required
+        />
+      )}
+
       <TextField
         className="m-r-3 m-b-4"
-        onChange={onChangeDescription}
-        value={description}
-        type="text"
-        label="Описание"
+        onChange={onChangeCoordinate}
+        value={String(coordinate)}
+        type="number"
+        label="Координата (Ось Х)"
         labelIcon={IconQuestion}
         required
+        min={0}
+        max={MAX_MAGNETOGRAM_WIDTH}
+        status={isCoordinateInvalid ? "alert" : undefined}
+        caption={
+          isCoordinateInvalid ? "Указано некорректное значение" : undefined
+        }
         width="full"
       />
-
-      <div className="w-100 container-row m-b-6 justify-between">
-        <TextField
-          className="m-r-3"
-          onChange={onChangeFirstPoint}
-          value={String(firstPoint)}
-          type="number"
-          label="Координата левая (Ось Х)"
-          labelIcon={IconQuestion}
-          required
-          min={0}
-          max={MAX_MAGNETOGRAM_WIDTH}
-          status={isFirstPointHasError ? "alert" : undefined}
-          caption={
-            isFirstPointHasError ? "Указано некорректное значение" : undefined
-          }
-          width="full"
-        />
-        <TextField
-          className="m-l-3"
-          onChange={onChangeSecondPoint}
-          value={String(secondPoint)}
-          type="number"
-          label="Координата правая (Ось Х)"
-          labelIcon={IconQuestion}
-          required
-          min={0}
-          max={MAX_MAGNETOGRAM_WIDTH}
-          status={isSecondPointHasError ? "alert" : undefined}
-          caption={
-            isSecondPointHasError ? "Указано некорректное значение" : undefined
-          }
-          width="full"
-        />
-      </div>
 
       <Switch
         className="m-r-3 m-b-6"

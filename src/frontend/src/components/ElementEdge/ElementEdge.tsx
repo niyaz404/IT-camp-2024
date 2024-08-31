@@ -1,46 +1,47 @@
 import { ElementEdgeProps } from "./types";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import css from "./style.css";
+import Draggable from "react-draggable";
+import { withTooltip } from "../../hocs";
 
-export const ElementEdge: FC<ElementEdgeProps> = ({ color, coordinate }) => {
+export const ElementEdge: FC<ElementEdgeProps> = ({
+  color,
+  coordinate,
+  onDragStop,
+  type,
+  leftOffset,
+}) => {
+  const defectPoints = "0,0 16,0 9,10 9,522 16,532 0,532 7,522 7,10";
+  const structutalElementPoints =
+    "0,8 8,0 16,8 9,16 9,526 16,534 8,542 0,534 7,526 7,16";
+
+  const points = type === "defect" ? defectPoints : structutalElementPoints;
+
+  const SvgWithTooltip = withTooltip(() => {
+    return (
+      <div>
+        <svg width="18" height="564">
+          <polygon
+            points={points}
+            fill={color}
+            stroke="black"
+            strokeWidth="1"
+          />
+        </svg>
+      </div>
+    );
+  });
+
   return (
-    <div
-      className={`${css.elementEdge}`}
-      style={{
-        left: coordinate,
-      }}
+    <Draggable
+      axis="x"
+      onStop={onDragStop}
+      defaultPosition={{ x: (coordinate - leftOffset) * 4, y: 0 }}
+      position={{ x: coordinate * 4, y: 0 }}
     >
-      <div className={css.arrowDown}>
-        <svg width={16} height={10}>
-          <polygon
-            points="0, 0 ,8, 10,  16, 0"
-            fill={color}
-            stroke="black"
-            strokeWidth="1"
-          />
-        </svg>
+      <div className={css.elementEdge}>
+        <SvgWithTooltip tooltipText={String(coordinate)} />
       </div>
-
-      <div
-        style={{
-          position: "absolute",
-          height: "100%",
-          width: "0.4rem",
-          backgroundColor: color,
-          border: `0.1rem solid #000`,
-        }}
-      />
-
-      <div className={css.arrowUp}>
-        <svg width={16} height={10}>
-          <polygon
-            points="0, 10 ,8, 0,  16, 10"
-            fill={color}
-            stroke="black"
-            strokeWidth="1"
-          />
-        </svg>
-      </div>
-    </div>
+    </Draggable>
   );
 };

@@ -9,30 +9,52 @@ import { magnetogramSlice } from "./slice";
  * @param rightCoordinateX правая кооррдинато по оси Х
  */
 export const addMagnetogramElement =
-  (
-    description: string,
-    type: MagnetogramElementType,
-    leftCoordinateX: number,
-    rightCoordinateX: number
-  ) =>
+  (description: string, type: MagnetogramElementType, coordinateX: number) =>
   (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
 
+    const getRandomNum = () => {
+      const min = 0;
+      const max = 255;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
     const newMagnetogramElement: MagnetogramElement = {
-      id: "",
+      id: "new",
       description: description,
       type: type,
-      leftCoordinateX: leftCoordinateX,
-      rightCoordinateX: rightCoordinateX,
+      coordinateX: coordinateX,
+      markerColor: `rgb(${getRandomNum()},${getRandomNum()},${getRandomNum()})`,
     };
 
     if (type === "defect") {
-      dispatch(magnetogramSlice.actions.replaceDefect(newMagnetogramElement));
+      dispatch(magnetogramSlice.actions.replaceDefects(newMagnetogramElement));
     } else {
       dispatch(
         magnetogramSlice.actions.replaceStructuralElements(
           newMagnetogramElement
         )
+      );
+    }
+  };
+
+export const updateElementCoordinate =
+  (magnetogramElement: MagnetogramElement, coordinateX: number) =>
+  (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+
+    const newMagnetogramElement: MagnetogramElement = {
+      ...magnetogramElement,
+      coordinateX,
+    };
+
+    if (magnetogramElement.type === "defect") {
+      dispatch(magnetogramSlice.actions.replaceDefect(newMagnetogramElement));
+    }
+
+    if (magnetogramElement.type === "structuralElement") {
+      dispatch(
+        magnetogramSlice.actions.replaceStructuralElement(newMagnetogramElement)
       );
     }
   };

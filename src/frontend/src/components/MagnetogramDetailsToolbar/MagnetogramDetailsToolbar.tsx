@@ -13,7 +13,7 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
   isStructuralElementsCheked,
   onDefectsSwitchChange,
   onStructuralElementsSwitchChange,
-  onAddNewDefect,
+  onAddNewElement,
 }) => {
   return (
     <div
@@ -28,7 +28,7 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
         label="Новый элемент"
         size="xs"
         iconLeft={IconShape}
-        onClick={onAddNewDefect}
+        onClick={onAddNewElement}
         view="secondary"
       />
 

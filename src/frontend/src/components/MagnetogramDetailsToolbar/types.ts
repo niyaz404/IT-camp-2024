@@ -4,5 +4,5 @@ export type MagnetogramDetailsToolbarProps = {
   isStructuralElementsCheked: boolean;
   onDefectsSwitchChange: () => void;
   onStructuralElementsSwitchChange: () => void;
-  onAddNewDefect: () => void;
+  onAddNewElement: () => void;
 };

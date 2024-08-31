@@ -1,10 +1,6 @@
 .magnetogram {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  position: absolute;
   height: calc(100vh - 18rem);
-  min-width: 100vw;
-  overflow-x: auto;
 }
 
 .edge {

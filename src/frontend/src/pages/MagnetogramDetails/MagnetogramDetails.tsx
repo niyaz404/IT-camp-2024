@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Modal } from "@consta/uikit/Modal";
 import {
-  ElementEdge,
   MagnetogramDetailsFooter,
   MagnetogramDetailsToolbar,
 } from "../../components";
@@ -14,6 +13,7 @@ import { magnetogramSelector, useAppSelector } from "../../store";
 
 export const MagnetogramDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [newElementCoordinate, setNewElementCoordinate] = useState<number>(0);
 
   const { defects, structuralElements } = useAppSelector(magnetogramSelector);
 
@@ -27,17 +27,12 @@ export const MagnetogramDetails = () => {
 
   const onCloseModal = () => {
     setIsModalOpen(false);
+    setNewElementCoordinate(0);
   };
 
   const onDefectsSwitchChange = () => {};
 
   const onStructuralElementsSwitchChange = () => {};
-
-  const onStructuralElementSwitchChange = () => {};
-
-  const onIsDefectSwitchChange = () => {};
-
-  const elements = [0, 10, 15, 50, 100];
 
   return (
     <div className="container-column w-100 h-100">
@@ -47,10 +42,16 @@ export const MagnetogramDetails = () => {
         isStructuralElementsCheked={false}
         onDefectsSwitchChange={onDefectsSwitchChange}
         onStructuralElementsSwitchChange={onStructuralElementsSwitchChange}
-        onAddNewDefect={onOpenModal}
+        onAddNewElement={onOpenModal}
       />
 
-      <MagnetogramWrapper elements={[...defects, ...structuralElements]}>
+      <MagnetogramWrapper
+        onAddNewElement={(coordinate: number) => {
+          setNewElementCoordinate(coordinate);
+          onOpenModal();
+        }}
+        elements={[...defects, ...structuralElements]}
+      >
         <Magnetogram />
       </MagnetogramWrapper>
 
@@ -61,7 +62,10 @@ export const MagnetogramDetails = () => {
         onClickOutside={onCloseModal}
         onEsc={onCloseModal}
       >
-        <AddNewMagnetogramElementForm onCloseModal={onCloseModal} />
+        <AddNewMagnetogramElementForm
+          onCloseModal={onCloseModal}
+          newElenentCoordinate={newElementCoordinate}
+        />
       </Modal>
     </div>
   );
