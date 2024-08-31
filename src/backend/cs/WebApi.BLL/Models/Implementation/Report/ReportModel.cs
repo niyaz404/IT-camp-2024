@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace WebApi.Models.Implementation.Report;
+﻿namespace WebApi.BLL.Models.Implementation.Report;
 
 /// <summary>
-/// Dto отчета
+/// Модель отчета
 /// </summary>
-public class ReportDto
+public class ReportModel
 {
     /// <summary>
     /// Идентификатор отчета

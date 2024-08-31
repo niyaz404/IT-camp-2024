@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Implementation.Magnerogram;
 
 namespace WebApi.Controllers;
@@ -8,6 +9,7 @@ namespace WebApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("[controller]/[action]")]
+[Authorize]
 public class MagnetogramController : ControllerBase
 {
     [HttpPost]

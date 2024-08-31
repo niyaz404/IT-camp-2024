@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using WebApi.DAL.Models.Abstract;
 
-namespace WebApi.Models.Implementation.Report;
+namespace WebApi.DAL.Models.Implementation.Report;
 
 /// <summary>
-/// Dto отчета
+/// Сущность отчета
 /// </summary>
-public class ReportDto
+public class ReportEntity : BaseEntity
 {
     /// <summary>
     /// Идентификатор отчета

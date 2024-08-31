@@ -11,9 +11,27 @@ namespace WebApi.Controllers;
 public class ReportController : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> Get(string metaDataId)
+    public async Task<IActionResult> Get(string commitId)
     {
-        return Ok(new { File = new ReportDto() });
+        var fileName = "1.pdf";
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+
+        if (!System.IO.File.Exists(filePath))
+        {
+            return NotFound(); // Если файл не найден, возвращаем 404
+        }
+
+        // Читаем файл в массив байтов
+        byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+
+        
+        return Ok(new ReportDto()
+        {
+            Id = "sf",
+            CommitId = commitId,
+            CreatedAt = DateTime.Now,
+            File = fileBytes
+        });
     }
 }
 
