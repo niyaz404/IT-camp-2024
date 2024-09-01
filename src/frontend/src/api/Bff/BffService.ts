@@ -4,6 +4,7 @@ import {
   CommitClient,
   DefectDto,
   FileParameter,
+  HealthClient,
   MagnetogramClient,
   ReportClient,
   StructuralElementDto,
@@ -15,12 +16,14 @@ enum BffClients {
   commitClient,
   magnetogramClient,
   reportClient,
+  healthClient,
 }
 
 function getClient(client: BffClients.authClient): AuthClient;
 function getClient(client: BffClients.commitClient): CommitClient;
 function getClient(client: BffClients.magnetogramClient): MagnetogramClient;
 function getClient(client: BffClients.reportClient): ReportClient;
+function getClient(client: BffClients.healthClient): HealthClient;
 
 function getClient(client: BffClients): any {
   switch (client) {
@@ -35,6 +38,9 @@ function getClient(client: BffClients): any {
 
     case BffClients.reportClient:
       return new ReportClient("", axiosInstance);
+
+    case BffClients.healthClient:
+      return new HealthClient("", axiosInstance);
   }
 }
 
@@ -133,4 +139,13 @@ export const loginInSystem = (
     password,
   });
   return client.login(userCredentials);
+};
+
+/**
+ * Проверка бэка
+ * @returns
+ */
+export const check = () => {
+  const client = getClient(BffClients.healthClient);
+  return client.check();
 };

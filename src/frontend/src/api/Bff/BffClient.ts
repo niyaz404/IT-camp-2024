@@ -8,985 +8,843 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  CancelToken,
-} from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 
 export class AuthClient {
-  protected instance: AxiosInstance;
-  protected baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance || axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl ?? "";
-  }
+        this.instance = instance || axios.create();
 
-  /**
-   * @param body (optional)
-   * @return OK
-   */
-  login(
-    body?: UserCredentials | undefined,
-    cancelToken?: CancelToken
-  ): Promise<void> {
-    let url_ = this.baseUrl + "/Auth/Login";
-    url_ = url_.replace(/[?&]$/, "");
+        this.baseUrl = baseUrl ?? "";
 
-    const content_ = JSON.stringify(body);
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: "POST",
-      url: url_,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processLogin(_response);
-      });
-  }
-
-  protected processLogin(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-      for (const k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        "An unexpected server error occurred.",
-        status,
-        _responseText,
-        _headers
-      );
+
+    /**
+     * Метод авторизации
+     * @param body (optional) 
+     * @return OK
+     */
+    login(body?: UserCredentials | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/Auth/Login";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLogin(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processLogin(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export class CommitClient {
-  protected instance: AxiosInstance;
-  protected baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance || axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl ?? "";
-  }
+        this.instance = instance || axios.create();
 
-  /**
-   * @param magnetogramId (optional) Идентификатор исходной магнитограммы
-   * @param createdAt (optional) Дата создание обработки (метаданных магнитограммы)
-   * @param name (optional) Наименование фиксации
-   * @param createdBy (optional) ФИО автора коммита
-   * @param isDefective (optional) Наличие дефектов в магнитограмме
-   * @param defects (optional) Список дефектов
-   * @param structuralElements (optional) Список конструктивных элементов
-   * @param processedMagnetogram (optional) Обработанная магнитограмма
-   * @param originalMagnetogram (optional) Исходная магнитограмма
-   * @return OK
-   */
-  save(
-    magnetogramId?: string | undefined,
-    createdAt?: Date | undefined,
-    name?: string | undefined,
-    createdBy?: string | undefined,
-    isDefective?: boolean | undefined,
-    defects?: DefectDto[] | undefined,
-    structuralElements?: StructuralElementDto[] | undefined,
-    processedMagnetogram?: string | undefined,
-    originalMagnetogram?: FileParameter | undefined,
-    cancelToken?: CancelToken
-  ): Promise<void> {
-    let url_ = this.baseUrl + "/Commit/Save?";
-    if (magnetogramId === null)
-      throw new Error("The parameter 'magnetogramId' cannot be null.");
-    else if (magnetogramId !== undefined)
-      url_ += "MagnetogramId=" + encodeURIComponent("" + magnetogramId) + "&";
-    if (createdAt === null)
-      throw new Error("The parameter 'createdAt' cannot be null.");
-    else if (createdAt !== undefined)
-      url_ +=
-        "CreatedAt=" +
-        encodeURIComponent(createdAt ? "" + createdAt.toISOString() : "") +
-        "&";
-    if (name === null) throw new Error("The parameter 'name' cannot be null.");
-    else if (name !== undefined)
-      url_ += "Name=" + encodeURIComponent("" + name) + "&";
-    if (createdBy === null)
-      throw new Error("The parameter 'createdBy' cannot be null.");
-    else if (createdBy !== undefined)
-      url_ += "CreatedBy=" + encodeURIComponent("" + createdBy) + "&";
-    if (isDefective === null)
-      throw new Error("The parameter 'isDefective' cannot be null.");
-    else if (isDefective !== undefined)
-      url_ += "IsDefective=" + encodeURIComponent("" + isDefective) + "&";
-    if (defects === null)
-      throw new Error("The parameter 'defects' cannot be null.");
-    else if (defects !== undefined)
-      defects &&
-        defects.forEach((item, index) => {
-          for (const attr in item)
-            if (item.hasOwnProperty(attr)) {
-              url_ +=
-                "Defects[" +
-                index +
-                "]." +
-                attr +
-                "=" +
-                encodeURIComponent("" + (item as any)[attr]) +
-                "&";
+        this.baseUrl = baseUrl ?? "";
+
+    }
+
+    /**
+     * @param magnetogramId (optional) Идентификатор исходной магнитограммы
+     * @param createdAt (optional) Дата создание обработки (метаданных магнитограммы)
+     * @param name (optional) Наименование фиксации
+     * @param createdBy (optional) ФИО автора коммита
+     * @param isDefective (optional) Наличие дефектов в магнитограмме
+     * @param defects (optional) Список дефектов
+     * @param structuralElements (optional) Список конструктивных элементов
+     * @param processedMagnetogram (optional) Обработанная магнитограмма
+     * @param originalMagnetogram (optional) Исходная магнитограмма
+     * @return OK
+     */
+    save(magnetogramId?: string | undefined, createdAt?: Date | undefined, name?: string | undefined, createdBy?: string | undefined, isDefective?: boolean | undefined, defects?: DefectDto[] | undefined, structuralElements?: StructuralElementDto[] | undefined, processedMagnetogram?: string | undefined, originalMagnetogram?: FileParameter | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/Commit/Save?";
+        if (magnetogramId === null)
+            throw new Error("The parameter 'magnetogramId' cannot be null.");
+        else if (magnetogramId !== undefined)
+            url_ += "MagnetogramId=" + encodeURIComponent("" + magnetogramId) + "&";
+        if (createdAt === null)
+            throw new Error("The parameter 'createdAt' cannot be null.");
+        else if (createdAt !== undefined)
+            url_ += "CreatedAt=" + encodeURIComponent(createdAt ? "" + createdAt.toISOString() : "") + "&";
+        if (name === null)
+            throw new Error("The parameter 'name' cannot be null.");
+        else if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&";
+        if (createdBy === null)
+            throw new Error("The parameter 'createdBy' cannot be null.");
+        else if (createdBy !== undefined)
+            url_ += "CreatedBy=" + encodeURIComponent("" + createdBy) + "&";
+        if (isDefective === null)
+            throw new Error("The parameter 'isDefective' cannot be null.");
+        else if (isDefective !== undefined)
+            url_ += "IsDefective=" + encodeURIComponent("" + isDefective) + "&";
+        if (defects === null)
+            throw new Error("The parameter 'defects' cannot be null.");
+        else if (defects !== undefined)
+            defects && defects.forEach((item, index) => {
+                for (const attr in item)
+        			if (item.hasOwnProperty(attr)) {
+        				url_ += "Defects[" + index + "]." + attr + "=" + encodeURIComponent("" + (item as any)[attr]) + "&";
+        			}
+            });
+        if (structuralElements === null)
+            throw new Error("The parameter 'structuralElements' cannot be null.");
+        else if (structuralElements !== undefined)
+            structuralElements && structuralElements.forEach((item, index) => {
+                for (const attr in item)
+        			if (item.hasOwnProperty(attr)) {
+        				url_ += "StructuralElements[" + index + "]." + attr + "=" + encodeURIComponent("" + (item as any)[attr]) + "&";
+        			}
+            });
+        if (processedMagnetogram === null)
+            throw new Error("The parameter 'processedMagnetogram' cannot be null.");
+        else if (processedMagnetogram !== undefined)
+            url_ += "ProcessedMagnetogram=" + encodeURIComponent("" + processedMagnetogram) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (originalMagnetogram === null || originalMagnetogram === undefined)
+            throw new Error("The parameter 'originalMagnetogram' cannot be null.");
+        else
+            content_.append("OriginalMagnetogram", originalMagnetogram.data, originalMagnetogram.fileName ? originalMagnetogram.fileName : "OriginalMagnetogram");
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
             }
+        }).then((_response: AxiosResponse) => {
+            return this.processSave(_response);
         });
-    if (structuralElements === null)
-      throw new Error("The parameter 'structuralElements' cannot be null.");
-    else if (structuralElements !== undefined)
-      structuralElements &&
-        structuralElements.forEach((item, index) => {
-          for (const attr in item)
-            if (item.hasOwnProperty(attr)) {
-              url_ +=
-                "StructuralElements[" +
-                index +
-                "]." +
-                attr +
-                "=" +
-                encodeURIComponent("" + (item as any)[attr]) +
-                "&";
+    }
+
+    protected processSave(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
             }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @param commitId (optional) 
+     * @return OK
+     */
+    get(commitId?: string | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/Commit/Get?";
+        if (commitId === null)
+            throw new Error("The parameter 'commitId' cannot be null.");
+        else if (commitId !== undefined)
+            url_ += "commitId=" + encodeURIComponent("" + commitId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGet(_response);
         });
-    if (processedMagnetogram === null)
-      throw new Error("The parameter 'processedMagnetogram' cannot be null.");
-    else if (processedMagnetogram !== undefined)
-      url_ +=
-        "ProcessedMagnetogram=" +
-        encodeURIComponent("" + processedMagnetogram) +
-        "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    const content_ = new FormData();
-    if (originalMagnetogram === null || originalMagnetogram === undefined)
-      throw new Error("The parameter 'originalMagnetogram' cannot be null.");
-    else
-      content_.append(
-        "OriginalMagnetogram",
-        originalMagnetogram.data,
-        originalMagnetogram.fileName
-          ? originalMagnetogram.fileName
-          : "OriginalMagnetogram"
-      );
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: "POST",
-      url: url_,
-      headers: {},
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processSave(_response);
-      });
-  }
-
-  protected processSave(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-      for (const k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        "An unexpected server error occurred.",
-        status,
-        _responseText,
-        _headers
-      );
-    }
-    return Promise.resolve<void>(null as any);
-  }
 
-  /**
-   * @param commitId (optional)
-   * @return OK
-   */
-  get(commitId?: string | undefined, cancelToken?: CancelToken): Promise<void> {
-    let url_ = this.baseUrl + "/Commit/Get?";
-    if (commitId === null)
-      throw new Error("The parameter 'commitId' cannot be null.");
-    else if (commitId !== undefined)
-      url_ += "commitId=" + encodeURIComponent("" + commitId) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: AxiosRequestConfig = {
-      method: "GET",
-      url: url_,
-      headers: {},
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGet(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGet(_response);
-      });
-  }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
 
-  protected processGet(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-      for (const k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        "An unexpected server error occurred.",
-        status,
-        _responseText,
-        _headers
-      );
+
+    /**
+     * @return OK
+     */
+    getAll( cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/Commit/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAll(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  /**
-   * @return OK
-   */
-  getAll(cancelToken?: CancelToken): Promise<void> {
-    let url_ = this.baseUrl + "/Commit/GetAll";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: AxiosRequestConfig = {
-      method: "GET",
-      url: url_,
-      headers: {},
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processGetAll(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGetAll(_response);
-      });
-  }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
 
-  protected processGetAll(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-      for (const k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        "An unexpected server error occurred.",
-        status,
-        _responseText,
-        _headers
-      );
+
+    /**
+     * @param commitId (optional) 
+     * @return OK
+     */
+    delete(commitId?: string | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/Commit/Delete?";
+        if (commitId === null)
+            throw new Error("The parameter 'commitId' cannot be null.");
+        else if (commitId !== undefined)
+            url_ += "commitId=" + encodeURIComponent("" + commitId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDelete(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
 
-  /**
-   * @param commitId (optional)
-   * @return OK
-   */
-  delete(
-    commitId?: string | undefined,
-    cancelToken?: CancelToken
-  ): Promise<void> {
-    let url_ = this.baseUrl + "/Commit/Delete?";
-    if (commitId === null)
-      throw new Error("The parameter 'commitId' cannot be null.");
-    else if (commitId !== undefined)
-      url_ += "commitId=" + encodeURIComponent("" + commitId) + "&";
-    url_ = url_.replace(/[?&]$/, "");
-
-    let options_: AxiosRequestConfig = {
-      method: "DELETE",
-      url: url_,
-      headers: {},
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
+    protected processDelete(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
         }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processDelete(_response);
-      });
-  }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
 
-  protected processDelete(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-      for (const k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-      }
+        return Promise.resolve<void>(null as any);
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        "An unexpected server error occurred.",
-        status,
-        _responseText,
-        _headers
-      );
-    }
-    return Promise.resolve<void>(null as any);
-  }
 }
 
 export class HealthClient {
-  protected instance: AxiosInstance;
-  protected baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance || axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl ?? "";
-  }
+        this.instance = instance || axios.create();
 
-  /**
-   * @return OK
-   */
-  check(cancelToken?: CancelToken): Promise<void> {
-    let url_ = this.baseUrl + "/Health/Check";
-    url_ = url_.replace(/[?&]$/, "");
+        this.baseUrl = baseUrl ?? "";
 
-    let options_: AxiosRequestConfig = {
-      method: "GET",
-      url: url_,
-      headers: {},
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processCheck(_response);
-      });
-  }
-
-  protected processCheck(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-      for (const k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        "An unexpected server error occurred.",
-        status,
-        _responseText,
-        _headers
-      );
+
+    /**
+     * @return OK
+     */
+    check( cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/Health/Check";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCheck(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processCheck(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export class MagnetogramClient {
-  protected instance: AxiosInstance;
-  protected baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance || axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl ?? "";
-  }
+        this.instance = instance || axios.create();
 
-  /**
-   * @param name (optional) Название магнитограммы
-   * @param objectName (optional) Название объекта магнитограммы
-   * @param createdAt (optional) Время сохранения магнитограммы
-   * @param file (optional) Файл магнитограммы в формате .pkl
-   * @return OK
-   */
-  save2(
-    name?: string | undefined,
-    objectName?: string | undefined,
-    createdAt?: Date | undefined,
-    file?: FileParameter | undefined,
-    cancelToken?: CancelToken
-  ): Promise<void> {
-    let url_ = this.baseUrl + "/Magnetogram/Save?";
-    if (name === null) throw new Error("The parameter 'name' cannot be null.");
-    else if (name !== undefined)
-      url_ += "Name=" + encodeURIComponent("" + name) + "&";
-    if (objectName === null)
-      throw new Error("The parameter 'objectName' cannot be null.");
-    else if (objectName !== undefined)
-      url_ += "ObjectName=" + encodeURIComponent("" + objectName) + "&";
-    if (createdAt === null)
-      throw new Error("The parameter 'createdAt' cannot be null.");
-    else if (createdAt !== undefined)
-      url_ +=
-        "CreatedAt=" +
-        encodeURIComponent(createdAt ? "" + createdAt.toISOString() : "") +
-        "&";
-    url_ = url_.replace(/[?&]$/, "");
+        this.baseUrl = baseUrl ?? "";
 
-    const content_ = new FormData();
-    if (file === null || file === undefined)
-      throw new Error("The parameter 'file' cannot be null.");
-    else
-      content_.append(
-        "File",
-        file.data,
-        file.fileName ? file.fileName : "File"
-      );
-
-    let options_: AxiosRequestConfig = {
-      data: content_,
-      method: "POST",
-      url: url_,
-      headers: {},
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processSave2(_response);
-      });
-  }
-
-  protected processSave2(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-      for (const k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        "An unexpected server error occurred.",
-        status,
-        _responseText,
-        _headers
-      );
+
+    /**
+     * @param name (optional) Название магнитограммы
+     * @param objectName (optional) Название объекта магнитограммы
+     * @param createdAt (optional) Время сохранения магнитограммы
+     * @param file (optional) Файл магнитограммы в формате .pkl
+     * @return OK
+     */
+    save2(name?: string | undefined, objectName?: string | undefined, createdAt?: Date | undefined, file?: FileParameter | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/Magnetogram/Save?";
+        if (name === null)
+            throw new Error("The parameter 'name' cannot be null.");
+        else if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&";
+        if (objectName === null)
+            throw new Error("The parameter 'objectName' cannot be null.");
+        else if (objectName !== undefined)
+            url_ += "ObjectName=" + encodeURIComponent("" + objectName) + "&";
+        if (createdAt === null)
+            throw new Error("The parameter 'createdAt' cannot be null.");
+        else if (createdAt !== undefined)
+            url_ += "CreatedAt=" + encodeURIComponent(createdAt ? "" + createdAt.toISOString() : "") + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (file === null || file === undefined)
+            throw new Error("The parameter 'file' cannot be null.");
+        else
+            content_.append("File", file.data, file.fileName ? file.fileName : "File");
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSave2(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processSave2(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export class ReportClient {
-  protected instance: AxiosInstance;
-  protected baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined =
-    undefined;
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(baseUrl?: string, instance?: AxiosInstance) {
-    this.instance = instance || axios.create();
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
 
-    this.baseUrl = baseUrl ?? "";
-  }
+        this.instance = instance || axios.create();
 
-  /**
-   * @param commitId (optional)
-   * @return OK
-   */
-  get2(
-    commitId?: string | undefined,
-    cancelToken?: CancelToken
-  ): Promise<void> {
-    let url_ = this.baseUrl + "/Report/Get?";
-    if (commitId === null)
-      throw new Error("The parameter 'commitId' cannot be null.");
-    else if (commitId !== undefined)
-      url_ += "commitId=" + encodeURIComponent("" + commitId) + "&";
-    url_ = url_.replace(/[?&]$/, "");
+        this.baseUrl = baseUrl ?? "";
 
-    let options_: AxiosRequestConfig = {
-      method: "GET",
-      url: url_,
-      headers: {},
-      cancelToken,
-    };
-
-    return this.instance
-      .request(options_)
-      .catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-          return _error.response;
-        } else {
-          throw _error;
-        }
-      })
-      .then((_response: AxiosResponse) => {
-        return this.processGet2(_response);
-      });
-  }
-
-  protected processGet2(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-      for (const k in response.headers) {
-        if (response.headers.hasOwnProperty(k)) {
-          _headers[k] = response.headers[k];
-        }
-      }
     }
-    if (status === 200) {
-      const _responseText = response.data;
-      return Promise.resolve<void>(null as any);
-    } else if (status !== 200 && status !== 204) {
-      const _responseText = response.data;
-      return throwException(
-        "An unexpected server error occurred.",
-        status,
-        _responseText,
-        _headers
-      );
+
+    /**
+     * @param commitId (optional) 
+     * @return OK
+     */
+    get2(commitId?: string | undefined, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/Report/Get?";
+        if (commitId === null)
+            throw new Error("The parameter 'commitId' cannot be null.");
+        else if (commitId !== undefined)
+            url_ += "commitId=" + encodeURIComponent("" + commitId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGet2(_response);
+        });
     }
-    return Promise.resolve<void>(null as any);
-  }
+
+    protected processGet2(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 /** Dto дефекта */
 export class DefectDto implements IDefectDto {
-  /** Идентификатор элемента */
-  id!: string | undefined;
-  type!: ElementType;
-  /** Дополнительное описание элемета */
-  description!: string | undefined;
-  /** Координата х элемента */
-  x!: number;
-  leftNeighbour!: MagnetogramElementDto;
-  rightNeighbour!: MagnetogramElementDto;
+    /** Идентификатор элемента */
+    id!: string | undefined;
+    type!: ElementType;
+    /** Дополнительное описание элемета */
+    description!: string | undefined;
+    /** Координата х элемента */
+    x!: number;
+    leftNeighbour!: MagnetogramElementDto;
+    rightNeighbour!: MagnetogramElementDto;
 
-  constructor(data?: IDefectDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IDefectDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.id = _data["id"];
-      this.type = _data["type"];
-      this.description = _data["description"];
-      this.x = _data["x"];
-      this.leftNeighbour = _data["leftNeighbour"]
-        ? MagnetogramElementDto.fromJS(_data["leftNeighbour"])
-        : <any>undefined;
-      this.rightNeighbour = _data["rightNeighbour"]
-        ? MagnetogramElementDto.fromJS(_data["rightNeighbour"])
-        : <any>undefined;
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.type = _data["type"];
+            this.description = _data["description"];
+            this.x = _data["x"];
+            this.leftNeighbour = _data["leftNeighbour"] ? MagnetogramElementDto.fromJS(_data["leftNeighbour"]) : <any>undefined;
+            this.rightNeighbour = _data["rightNeighbour"] ? MagnetogramElementDto.fromJS(_data["rightNeighbour"]) : <any>undefined;
+        }
     }
-  }
 
-  static fromJS(data: any): DefectDto {
-    data = typeof data === "object" ? data : {};
-    let result = new DefectDto();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): DefectDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DefectDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === "object" ? data : {};
-    data["id"] = this.id;
-    data["type"] = this.type;
-    data["description"] = this.description;
-    data["x"] = this.x;
-    data["leftNeighbour"] = this.leftNeighbour
-      ? this.leftNeighbour.toJSON()
-      : <any>undefined;
-    data["rightNeighbour"] = this.rightNeighbour
-      ? this.rightNeighbour.toJSON()
-      : <any>undefined;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["description"] = this.description;
+        data["x"] = this.x;
+        data["leftNeighbour"] = this.leftNeighbour ? this.leftNeighbour.toJSON() : <any>undefined;
+        data["rightNeighbour"] = this.rightNeighbour ? this.rightNeighbour.toJSON() : <any>undefined;
+        return data;
+    }
 }
 
 /** Dto дефекта */
 export interface IDefectDto {
-  /** Идентификатор элемента */
-  id: string | undefined;
-  type: ElementType;
-  /** Дополнительное описание элемета */
-  description: string | undefined;
-  /** Координата х элемента */
-  x: number;
-  leftNeighbour: MagnetogramElementDto;
-  rightNeighbour: MagnetogramElementDto;
+    /** Идентификатор элемента */
+    id: string | undefined;
+    type: ElementType;
+    /** Дополнительное описание элемета */
+    description: string | undefined;
+    /** Координата х элемента */
+    x: number;
+    leftNeighbour: MagnetogramElementDto;
+    rightNeighbour: MagnetogramElementDto;
 }
 
 /** Тип элемента на магнитограмме */
 export enum ElementType {
-  _1 = 1,
-  _2 = 2,
+    _1 = 1,
+    _2 = 2,
 }
 
 /** Dto элемента на магнитограмме */
 export class MagnetogramElementDto implements IMagnetogramElementDto {
-  /** Идентификатор элемента */
-  id!: string | undefined;
-  type!: ElementType;
-  /** Дополнительное описание элемета */
-  description!: string | undefined;
-  /** Координата х элемента */
-  x!: number;
-  leftNeighbour!: MagnetogramElementDto;
-  rightNeighbour!: MagnetogramElementDto;
+    /** Идентификатор элемента */
+    id!: string | undefined;
+    type!: ElementType;
+    /** Дополнительное описание элемета */
+    description!: string | undefined;
+    /** Координата х элемента */
+    x!: number;
+    leftNeighbour!: MagnetogramElementDto;
+    rightNeighbour!: MagnetogramElementDto;
 
-  constructor(data?: IMagnetogramElementDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IMagnetogramElementDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.id = _data["id"];
-      this.type = _data["type"];
-      this.description = _data["description"];
-      this.x = _data["x"];
-      this.leftNeighbour = _data["leftNeighbour"]
-        ? MagnetogramElementDto.fromJS(_data["leftNeighbour"])
-        : <any>undefined;
-      this.rightNeighbour = _data["rightNeighbour"]
-        ? MagnetogramElementDto.fromJS(_data["rightNeighbour"])
-        : <any>undefined;
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.type = _data["type"];
+            this.description = _data["description"];
+            this.x = _data["x"];
+            this.leftNeighbour = _data["leftNeighbour"] ? MagnetogramElementDto.fromJS(_data["leftNeighbour"]) : <any>undefined;
+            this.rightNeighbour = _data["rightNeighbour"] ? MagnetogramElementDto.fromJS(_data["rightNeighbour"]) : <any>undefined;
+        }
     }
-  }
 
-  static fromJS(data: any): MagnetogramElementDto {
-    data = typeof data === "object" ? data : {};
-    let result = new MagnetogramElementDto();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): MagnetogramElementDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MagnetogramElementDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === "object" ? data : {};
-    data["id"] = this.id;
-    data["type"] = this.type;
-    data["description"] = this.description;
-    data["x"] = this.x;
-    data["leftNeighbour"] = this.leftNeighbour
-      ? this.leftNeighbour.toJSON()
-      : <any>undefined;
-    data["rightNeighbour"] = this.rightNeighbour
-      ? this.rightNeighbour.toJSON()
-      : <any>undefined;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["description"] = this.description;
+        data["x"] = this.x;
+        data["leftNeighbour"] = this.leftNeighbour ? this.leftNeighbour.toJSON() : <any>undefined;
+        data["rightNeighbour"] = this.rightNeighbour ? this.rightNeighbour.toJSON() : <any>undefined;
+        return data;
+    }
 }
 
 /** Dto элемента на магнитограмме */
 export interface IMagnetogramElementDto {
-  /** Идентификатор элемента */
-  id: string | undefined;
-  type: ElementType;
-  /** Дополнительное описание элемета */
-  description: string | undefined;
-  /** Координата х элемента */
-  x: number;
-  leftNeighbour: MagnetogramElementDto;
-  rightNeighbour: MagnetogramElementDto;
+    /** Идентификатор элемента */
+    id: string | undefined;
+    type: ElementType;
+    /** Дополнительное описание элемета */
+    description: string | undefined;
+    /** Координата х элемента */
+    x: number;
+    leftNeighbour: MagnetogramElementDto;
+    rightNeighbour: MagnetogramElementDto;
 }
 
 /** Dto конструктивного элемента */
 export class StructuralElementDto implements IStructuralElementDto {
-  /** Идентификатор элемента */
-  id!: string | undefined;
-  type!: ElementType;
-  /** Дополнительное описание элемета */
-  description!: string | undefined;
-  /** Координата х элемента */
-  x!: number;
-  leftNeighbour!: MagnetogramElementDto;
-  rightNeighbour!: MagnetogramElementDto;
-  structuralElementType!: StructuralElementType;
+    /** Идентификатор элемента */
+    id!: string | undefined;
+    type!: ElementType;
+    /** Дополнительное описание элемета */
+    description!: string | undefined;
+    /** Координата х элемента */
+    x!: number;
+    leftNeighbour!: MagnetogramElementDto;
+    rightNeighbour!: MagnetogramElementDto;
+    structuralElementType!: StructuralElementType;
 
-  constructor(data?: IStructuralElementDto) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IStructuralElementDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.id = _data["id"];
-      this.type = _data["type"];
-      this.description = _data["description"];
-      this.x = _data["x"];
-      this.leftNeighbour = _data["leftNeighbour"]
-        ? MagnetogramElementDto.fromJS(_data["leftNeighbour"])
-        : <any>undefined;
-      this.rightNeighbour = _data["rightNeighbour"]
-        ? MagnetogramElementDto.fromJS(_data["rightNeighbour"])
-        : <any>undefined;
-      this.structuralElementType = _data["structuralElementType"];
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.type = _data["type"];
+            this.description = _data["description"];
+            this.x = _data["x"];
+            this.leftNeighbour = _data["leftNeighbour"] ? MagnetogramElementDto.fromJS(_data["leftNeighbour"]) : <any>undefined;
+            this.rightNeighbour = _data["rightNeighbour"] ? MagnetogramElementDto.fromJS(_data["rightNeighbour"]) : <any>undefined;
+            this.structuralElementType = _data["structuralElementType"];
+        }
     }
-  }
 
-  static fromJS(data: any): StructuralElementDto {
-    data = typeof data === "object" ? data : {};
-    let result = new StructuralElementDto();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): StructuralElementDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StructuralElementDto();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === "object" ? data : {};
-    data["id"] = this.id;
-    data["type"] = this.type;
-    data["description"] = this.description;
-    data["x"] = this.x;
-    data["leftNeighbour"] = this.leftNeighbour
-      ? this.leftNeighbour.toJSON()
-      : <any>undefined;
-    data["rightNeighbour"] = this.rightNeighbour
-      ? this.rightNeighbour.toJSON()
-      : <any>undefined;
-    data["structuralElementType"] = this.structuralElementType;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["description"] = this.description;
+        data["x"] = this.x;
+        data["leftNeighbour"] = this.leftNeighbour ? this.leftNeighbour.toJSON() : <any>undefined;
+        data["rightNeighbour"] = this.rightNeighbour ? this.rightNeighbour.toJSON() : <any>undefined;
+        data["structuralElementType"] = this.structuralElementType;
+        return data;
+    }
 }
 
 /** Dto конструктивного элемента */
 export interface IStructuralElementDto {
-  /** Идентификатор элемента */
-  id: string | undefined;
-  type: ElementType;
-  /** Дополнительное описание элемета */
-  description: string | undefined;
-  /** Координата х элемента */
-  x: number;
-  leftNeighbour: MagnetogramElementDto;
-  rightNeighbour: MagnetogramElementDto;
-  structuralElementType: StructuralElementType;
+    /** Идентификатор элемента */
+    id: string | undefined;
+    type: ElementType;
+    /** Дополнительное описание элемета */
+    description: string | undefined;
+    /** Координата х элемента */
+    x: number;
+    leftNeighbour: MagnetogramElementDto;
+    rightNeighbour: MagnetogramElementDto;
+    structuralElementType: StructuralElementType;
 }
 
 /** Типы конструктивных элементов */
 export enum StructuralElementType {
-  _0 = 0,
-  _1 = 1,
-  _2 = 2,
-  _3 = 3,
-  _4 = 4,
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    _4 = 4,
 }
 
 export class UserCredentials implements IUserCredentials {
-  username!: string | undefined;
-  password!: string | undefined;
+    username!: string | undefined;
+    password!: string | undefined;
 
-  constructor(data?: IUserCredentials) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IUserCredentials) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.username = _data["username"];
-      this.password = _data["password"];
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data["username"];
+            this.password = _data["password"];
+        }
     }
-  }
 
-  static fromJS(data: any): UserCredentials {
-    data = typeof data === "object" ? data : {};
-    let result = new UserCredentials();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): UserCredentials {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserCredentials();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === "object" ? data : {};
-    data["username"] = this.username;
-    data["password"] = this.password;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["username"] = this.username;
+        data["password"] = this.password;
+        return data;
+    }
 }
 
 export interface IUserCredentials {
-  username: string | undefined;
-  password: string | undefined;
+    username: string | undefined;
+    password: string | undefined;
 }
 
 export interface FileParameter {
-  data: any;
-  fileName: string;
+    data: any;
+    fileName: string;
 }
 
 export class ApiException extends Error {
-  message: string;
-  status: number;
-  response: string;
-  headers: { [key: string]: any };
-  result: any;
+    message: string;
+    status: number;
+    response: string;
+    headers: { [key: string]: any; };
+    result: any;
 
-  constructor(
-    message: string,
-    status: number,
-    response: string,
-    headers: { [key: string]: any },
-    result: any
-  ) {
-    super();
+    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
+        super();
 
-    this.message = message;
-    this.status = status;
-    this.response = response;
-    this.headers = headers;
-    this.result = result;
-  }
+        this.message = message;
+        this.status = status;
+        this.response = response;
+        this.headers = headers;
+        this.result = result;
+    }
 
-  protected isApiException = true;
+    protected isApiException = true;
 
-  static isApiException(obj: any): obj is ApiException {
-    return obj.isApiException === true;
-  }
+    static isApiException(obj: any): obj is ApiException {
+        return obj.isApiException === true;
+    }
 }
 
-function throwException(
-  message: string,
-  status: number,
-  response: string,
-  headers: { [key: string]: any },
-  result?: any
-): any {
-  if (result !== null && result !== undefined) throw result;
-  else throw new ApiException(message, status, response, headers, null);
+function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
+    if (result !== null && result !== undefined)
+        throw result;
+    else
+        throw new ApiException(message, status, response, headers, null);
 }
 
 function isAxiosError(obj: any): obj is AxiosError {
-  return obj && obj.isAxiosError === true;
+    return obj && obj.isAxiosError === true;
 }

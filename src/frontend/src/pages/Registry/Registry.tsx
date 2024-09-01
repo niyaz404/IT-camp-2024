@@ -3,7 +3,7 @@ import { ReportTable } from "../../module";
 import { AddNewReportForm, RegistryHeader } from "../../components";
 import { Modal } from "@consta/uikit/Modal";
 import { Layout } from "@consta/uikit/Layout";
-import { getAllReportRow } from "../../api";
+import { check, getAllReportRow } from "../../api";
 
 export const Registry = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -11,6 +11,7 @@ export const Registry = () => {
   useEffect(() => {
     const loadReportRows = async () => {
       await getAllReportRow();
+      await check();
     };
 
     loadReportRows();
