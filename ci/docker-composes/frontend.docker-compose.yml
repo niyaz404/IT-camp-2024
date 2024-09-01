@@ -6,7 +6,8 @@ services:
       context: /../../
       dockerfile: /ci/dockerfiles/Frontend.Dockerfile
     environment:
-      - NODE_ENV = development
+      NODE_ENV : development
+      REACT_APP_API_URL: 'http://webapi:8000'
     ports:
       - "3000:80"
     volumes:

@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ReportTable } from "../../module";
 import { AddNewReportForm, RegistryHeader } from "../../components";
 import { Modal } from "@consta/uikit/Modal";
 import { Layout } from "@consta/uikit/Layout";
+import { getAllReportRow } from "../../api";
 
 export const Registry = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const loadReportRows = async () => {
+      await getAllReportRow();
+    };
+
+    loadReportRows();
+  }, []);
 
   const onAddNewReport = () => {};
 

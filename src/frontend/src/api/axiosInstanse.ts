@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseURL = "";
+// const baseURL = "";
+const baseURL = "http://webapi:8000";
 
 export const axiosInstance = axios.create({
   baseURL,
