@@ -2,12 +2,12 @@ version: "3.4"
 
 services:
   frontend:
+    container_name: frontend
     build:
       context: /../../
       dockerfile: /ci/dockerfiles/Frontend.Dockerfile
     environment:
       NODE_ENV: development
-      REACT_APP_APi_HOST: http://${BFF_HOST}:${BFF_PORT}
     ports:
       - "3000:80"
     networks:

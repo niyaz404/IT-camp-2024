@@ -11,6 +11,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build app/bin/Release/net8.0 .
 
-ENV ASPNETCORE_URLS=http://+:8000
+ENV ASPNETCORE_URLS=http://+:8002
 
 ENTRYPOINT ["dotnet", "WebApi.dll"]

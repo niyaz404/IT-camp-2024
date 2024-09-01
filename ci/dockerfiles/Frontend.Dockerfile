@@ -11,7 +11,6 @@ FROM nginx:stable-alpine3.20-perl
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY src/frontend/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]
