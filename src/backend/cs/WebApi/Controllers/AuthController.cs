@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     public class AuthController : ControllerBase
     {
         private readonly HttpClient _httpClient;
@@ -20,8 +19,19 @@ namespace WebAPI.Controllers
             _configuration = configuration;
         }
         
+        /// <summary>
+        /// OPTIONS-эндпойнт для браузера
+        /// </summary>
+        [HttpOptions("/api/auth/login")]
+        public IActionResult Options()
+        {
+            return Ok();
+        }
+        
+        /// <summary>
+        /// Метод авторизации
+        /// </summary>
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserCredentials userCredentials)
         {
             // Создаем HTTP-запрос для AuthService

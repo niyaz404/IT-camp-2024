@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +11,19 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        
+        builder.Services.AddCors(options =>  
+        {  
+            options.AddDefaultPolicy(
+                policy  =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        //.WithOrigins("http://localhost:80", "http://frontend:80", "http://localhost:3000", "http://frontend:3000", "http://webapi:8002")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });  
+        });  
 
         builder.Services.AddAuthentication(options =>
             {
@@ -33,21 +47,24 @@ public class Program
         builder.Services.AddAuthorization();
         builder.Services.AddControllers();
         
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
-            // Получаем путь к XML-документации
             var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             options.IncludeXmlComments(xmlPath);
         });
         
-        builder.Services.AddHttpClient(); // Регистрация IHttpClientFactory
+        builder.Services.AddHttpClient();
         builder.Services.AddTransient<MyCustomService>(); 
 
         var app = builder.Build();
+
+        app.UseStaticFiles();
+        app.UseRouting();
+        
+        app.UseCors();
 
         // Configure the HTTP request pipeline.
         if(app.Environment.IsDevelopment())
@@ -56,27 +73,25 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
-
+        app.UseAuthentication();
+        
         app.UseAuthorization();
 
-        app.MapControllers();
-        
         app.Use(async (context, next) =>
         {
-            // Запуск следующего middleware
             await next();
 
-            // Сохраняем swagger.json в файловую систему
             if (context.Request.Path == "/swagger/v1/swagger.json")
             {
+                context.Response.Body.Position = 0; // Важно: сбросить позицию потока перед чтением
                 using var reader = new StreamReader(context.Response.Body);
                 var swaggerJson = await reader.ReadToEndAsync();
                 await File.WriteAllTextAsync("swagger.json", swaggerJson);
             }
         });
 
-
+        app.MapControllers();
+        
         app.Run();
     }
     
