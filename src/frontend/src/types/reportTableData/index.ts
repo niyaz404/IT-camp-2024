@@ -1,1 +1,1 @@
-export { ReportTableData } from "./types";
+export type { ReportTableData } from "./types";

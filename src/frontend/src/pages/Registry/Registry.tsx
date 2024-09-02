@@ -10,8 +10,8 @@ export const Registry = () => {
 
   useEffect(() => {
     const loadReportRows = async () => {
-      await getAllReportRow();
-      await check();
+      // await getAllReportRow();
+      // await check();
     };
 
     loadReportRows();

@@ -1,10 +1,7 @@
-export {
+export type {
   Magnetogram,
   MagnetogramElement,
   MagnetogramElementType,
-  MetaData,
-  Report,
-} from "./types";
-
-export { ReportTableData } from "./reportTableData";
+} from "./magnetogram";
+export type { ReportTableData } from "./reportTableData";
 export { RoutePaths } from "./routePaths";

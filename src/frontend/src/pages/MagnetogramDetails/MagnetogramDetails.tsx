@@ -1,9 +1,6 @@
-import React, { MouseEventHandler, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Modal } from "@consta/uikit/Modal";
-import {
-  MagnetogramDetailsFooter,
-  MagnetogramDetailsToolbar,
-} from "../../components";
+import { MagnetogramDetailsToolbar } from "../../components";
 import {
   Magnetogram,
   AddNewMagnetogramElementForm,
@@ -32,8 +29,6 @@ export const MagnetogramDetails = () => {
   const dispatch = useAppDispatch();
 
   const onSave = () => {};
-
-  const onClear = () => {};
 
   const onOpenModal = () => {
     setIsModalOpen(true);
@@ -76,7 +71,6 @@ export const MagnetogramDetails = () => {
         <Magnetogram />
       </MagnetogramWrapper>
 
-      {/* <MagnetogramDetailsFooter onSave={onSave} onClear={onClear} /> */}
       <Modal
         isOpen={isModalOpen}
         hasOverlay
