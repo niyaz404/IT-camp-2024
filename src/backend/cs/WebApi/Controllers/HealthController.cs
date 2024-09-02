@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
+    /// <summary>
+    /// Контроллер для проверки работоспособности сервиса
+    /// </summary>
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     public class HealthController : ControllerBase
     {
+        /// <summary>
+        /// Проверка работоспособности сервиса
+        /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Check()
+        public async Task<ActionResult<string>> Check()
         {
             return Ok("Ok");
         }

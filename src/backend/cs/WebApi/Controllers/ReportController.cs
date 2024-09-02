@@ -7,11 +7,16 @@ namespace WebApi.Controllers;
 /// Контроллер для работы с отчетами
 /// </summary>
 [ApiController]
-[Route("[controller]/[action]")]
+[Route("api/[controller]/[action]")]
 public class ReportController : ControllerBase
 {
+    /// <summary>
+    /// Получение отчета по идентификатору обработки
+    /// </summary>
+    /// <param name="commitId">Идентификатор обработки</param>
+    /// <returns>Отчет</returns>
     [HttpGet]
-    public async Task<IActionResult> Get(string commitId)
+    public async Task<ActionResult<ReportDto>> Get(string commitId)
     {
         var fileName = "1.pdf";
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
@@ -27,9 +32,6 @@ public class ReportController : ControllerBase
         
         return Ok(new ReportDto()
         {
-            Id = "sf",
-            CommitId = commitId,
-            CreatedAt = DateTime.Now,
             File = fileBytes
         });
     }

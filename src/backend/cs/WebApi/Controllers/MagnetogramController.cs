@@ -8,13 +8,18 @@ namespace WebApi.Controllers;
 /// Контроллер для работы с магнитограммами
 /// </summary>
 [ApiController]
-[Route("[controller]/[action]")]
+[Route("api/[controller]/[action]")]
 [Authorize]
 public class MagnetogramController : ControllerBase
 {
+    /// <summary>
+    /// Сохранение файла магнитограммы
+    /// </summary>
+    /// <param name="magnetogramDto">Магнитограмма</param>
+    /// <returns>Идентификатор сохраненной магнитограммы</returns>
     [HttpPost]
-    public async Task<IActionResult> Save(MagnetogramDto magnetogramDto)
+    public async Task<ActionResult<string>> Save(MagnetogramDto magnetogramDto)
     {
-        return Ok(new { MagnetogramId = "magtenogramId" });
+        return Ok("magtenogramId");
     }
 }
