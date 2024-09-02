@@ -2,7 +2,9 @@ export { magnetogramReducer, magnetogramSlice } from "./slice";
 export { magnetogramSelector } from "./selectors";
 export {
   addMagnetogramElement,
-  updateElementCoordinate,
+  updateElementCoordinates,
   setIsDefectsVisible,
   setIsStructuralElementsVisible,
+  loadMagnetogramById,
+  saveMagnetogram,
 } from "./actions";

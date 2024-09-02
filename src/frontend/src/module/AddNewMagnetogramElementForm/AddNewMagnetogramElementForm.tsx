@@ -112,7 +112,24 @@ export const AddNewMagnetogramElementForm: FC<
         onChange={onChangeCoordinate}
         value={String(coordinate)}
         type="number"
-        label="Координата (Ось Х)"
+        label="Левая координата (Ось Х)"
+        labelIcon={IconQuestion}
+        required
+        min={0}
+        max={MAX_MAGNETOGRAM_WIDTH}
+        status={isCoordinateInvalid ? "alert" : undefined}
+        caption={
+          isCoordinateInvalid ? "Указано некорректное значение" : undefined
+        }
+        width="full"
+      />
+
+      <TextField
+        className="m-r-3 m-b-4"
+        onChange={onChangeCoordinate}
+        value={String(coordinate)}
+        type="number"
+        label="Правая координата (Ось Х)"
         labelIcon={IconQuestion}
         required
         min={0}
@@ -140,6 +157,7 @@ export const AddNewMagnetogramElementForm: FC<
       />
 
       <Button
+        className="m-t-2"
         label="Добавить"
         size="m"
         onClick={onAddNewMagnetogramElement}

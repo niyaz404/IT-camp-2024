@@ -1,10 +1,11 @@
-import { MagnetogramElement } from "../../types";
+import { Defect, StructuralElement } from "../../types";
 
 export type InitialMagnetogramState = {
   id: string;
-  defects: MagnetogramElement[];
-  structuralElements: MagnetogramElement[];
-  processImage: any;
+  name: string,
+  defects: Defect[];
+  structuralElements: StructuralElement[];
+  processImage: string;
   isLoading: boolean;
   isDefectsVisible: boolean;
   isStructuralElementsVisible: boolean;

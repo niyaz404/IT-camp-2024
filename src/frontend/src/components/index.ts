@@ -5,4 +5,3 @@ export { RegistryHeader } from "./RegistryHeader";
 export { AddNewReportForm } from "./AddNewReportForm";
 export { MagnetogramDetailsToolbar } from "./MagnetogramDetailsToolbar";
 export { Delimiter } from "./Delimiter";
-export { ElementEdge } from "./ElementEdge";

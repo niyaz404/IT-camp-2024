@@ -11,7 +11,7 @@ export const Routers: React.FC = () => {
       <Navbar />
       <Routes>
         <Route
-          path={`${RoutePaths.Magnetogram}/*`}
+          path={`${RoutePaths.Magnetogram}/:id`}
           element={
             <PrivateRoute>
               <MagnetogramDetails />

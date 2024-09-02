@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
 import { InitialMagnetogramState } from "./types";
-import { MagnetogramElement } from "../../types";
+import { Defect, MagnetogramElement, StructuralElement } from "../../types";
 
 /**
  * Обновление всех дефектов
@@ -10,9 +10,9 @@ import { MagnetogramElement } from "../../types";
  */
 const replaceDefects = (
   state: InitialMagnetogramState,
-  action: PayloadAction<MagnetogramElement>
+  action: PayloadAction<Defect[]>
 ) => {
-  state.defects = [...state.defects, action.payload];
+  state.defects = [...state.defects, ...action.payload];
 };
 
 /**
@@ -22,9 +22,9 @@ const replaceDefects = (
  */
 const replaceStructuralElements = (
   state: InitialMagnetogramState,
-  action: PayloadAction<MagnetogramElement>
+  action: PayloadAction<StructuralElement[]>
 ) => {
-  state.structuralElements = [...state.structuralElements, action.payload];
+  state.structuralElements = [...state.structuralElements, ...action.payload];
 };
 
 /**
@@ -34,7 +34,7 @@ const replaceStructuralElements = (
  */
 const replaceDefect = (
   state: InitialMagnetogramState,
-  action: PayloadAction<MagnetogramElement>
+  action: PayloadAction<Defect>
 ) => {
   state.defects = [
     ...state.defects.filter((defetct) => defetct.id !== action.payload.id),
@@ -49,7 +49,7 @@ const replaceDefect = (
  */
 const replaceStructuralElement = (
   state: InitialMagnetogramState,
-  action: PayloadAction<MagnetogramElement>
+  action: PayloadAction<StructuralElement>
 ) => {
   state.structuralElements = [
     ...state.structuralElements.filter(
@@ -83,6 +83,54 @@ const replaceIsStructuralElementsVisible = (
   state.isStructuralElementsVisible = action.payload;
 };
 
+/**
+ * Заменяет признак загрузки магнитограммы
+ * @param state текущее состояние
+ * @param action признак загрузки магнитограммы
+ */
+const replaceIsMagnetogramLoading = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<boolean>
+) => {
+  state.isLoading = action.payload;
+};
+
+/**
+ * Заменяет идентификатор текущей магнитограммы
+ * @param state текущее состояние
+ * @param action идентификатор текущей магнитограммы
+ */
+const replaceMagnetogramId = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<string>
+) => {
+  state.id = action.payload;
+};
+
+/**
+ * Заменяет изображение текущей магнитограммы
+ * @param state текущее состояние
+ * @param action изображение текущей магнитограммы
+ */
+const replaceMagnetogramImage = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<string>
+) => {
+  state.processImage = action.payload;
+};
+
+/**
+ * Заменяет наименование
+ * @param state текущее состояние
+ * @param action наименование
+ */
+const replaceName = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<string>
+) => {
+  state.name = action.payload;
+};
+
 export const magnetogramSlice = createSlice({
   name: "magnetogramSlice",
   initialState: initialState,
@@ -93,6 +141,10 @@ export const magnetogramSlice = createSlice({
     replaceStructuralElement,
     replaceIsDefectsVisible,
     replaceIsStructuralElementsVisible,
+    replaceIsMagnetogramLoading,
+    replaceMagnetogramId,
+    replaceMagnetogramImage,
+    replaceName,
   },
 });
 

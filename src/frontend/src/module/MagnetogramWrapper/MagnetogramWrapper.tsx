@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useRef, useState, MouseEvent } from "react";
-import { DraggableEvent } from "react-draggable";
-import { ElementEdge } from "../../components";
-import { updateElementCoordinate, useAppDispatch } from "../../store";
+import { Marker } from "../../module";
+import { useAppDispatch } from "../../store";
 import css from "./style.css";
 import { MagnetogramWrapperProps } from "./types";
 
@@ -59,12 +58,6 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
 
       <div>
         {elements.map((element) => {
-          const onDragStop = (e: DraggableEvent) => {
-            const newCoordinate =
-              ((e as MouseEvent).clientX + scrollOffset - leftOffset) / 4;
-            dispatch(updateElementCoordinate(element, newCoordinate));
-          };
-
           return (
             <div
               className={`${
@@ -77,12 +70,23 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
                   : css.none
               }`}
             >
-              <ElementEdge
+              <Marker
+                id={element.id}
                 color={element.markerColor}
-                coordinate={element.coordinateX}
+                coordinate={element.leftCoordinateX}
                 type={element.type}
-                onDragStop={onDragStop}
                 leftOffset={leftOffset}
+                scrollOffset={scrollOffset}
+                side="left"
+              />
+              <Marker
+                id={element.id}
+                color={element.markerColor}
+                coordinate={element.rightCoordinateX}
+                type={element.type}
+                leftOffset={leftOffset}
+                scrollOffset={scrollOffset}
+                side="right"
               />
             </div>
           );

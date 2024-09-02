@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "@consta/uikit/Modal";
 import { MagnetogramDetailsToolbar } from "../../components";
 import {
@@ -7,28 +7,45 @@ import {
   MagnetogramWrapper,
 } from "../../module";
 import {
+  loadMagnetogramById,
   magnetogramSelector,
+  saveMagnetogram,
   setIsDefectsVisible,
   setIsStructuralElementsVisible,
   useAppDispatch,
   useAppSelector,
 } from "../../store";
 import { Loader } from "@consta/uikit/Loader";
+import { useParams } from "react-router-dom";
 
 export const MagnetogramDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [newElementCoordinate, setNewElementCoordinate] = useState<number>(0);
 
   const {
+    name,
     defects,
     structuralElements,
     isDefectsVisible,
     isStructuralElementsVisible,
+    isLoading,
   } = useAppSelector(magnetogramSelector);
 
   const dispatch = useAppDispatch();
 
-  const onSave = () => {};
+  const params = useParams();
+  const magnetogramId = params.id;
+
+  useEffect(() => {
+    const loadMagnetogram = async () => {
+      await dispatch(loadMagnetogramById(magnetogramId));
+    };
+    loadMagnetogram();
+  }, []);
+
+  const onSave = () => {
+    dispatch(saveMagnetogram());
+  };
 
   const onOpenModal = () => {
     setIsModalOpen(true);
@@ -47,10 +64,14 @@ export const MagnetogramDetails = () => {
     dispatch(setIsStructuralElementsVisible(checked));
   };
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <div className="container-column w-100 h-100">
       <MagnetogramDetailsToolbar
-        name={"Название объекта"}
+        name={name}
         isDefectsCheked={isDefectsVisible}
         isStructuralElementsCheked={isStructuralElementsVisible}
         onDefectsSwitchChange={onDefectsSwitchChange}

@@ -1,20 +1,29 @@
 export type MagnetogramElementType = "defect" | "structuralElement";
 
+export type MarkerSide = "left" | "right";
+
 export type MagnetogramElement = {
   id: string; // идентификатор
-  description: string; // наименование магнитограммы
   type: MagnetogramElementType; // тип элемента
-  coordinateX: number; // координата по оси Х
-  leftNeighbour?: MagnetogramElement | null; // Ближайший левый элементы
-  rightNeighbour?: MagnetogramElement | null; // Ближайший правый элементы
+  leftCoordinateX: number; // левая координата по оси Х
+  rightCoordinateX: number; // правая координата по оси Х
   markerColor: string;
   isEditable: false;
+};
+
+export type Defect = MagnetogramElement & {
+  description: string; // наименование магнитограммы
+  leftStructuralElementId: string | null; // Ближайший левый структурный элемент
+  rightStructuralElementId: string | null; // Ближайший правый структурный элемент
+};
+
+export type StructuralElement = MagnetogramElement & {
+  structuralElementType: number;
 };
 
 export type Magnetogram = {
   id: string; // идентификатор
   name: string; // наименование магнитограммы
-  objectName: string; //наименование участка объекта (трубы)
-  data: any; // данные
+  data: File; // данные
   createdAt: Date; // дата создания
 };

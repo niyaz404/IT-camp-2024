@@ -1,10 +1,18 @@
 export { store, useAppDispatch, useAppSelector } from "./store";
-export { reportSelector } from "./report";
+export {
+  reportSelector,
+  loadReportRowData,
+  downloadReport,
+  removeReportRow,
+  addNewMagnetogramReport,
+} from "./report";
 export {
   magnetogramSelector,
   addMagnetogramElement,
-  updateElementCoordinate,
+  updateElementCoordinates,
   setIsDefectsVisible,
   setIsStructuralElementsVisible,
+  loadMagnetogramById,
+  saveMagnetogram,
 } from "./magnetogram";
 export { authSelector } from "./auth";

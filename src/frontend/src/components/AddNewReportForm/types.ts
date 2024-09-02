@@ -1,4 +1,4 @@
 export type AddNewReportFormProps = {
-  onAddNewReport: () => void;
+  onAddNewReport: (reportName: string | null, file: File | null) => void;
   onCloseModal: () => void;
 };
