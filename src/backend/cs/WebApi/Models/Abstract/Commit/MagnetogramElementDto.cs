@@ -1,5 +1,4 @@
 ﻿using WebApi.Enums;
-using WebApi.Models.Implementation.Commit;
 
 namespace WebApi.Models.Abstract.Commit;
 

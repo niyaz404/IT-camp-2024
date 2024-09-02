@@ -11,9 +11,9 @@ public class MagnetogramModel
     public string Name { get; set; }
     
     /// <summary>
-    /// Название объекта магнитограммы
+    /// ФИО загрузившего
     /// </summary>
-    public string ObjectName { get; set; }
+    public string CreatedBy { get; set; }
     
     /// <summary>
     /// Время сохранения магнитограммы

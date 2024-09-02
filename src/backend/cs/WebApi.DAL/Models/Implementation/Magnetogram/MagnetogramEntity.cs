@@ -15,18 +15,6 @@ public class MagnetogramEntity : BaseEntity
     public string Id { get; set; }
     
     /// <summary>
-    /// Название магнитограммы
-    /// </summary>
-    [Column("name")]
-    public string Name { get; set; }
-    
-    /// <summary>
-    /// Название объекта
-    /// </summary>
-    [Column("objectname")]
-    public string ObjectName { get; set; }
-    
-    /// <summary>
     /// ФИО загрузившего магнитограмму
     /// </summary>
     [Column("createdby")]

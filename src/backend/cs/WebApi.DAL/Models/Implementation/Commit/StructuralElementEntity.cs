@@ -11,44 +11,24 @@ public class StructuralElementEntity : BaseEntity
     /// Идентификатор элемента
     /// </summary>
     public string Id { get; set; }
-
-    /// <summary>
-    /// Тип элемента на магнитограмме
-    /// </summary>
-    public int Type { get; set; }
     
     /// <summary>
-    /// Дополнительное описание элемета
+    /// Тип структурного элемента
     /// </summary>
-    public string Description { get; set; }
+    public int StructuralElementTypeId { get; set; }
     
     /// <summary>
-    /// Координата X на магнитограмме
+    /// Цвет элемента на магнитограмме
     /// </summary>
-    public int X { get; set; }
+    public string Color { get; set; }
     
     /// <summary>
-    /// Координата Y на магнитограмме
+    /// Х-координата начала области
     /// </summary>
-    public int Y { get; set; }
+    public int StartXCoordinate { get; set; }
     
     /// <summary>
-    /// Соседний элемент справа на магнитограмме
+    /// Х-координата конца области
     /// </summary>
-    public string LeftNeighbourId { get; set; }
-    
-    /// <summary>
-    /// Тип левого соседа. 1 - дефект, 2 - конструктивный элемент
-    /// </summary>
-    public int LeftNeighbourType { get; set; }
-    
-    /// <summary>
-    /// Соседний элемент справа на магнитограмме
-    /// </summary>
-    public string RightNeighbourId { get; set; }   
-    
-    /// <summary>
-    /// Тип левого соседа. 1 - дефект, 2 - конструктивный элемент
-    /// </summary>
-    public int RightNeighbourType { get; set; }
+    public int EndXCoordinate { get; set; }
 }

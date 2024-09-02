@@ -11,9 +11,19 @@ public class CommitModel
     public string MagnetogramId { get; set; }
     
     /// <summary>
+    /// Наименование фиксации
+    /// </summary>
+    public string Name { get; set; }
+    
+    /// <summary>
     /// Дата создание обработки (метаданных магнитограммы)
     /// </summary>
     public DateTime CreatedAt { get; set; }
+    
+    /// <summary>
+    /// ФИО автора коммита
+    /// </summary>
+    public string CreatedBy { get; set; }
     
     /// <summary>
     /// Наличие дефектов в магнитограмме
@@ -31,12 +41,7 @@ public class CommitModel
     public List<StructuralElementModel> StructuralElements { get; set; }
     
     /// <summary>
-    /// Исходная магнитограмма
-    /// </summary>
-    public byte[] OriginalMagnetogram { get; set; }
-    
-    /// <summary>
     /// Обработанная магнитограмма
     /// </summary>
-    public byte[] ProcessedMagnetogram { get; set; }
+    public string ProcessedImage { get; set; }
 }

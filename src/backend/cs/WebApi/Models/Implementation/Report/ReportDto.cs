@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace WebApi.Models.Implementation.Report;
+﻿namespace WebApi.Models.Implementation.Report;
 
 /// <summary>
 /// Dto отчета

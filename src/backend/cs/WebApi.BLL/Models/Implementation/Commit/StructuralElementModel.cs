@@ -8,6 +8,8 @@ namespace WebApi.BLL.Models.Implementation.Commit;
 /// </summary>
 public class StructuralElementModel : MagnetogramElementModel
 {
+    public StructuralElementModel() => Type = ElementType.StructuralElement;
+
     /// <summary>
     /// Тип конструктивного элемента
     /// </summary>

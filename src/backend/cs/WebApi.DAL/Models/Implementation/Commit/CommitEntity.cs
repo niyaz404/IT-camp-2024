@@ -18,6 +18,11 @@ public class CommitEntity : BaseEntity
     public string MagnetogramId { get; set; }
     
     /// <summary>
+    /// Наименование фиксации
+    /// </summary>
+    public string Name { get; set; }
+    
+    /// <summary>
     /// Дата обработка магнитограммы
     /// </summary>
     public DateTime CreatedAt { get; set; }
@@ -38,12 +43,7 @@ public class CommitEntity : BaseEntity
     public string[] StructuralElementIds { get; set; }
     
     /// <summary>
-    /// Файл исходной магнитограммы
-    /// </summary>
-    public byte[] OriginalMagnetogram { get; set; }
-    
-    /// <summary>
     /// Файл обработанной магнитограммы
     /// </summary>
-    public byte[] ProcessedMagnetogram { get; set; }
+    public byte[] ProcessedImage { get; set; }
 }
