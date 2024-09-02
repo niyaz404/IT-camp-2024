@@ -16,25 +16,20 @@ public abstract class MagnetogramElementDto
     /// <summary>
     /// Тип элемента на магнитограмме
     /// </summary>
-    public ElementType Type { get; set; }
+    public ElementType Type { get; protected set; }
     
     /// <summary>
-    /// Дополнительное описание элемета
+    /// Цвет элемента на магнитограмме
     /// </summary>
-    public string Description { get; set; }
+    public string Color { get; set; }
     
     /// <summary>
-    /// Координата х элемента
+    /// Х-координата начала области
     /// </summary>
-    public int X { get; set; }
+    public int StartXCoordinate { get; set; }
     
     /// <summary>
-    /// Соседний элемент справа на магнитограмме
+    /// Х-координата конца области
     /// </summary>
-    public MagnetogramElementDto LeftNeighbour { get; set; }
-    
-    /// <summary>
-    /// Соседний элемент справа на магнитограмме
-    /// </summary>
-    public MagnetogramElementDto RightNeighbour { get; set; }
+    public int EndXCoordinate { get; set; }
 }

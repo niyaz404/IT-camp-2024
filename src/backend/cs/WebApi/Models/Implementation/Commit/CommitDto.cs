@@ -11,14 +11,14 @@ public class CommitDto
     public string MagnetogramId { get; set; }
     
     /// <summary>
-    /// Дата создание обработки (метаданных магнитограммы)
-    /// </summary>
-    public DateTime CreatedAt { get; set; }
-    
-    /// <summary>
     /// Наименование фиксации
     /// </summary>
     public string Name { get; set; }
+    
+    /// <summary>
+    /// Дата создание обработки (метаданных магнитограммы)
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
     
     /// <summary>
     /// ФИО автора коммита
@@ -41,12 +41,7 @@ public class CommitDto
     public List<StructuralElementDto> StructuralElements { get; set; }
     
     /// <summary>
-    /// Исходная магнитограмма
-    /// </summary>
-    public IFormFile OriginalMagnetogram { get; set; }
-    
-    /// <summary>
     /// Обработанная магнитограмма
     /// </summary>
-    public string ProcessedMagnetogram { get; set; }
+    public string ProcessedImage { get; set; }
 }

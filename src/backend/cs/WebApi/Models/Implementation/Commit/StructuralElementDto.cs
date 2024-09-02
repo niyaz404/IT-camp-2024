@@ -8,6 +8,8 @@ namespace WebApi.Models.Implementation.Commit;
 /// </summary>
 public class StructuralElementDto : MagnetogramElementDto
 {
+    public StructuralElementDto() => Type = ElementType.StructuralElement;
+
     /// <summary>
     /// Тип конструктивного элемента
     /// </summary>
