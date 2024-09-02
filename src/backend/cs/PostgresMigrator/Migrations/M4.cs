@@ -4,32 +4,44 @@ using PostgresMigrator.Consts;
 namespace PostgresMigrator.Migrations
 {
     /// <summary>
-    /// Миграция для заполнения справочника ELEMENT_TYPE
+    /// Миграция для создания таблицы STRUCTURALELEMENT
     /// </summary>
-    [Migration(4, "Добавление данных в таблицу ELEMENT_TYPE")]
-    public class M4 : Migration
+    [Migration(4, "Создание таблицы STRUCTURALELEMENT")]
+    public class M9 : Migration
     {
-        private static readonly string _tableName = "element_type";
+        private static readonly string _tableName = "structuralelement";
+        private static readonly string _elementTypeTableName = "structuralelementtype";
         
         public override void Up()
         {
-            // Проверка на существование таблицы перед добавлением записей
-            if (Schema.Schema(Const.Schema).Table(_tableName).Exists())
+            // Проверка на существование таблицы перед созданием
+            if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
             {
-                Insert.IntoTable(_tableName).InSchema(Const.Schema)
-                    .Row(new { id = 1, name = "Дефект" })
-                    .Row(new { id = 2, name = "Конструктивный элемент" });
+                Create.Table(_tableName).InSchema(Const.Schema)
+                    .WithColumn("id").AsGuid().PrimaryKey()
+                    .WithColumnDescription("Идентификатор элемента")
+
+                    .WithColumn("color").AsString(30).Nullable()
+                    .WithColumnDescription("Цвет метки на магнитограмме")
+
+                    .WithColumn("elementtypeid").AsInt32().NotNullable()
+                    .ForeignKey("elementtypeid", Const.Schema, _elementTypeTableName, "id")
+                    .WithColumnDescription("Идентификатор типа структурного элемента")
+
+                    .WithColumn("startx").AsInt32().NotNullable()
+                    .WithColumnDescription("Координата X начала области")
+
+                    .WithColumn("endx").AsInt32().NotNullable()
+                    .WithColumnDescription("Координата X конца области");
             }
         }
 
         public override void Down()
         {
-            // Проверка на существование таблицы перед удалением записей
+            // Проверка на существование таблицы перед удалением
             if (Schema.Schema(Const.Schema).Table(_tableName).Exists())
             {
-                Delete.FromTable(_tableName)
-                    .Row(new { id = 1, name = "Дефект" })
-                    .Row(new { id = 2, name = "Конструктивный элемент" });
+                Delete.Table(_tableName).InSchema(Const.Schema);
             }
         }
     }

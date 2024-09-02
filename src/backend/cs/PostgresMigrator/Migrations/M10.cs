@@ -18,10 +18,10 @@ namespace PostgresMigrator.Migrations
             if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
             {
                 Create.Table(_tableName).InSchema(Const.Schema)
-                    .WithColumn("id").AsString().PrimaryKey()
+                    .WithColumn("id").AsGuid().PrimaryKey()
                     .WithColumnDescription("Идентификатор отчета")
 
-                    .WithColumn("commitid").AsString().NotNullable()
+                    .WithColumn("commitid").AsGuid().NotNullable()
                     .ForeignKey("commitid", Const.Schema, _commitTableName, "id")
                     .WithColumnDescription("Идентификатор данных о магнитограмме")
 

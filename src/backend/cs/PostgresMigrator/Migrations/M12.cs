@@ -19,14 +19,14 @@ namespace PostgresMigrator.Migrations
             if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
             {
                 Create.Table(_tableName).InSchema(Const.Schema)
-                    .WithColumn("id").AsString().PrimaryKey()
+                    .WithColumn("id").AsGuid().PrimaryKey()
                     .WithColumnDescription("Идентификатор связи")
 
-                    .WithColumn("commitid").AsString().NotNullable()
+                    .WithColumn("commitid").AsGuid().NotNullable()
                     .ForeignKey("commitid", Const.Schema, _commitTableName, "id")
                     .WithColumnDescription("Идентификатор данных о магнитограмме")
 
-                    .WithColumn("defectid").AsString().NotNullable()
+                    .WithColumn("defectid").AsGuid().NotNullable()
                     .ForeignKey("defectid", Const.Schema, _defectTableName, "id")
                     .WithColumnDescription("Идентификатор дефекта");
             }

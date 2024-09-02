@@ -17,14 +17,8 @@ namespace PostgresMigrator.Migrations
             if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
             {
                 Create.Table(_tableName).InSchema(Const.Schema)
-                    .WithColumn("id").AsString().PrimaryKey()
+                    .WithColumn("id").AsGuid().PrimaryKey()
                     .WithColumnDescription("Идентификатор магнитограммы")
-
-                    .WithColumn("name").AsString(255).NotNullable()
-                    .WithColumnDescription("Название магнитограммы")
-
-                    .WithColumn("objectname").AsString(255).NotNullable()
-                    .WithColumnDescription("Название объекта")
 
                     .WithColumn("createdby").AsString(255).NotNullable()
                     .WithColumnDescription("ФИО загрузившего магнитограмму")

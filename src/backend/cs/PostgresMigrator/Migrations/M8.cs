@@ -18,10 +18,10 @@ namespace PostgresMigrator.Migrations
             if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
             {
                 Create.Table(_tableName).InSchema(Const.Schema)
-                    .WithColumn("id").AsString().PrimaryKey()
+                    .WithColumn("id").AsGuid().PrimaryKey()
                     .WithColumnDescription("Идентификатор данных о магнитограмме")
 
-                    .WithColumn("magnetogramid").AsString().NotNullable()
+                    .WithColumn("magnetogramid").AsGuid().NotNullable()
                     .ForeignKey("magnetogramid", Const.Schema, _magnetogramTableName, "id")
                     .WithColumnDescription("Идентификатор магнитограммы")
 
@@ -31,7 +31,7 @@ namespace PostgresMigrator.Migrations
                     .WithColumn("createdby").AsString(255).NotNullable()
                     .WithColumnDescription("ФИО пользователя, запустившего обработку магнитограммы")
 
-                    .WithColumn("processedmagnetogram").AsBinary().Nullable()
+                    .WithColumn("processedimage").AsBinary().Nullable()
                     .WithColumnDescription("Файл обработанной магнитограммы");
             }
         }

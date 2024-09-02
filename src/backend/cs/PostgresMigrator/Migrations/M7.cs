@@ -9,7 +9,7 @@ namespace PostgresMigrator.Migrations
     [Migration(7, "Добавление данных в таблицу STRUCTURAL_ELEMENT_TYPE")]
     public class M7 : Migration
     {
-        private static readonly string _tableName = "structural_element_type";
+        private static readonly string _tableName = "structuralelementtype";
         
         public override void Up()
         {

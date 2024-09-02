@@ -4,12 +4,12 @@ using PostgresMigrator.Consts;
 namespace PostgresMigrator.Migrations
 {
     /// <summary>
-    /// Миграция для создания таблицы ELEMENTTYPE
+    /// Миграция для создания таблицы STRUCTURALELEMENTTYPE
     /// </summary>
-    [Migration(3, "Создание таблицы ELEMENT_TYPE")]
-    public class M3 : Migration
+    [Migration(3, "Создание таблицы STRUCTURALELEMENTTYPE")]
+    public class M6 : Migration
     {
-        private static readonly string _tableName = "element_type";
+        private static readonly string _tableName = "structuralelementtype";
         
         public override void Up()
         {
@@ -21,7 +21,7 @@ namespace PostgresMigrator.Migrations
                     .WithColumnDescription("Идентификатор типа")
 
                     .WithColumn("name").AsString(255).NotNullable()
-                    .WithColumnDescription("Наименование типа");
+                    .WithColumnDescription("Наименование типа структурного элемента");
             }
         }
 
