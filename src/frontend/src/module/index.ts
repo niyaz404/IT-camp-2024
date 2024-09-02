@@ -6,3 +6,4 @@ export { Routers } from "./Routers";
 export { Auth } from "./Auth";
 export { AddNewMagnetogramElementForm } from "./AddNewMagnetogramElementForm";
 export { MagnetogramWrapper } from "./MagnetogramWrapper";
+export { Marker } from "./Marker";

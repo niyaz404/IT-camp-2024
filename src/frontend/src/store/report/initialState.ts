@@ -1,6 +1,6 @@
-import { initialAuthState } from "./types";
+import { initialReportState } from "./types";
 
-export const initialState: initialAuthState = {
-  id: "1",
-  name: "Дамир",
+export const initialState: initialReportState = {
+  reportRowData: [],
+  isLoading: false,
 };

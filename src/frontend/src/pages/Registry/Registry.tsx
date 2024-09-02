@@ -4,20 +4,37 @@ import { AddNewReportForm, RegistryHeader } from "../../components";
 import { Modal } from "@consta/uikit/Modal";
 import { Layout } from "@consta/uikit/Layout";
 import { check, getAllReportRow } from "../../api";
+import {
+  addNewMagnetogramReport,
+  authSelector,
+  loadReportRowData,
+  reportSelector,
+  useAppDispatch,
+  useAppSelector,
+} from "../../store";
+import { Loader } from "@consta/uikit/Loader";
 
 export const Registry = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { reportRowData, isLoading } = useAppSelector(reportSelector);
+  const { userName } = useAppSelector(authSelector);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const loadReportRows = async () => {
-      // await getAllReportRow();
-      // await check();
+    const loadRowData = () => {
+      dispatch(loadReportRowData());
+      // check();
     };
 
-    loadReportRows();
+    loadRowData();
   }, []);
 
-  const onAddNewReport = () => {};
+  const onAddNewReport = (reportName: string | null, file: File | null) => {
+    const createdAt = new Date();
+    const createdBy = userName;
+    dispatch(addNewMagnetogramReport(reportName, createdBy, createdAt, file));
+  };
 
   const onOpenModal = () => {
     setIsModalOpen(true);
@@ -27,13 +44,17 @@ export const Registry = () => {
     setIsModalOpen(false);
   };
 
+  if (isLoading === true) {
+    return <Loader />;
+  }
+
   return (
     <Layout direction="row" className="container-column w-100 h-100">
       <Layout flex={1}></Layout>
       <Layout flex={4}>
         <div className="w-100">
           <RegistryHeader onAddNewReport={onOpenModal} />
-          <ReportTable />
+          <ReportTable rowData={reportRowData} />
           <Modal
             isOpen={isModalOpen}
             hasOverlay

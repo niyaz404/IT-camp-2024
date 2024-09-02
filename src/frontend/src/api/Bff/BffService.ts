@@ -2,13 +2,14 @@ import { axiosInstance } from "../axiosInstanse";
 import {
   AuthClient,
   CommitClient,
+  CommitDto,
   DefectDto,
   FileParameter,
   HealthClient,
   MagnetogramClient,
   ReportClient,
   StructuralElementDto,
-  UserCredentials,
+  UserCredentialsDto,
 } from "./BffClient";
 
 enum BffClients {
@@ -52,12 +53,13 @@ function getClient(client: BffClients): any {
  * @returns
  */
 export const addMagnetogram = (
-  name: string | undefined,
-  createdAt: Date | undefined,
-  file: FileParameter | undefined
+  name: string,
+  createdBy: string,
+  createdAt: Date,
+  file: FileParameter
 ) => {
   const client = getClient(BffClients.magnetogramClient);
-  return client.save2(name, undefined, createdAt, file);
+  return client.save2(name, createdBy, createdAt, file);
 };
 
 /**
@@ -84,17 +86,17 @@ export const getMagnetogramInfo = (reportRowId: string) => {
  */
 export const saveNewMagnetogram = (
   magnetogramId: string | undefined,
-  createdAt: Date | undefined,
+  createdAt: Date,
   name: string | undefined,
   createdBy: string | undefined,
-  isDefective: boolean | undefined,
+  isDefective: boolean,
   defects: DefectDto[] | undefined,
   structuralElements: StructuralElementDto[] | undefined,
-  processedMagnetogram: string | undefined,
-  originalMagnetogram: FileParameter | undefined
+  processedImage: string | undefined
 ) => {
   const client = getClient(BffClients.commitClient);
-  return client.save(
+
+  const newMagnetogram = new CommitDto({
     magnetogramId,
     createdAt,
     name,
@@ -102,9 +104,10 @@ export const saveNewMagnetogram = (
     isDefective,
     defects,
     structuralElements,
-    processedMagnetogram,
-    originalMagnetogram
-  );
+    processedImage,
+  });
+
+  return client.save(newMagnetogram);
 };
 
 /**
@@ -120,7 +123,7 @@ export const removeMagnetogram = (reportRowId: string) => {
  * Получаем отчет по конкретной строке
  * @returns
  */
-export const getReportById = (reportRowId: string) => {
+export const downloadReportById = (reportRowId: string) => {
   const client = getClient(BffClients.reportClient);
   return client.get2(reportRowId);
 };
@@ -130,12 +133,12 @@ export const getReportById = (reportRowId: string) => {
  * @returns
  */
 export const loginInSystem = (
-  username: string | undefined,
+  login: string | undefined,
   password: string | undefined
 ) => {
   const client = getClient(BffClients.authClient);
-  const userCredentials = new UserCredentials({
-    username,
+  const userCredentials = new UserCredentialsDto({
+    login,
     password,
   });
   return client.login(userCredentials);

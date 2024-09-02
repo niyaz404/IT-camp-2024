@@ -12,7 +12,7 @@ export const RegistryHeader: FC<RegistryHeaderProps> = ({ onAddNewReport }) => {
       </Text>
       <Button
         label="Новый отчет"
-        size="m"
+        size="s"
         iconRight={IconAdd}
         onClick={onAddNewReport}
       />

@@ -1,19 +1,19 @@
 import css from "./style.css";
-import React from "react";
+import React, { FC, useEffect } from "react";
 import { Table, TableColumn } from "@consta/uikit/Table";
 import { Text } from "@consta/uikit/Text";
-
 import { Badge } from "@consta/uikit/Badge";
-
 import { ReportTableData, RoutePaths } from "../../types";
-import { mockReportTableData } from "./mockMetaData";
 import { ActionCellRenderer } from "../../components";
 import { useNavigate } from "react-router-dom";
+import { ReportTableProps } from "./types";
+import { removeReportRow, downloadReport, useAppDispatch } from "../../store";
 
-export const ReportTable = () => {
+export const ReportTable: FC<ReportTableProps> = ({ rowData }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const columns: TableColumn<ReportTableData>[] = [
+  const colDefs: TableColumn<ReportTableData>[] = [
     {
       title: "Наименование",
       accessor: "name",
@@ -47,7 +47,7 @@ export const ReportTable = () => {
       accessor: "createdBy",
       align: "left",
       sortable: true,
-      width: 300,
+      width: 200,
     },
     {
       title: "Наличие дефектов",
@@ -63,17 +63,18 @@ export const ReportTable = () => {
     {
       title: "Действия",
       accessor: "id",
-      align: "center",
       sortable: true,
+      width: 150,
       renderCell: (row) => {
         const onDownload = () => {
-          alert(`onDownload ${row.name}`);
+          dispatch(downloadReport(row.id));
         };
         const onEdit = () => {
-          alert(`onEdit ${row.name}`);
+          const magnetogramPath = `${RoutePaths.Magnetogram}/${row.id}`;
+          navigate(magnetogramPath);
         };
         const onRemove = () => {
-          alert(`onRemove ${row.name}`);
+          dispatch(removeReportRow(row.id));
         };
 
         return (
@@ -90,8 +91,8 @@ export const ReportTable = () => {
   return (
     <div className={css.table}>
       <Table
-        rows={mockReportTableData}
-        columns={columns}
+        rows={rowData}
+        columns={colDefs}
         borderBetweenColumns
         borderBetweenRows
         zebraStriped="odd"

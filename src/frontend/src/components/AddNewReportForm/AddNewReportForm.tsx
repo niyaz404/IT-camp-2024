@@ -16,14 +16,10 @@ export const AddNewReportForm: FC<AddNewReportFormProps> = ({
   onCloseModal,
 }) => {
   const [reportName, setReportName] = useState<string | null>(null);
-  const [objectName, setObjectName] = useState<string | null>(null);
   const [file, setFile] = React.useState<File | null>(null);
 
   const onChangeReportName = ({ value }: { value: string | null }) =>
     setReportName(value);
-
-  const onChangeObjectName = ({ value }: { value: string | null }) =>
-    setObjectName(value);
 
   const onDropFiles = (files: File[]): void => {
     setFile(files[0]);
@@ -40,7 +36,7 @@ export const AddNewReportForm: FC<AddNewReportFormProps> = ({
     }`;
   };
 
-  const isSaveDisabled = !reportName || !objectName || !file;
+  const isSaveDisabled = !reportName || !file;
 
   return (
     <div className={`container-column ${css.addNewReportFormModal} p-8`}>
@@ -64,16 +60,6 @@ export const AddNewReportForm: FC<AddNewReportFormProps> = ({
           type="text"
           placeholder="Введите название отчета"
           label="Название отчета"
-          labelIcon={IconQuestion}
-          required
-        />
-        <TextField
-          className="m-b-6"
-          onChange={onChangeObjectName}
-          value={objectName}
-          type="text"
-          placeholder="Введите название объекта"
-          label="Название объекта"
           labelIcon={IconQuestion}
           required
         />
@@ -119,7 +105,9 @@ export const AddNewReportForm: FC<AddNewReportFormProps> = ({
         className="m-t-4"
         label="Сохранить"
         size="m"
-        onClick={onAddNewReport}
+        onClick={() => {
+          onAddNewReport(reportName, file);
+        }}
         disabled={isSaveDisabled}
       />
     </div>

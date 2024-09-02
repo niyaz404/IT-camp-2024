@@ -1,4 +1,6 @@
-export type initialAuthState = {
-  id: string;
-  name: string;
+import { ReportTableData } from "../../types";
+
+export type initialReportState = {
+  reportRowData: ReportTableData[];
+  isLoading: boolean;
 };
