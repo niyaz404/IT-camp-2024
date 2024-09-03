@@ -10,6 +10,12 @@ import {
   DefectDto,
   StructuralElementDto,
 } from "../../../api/Bff/BffClient";
+import {
+  getMagnetogramElementType,
+  getRandomColor,
+  getStructuralElementLocalType,
+  getStructuralElementType,
+} from "../../../utils";
 
 export const castMagnetogram = (res: CommitDto): Magnetogram => {
   const result: Magnetogram = {
@@ -28,17 +34,14 @@ export const castMagnetogram = (res: CommitDto): Magnetogram => {
 };
 
 /**
- * Преобразовывает дефект к типуDefectDto
+ * Преобразовывает дефект к типу DefectDto
  * @param localDefect дефект, локального типа
  * @returns дефект типа DefectDto
  */
 export const castDefect = (localDefect: Defect): DefectDto => {
   const mappedDefects = new DefectDto({
-    id: localDefect.id,
-    type: getType(localDefect.type),
-    leftStructuralElementId: localDefect.leftStructuralElementId ?? undefined,
-    rightStructuralElementId: localDefect.leftStructuralElementId ?? undefined,
-    color: localDefect.markerColor,
+    id: localDefect.id ?? "",
+    type: getMagnetogramElementType(localDefect.type),
     startXCoordinate: localDefect.leftCoordinateX,
     endXCoordinate: localDefect.rightCoordinateX,
     description: localDefect.description,
@@ -58,11 +61,9 @@ export const castDefectToLocal = (defect: DefectDto): Defect => {
     type: "defect",
     leftCoordinateX: defect.startXCoordinate,
     rightCoordinateX: defect.endXCoordinate,
-    markerColor: defect.color ?? "",
+    markerColor: getRandomColor(),
     isEditable: false,
     description: defect.description ?? "",
-    leftStructuralElementId: defect.leftStructuralElementId ?? "",
-    rightStructuralElementId: defect.rightStructuralElementId ?? "",
   };
 
   return mappedDefect;
@@ -77,12 +78,13 @@ export const castStructuralElement = (
   localStructuralElement: StructuralElement
 ): StructuralElementDto => {
   const mappedStructuralElement = new StructuralElementDto({
-    id: localStructuralElement.id,
-    type: getType(localStructuralElement.type),
+    id: localStructuralElement.id ?? "",
+    type: getMagnetogramElementType(localStructuralElement.type),
     startXCoordinate: localStructuralElement.leftCoordinateX,
     endXCoordinate: localStructuralElement.rightCoordinateX,
-    color: localStructuralElement.markerColor,
-    structuralElementType: localStructuralElement.structuralElementType,
+    structuralElementType: getStructuralElementType(
+      localStructuralElement.structuralElementType
+    ),
   });
 
   return mappedStructuralElement;
@@ -101,17 +103,12 @@ export const castStructuralElementToLocal = (
     type: "structuralElement",
     leftCoordinateX: structuralElement.startXCoordinate,
     rightCoordinateX: structuralElement.endXCoordinate,
-    markerColor: structuralElement.color ?? "",
+    markerColor: getRandomColor(),
     isEditable: false,
-    structuralElementType: structuralElement.structuralElementType,
+    structuralElementType: getStructuralElementLocalType(
+      structuralElement.structuralElementType
+    ),
   };
 
   return mappedStructuralElement;
-};
-
-const getType = (type: MagnetogramElementType) => {
-  if (type === "defect") return 1;
-  else {
-    return 2;
-  }
 };

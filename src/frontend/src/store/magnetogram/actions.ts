@@ -1,9 +1,12 @@
+import { getRandomColor } from "../../utils";
 import { getMagnetogramInfo, saveNewMagnetogram } from "../../api";
 import {
   Defect,
   MagnetogramElementType,
   MarkerSide,
   StructuralElement,
+  StructuralElementType,
+  StructuralElementTypes,
 } from "../../types";
 import { authSelector } from "../auth";
 import { AppDispatch, RootState } from "../store";
@@ -23,7 +26,9 @@ export const loadMagnetogramById =
       dispatch(magnetogramSlice.actions.replaceMagnetogramId(data.id));
       dispatch(magnetogramSlice.actions.replaceName(data.name));
       dispatch(
-        magnetogramSlice.actions.replaceMagnetogramImage(data.processedImage)
+        magnetogramSlice.actions.replaceMagnetogramImage(
+          `data:image/jpeg;base64,${data.processedImage}`
+        )
       );
       dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
       dispatch(
@@ -95,43 +100,37 @@ export const addMagnetogramElement =
     description: string,
     type: MagnetogramElementType,
     leftCoordinateX: number,
-    rightCoordinateX: number
+    rightCoordinateX: number,
+    structuralElementType?: StructuralElementType
   ) =>
   (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
 
     const { defects, structuralElements } = magnetogramSelector(state);
 
-    const getRandomNum = () => {
-      const min = 0;
-      const max = 255;
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
-
     if (type === "defect") {
       const newDefect: Defect = {
-        id: "new",
+        id: "",
         description: description,
         type: type,
         leftCoordinateX: leftCoordinateX,
         rightCoordinateX: rightCoordinateX,
-        markerColor: `rgb(${getRandomNum()},${getRandomNum()},${getRandomNum()})`,
+        markerColor: getRandomColor(),
         isEditable: false,
-        leftStructuralElementId: "",
-        rightStructuralElementId: "",
       };
       dispatch(
         magnetogramSlice.actions.replaceDefects([...defects, newDefect])
       );
     } else {
       const newStructuralElement: StructuralElement = {
-        id: "new",
+        id: "",
         type: type,
         leftCoordinateX: leftCoordinateX,
         rightCoordinateX: rightCoordinateX,
-        markerColor: `rgb(${getRandomNum()},${getRandomNum()},${getRandomNum()})`,
+        markerColor: getRandomColor(),
         isEditable: false,
-        structuralElementType: 1,
+        structuralElementType:
+          structuralElementType ?? StructuralElementTypes[0],
       };
 
       dispatch(

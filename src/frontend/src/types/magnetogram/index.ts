@@ -5,4 +5,7 @@ export type {
   Defect,
   StructuralElement,
   MarkerSide,
+  StructuralElementType,
 } from "./types";
+
+export { StructuralElementNames, StructuralElementTypes } from "./types";

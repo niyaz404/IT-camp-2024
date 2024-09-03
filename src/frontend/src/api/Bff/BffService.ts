@@ -88,7 +88,7 @@ export const getMagnetogramInfo = (reportRowId: string | undefined) => {
  * @returns
  */
 export const saveNewMagnetogram = (
-  magnetogramId: string | undefined,
+  magnetogramId: string,
   createdAt: Date,
   name: string | undefined,
   createdBy: string | undefined,
@@ -98,7 +98,6 @@ export const saveNewMagnetogram = (
   processedImage: string | undefined
 ) => {
   const client = getClient(BffClients.commitClient);
-
   const newMagnetogram = new CommitDto({
     magnetogramId,
     createdAt,

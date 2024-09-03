@@ -2,6 +2,24 @@ export type MagnetogramElementType = "defect" | "structuralElement";
 
 export type MarkerSide = "left" | "right";
 
+export const StructuralElementNames = {
+  None: "Чистая труба",
+  WeldSeam: "Сварочный шов",
+  Bend: "Изгиб",
+  Branching: "Ветвление",
+  Patch: "Заплатка",
+} as const;
+
+export type StructuralElementType = keyof typeof StructuralElementNames;
+
+export const StructuralElementTypes = {
+  0: "None",
+  1: "WeldSeam",
+  2: "Bend",
+  3: "Branching",
+  4: "Patch",
+} as const;
+
 export type MagnetogramElement = {
   id: string; // идентификатор
   type: MagnetogramElementType; // тип элемента
@@ -11,14 +29,22 @@ export type MagnetogramElement = {
   isEditable: boolean;
 };
 
+export type StructuralElementCount = {
+  None: number;
+  WeldSeam: number;
+  Bend: number;
+  Branching: number;
+  Patch: number;
+};
+
 export type Defect = MagnetogramElement & {
-  description: string; // наименование магнитограммы
-  leftStructuralElementId: string | null; // Ближайший левый структурный элемент
-  rightStructuralElementId: string | null; // Ближайший правый структурный элемент
+  description: string;
+  leftStructuralElementCount?: StructuralElementCount;
+  rightStructuralElementCount?: StructuralElementCount;
 };
 
 export type StructuralElement = MagnetogramElement & {
-  structuralElementType: number;
+  structuralElementType: StructuralElementType;
 };
 
 export type Magnetogram = {
