@@ -78,6 +78,7 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
                 leftOffset={leftOffset}
                 scrollOffset={scrollOffset}
                 side="left"
+                isEditable={element.isEditable}
               />
               <Marker
                 id={element.id}
@@ -87,6 +88,7 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
                 leftOffset={leftOffset}
                 scrollOffset={scrollOffset}
                 side="right"
+                isEditable={element.isEditable}
               />
             </div>
           );

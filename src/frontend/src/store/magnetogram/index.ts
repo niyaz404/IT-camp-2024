@@ -7,4 +7,6 @@ export {
   setIsStructuralElementsVisible,
   loadMagnetogramById,
   saveMagnetogram,
+  removeMagnetogramElement,
+  reverseMagnetogramElementEnable,
 } from "./actions";

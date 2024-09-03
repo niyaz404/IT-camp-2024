@@ -7,7 +7,13 @@ import { Popover } from "@consta/uikit/Popover";
 import { Button } from "@consta/uikit/Button";
 import { IconTrash } from "@consta/uikit/IconTrash";
 import { IconLock } from "@consta/uikit/IconLock";
-import { updateElementCoordinates, useAppDispatch } from "../../store";
+import { IconUnlock } from "@consta/uikit/IconUnlock";
+import {
+  removeMagnetogramElement,
+  reverseMagnetogramElementEnable,
+  updateElementCoordinates,
+  useAppDispatch,
+} from "../../store";
 
 export const Marker: FC<MarkerProps> = ({
   id,
@@ -17,6 +23,7 @@ export const Marker: FC<MarkerProps> = ({
   leftOffset,
   scrollOffset,
   side,
+  isEditable,
 }) => {
   const markerRef = useRef<HTMLDivElement | null>(null);
   const [isContextMenuVisible, setIsContextMenuVisible] =
@@ -56,10 +63,12 @@ export const Marker: FC<MarkerProps> = ({
   };
 
   const onLock = () => {
+    dispatch(reverseMagnetogramElementEnable(id, type));
     onCloseContextMenu();
   };
 
   const onRemove = () => {
+    dispatch(removeMagnetogramElement(id, type));
     onCloseContextMenu();
   };
 
@@ -83,9 +92,12 @@ export const Marker: FC<MarkerProps> = ({
         onStop={onDragStop}
         defaultPosition={{ x: (coordinate - leftOffset) * 4, y: 0 }}
         position={{ x: coordinate * 4, y: 0 }}
+        cancel=".isDisable"
       >
         <div
-          className={css.elementEdge}
+          className={`${css.elementEdge} ${
+            isEditable === false && "isDisable"
+          }`}
           onContextMenu={onRightButtonMouseClick}
           ref={markerRef}
         >
@@ -94,8 +106,8 @@ export const Marker: FC<MarkerProps> = ({
       </Draggable>
       {isContextMenuVisible && (
         <Popover
-          direction="rightCenter"
-          spareDirection="rightCenter"
+          direction="rightStartUp"
+          spareDirection="rightStartUp"
           offset="s"
           arrowOffset={0}
           onClickOutside={onCloseContextMenu}
@@ -109,10 +121,10 @@ export const Marker: FC<MarkerProps> = ({
           <div className={css.popover}>
             <Button
               className="m-b-2"
-              label="Заблокировать"
+              label={isEditable === false ? "Разблокировать" : "Заблокировать"}
               size="xs"
               view="clear"
-              iconLeft={IconLock}
+              iconLeft={isEditable === false ? IconUnlock : IconLock}
               onClick={onLock}
             />
             <Button
