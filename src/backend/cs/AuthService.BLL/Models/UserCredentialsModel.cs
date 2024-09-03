@@ -1,9 +1,9 @@
-﻿namespace AuthService.Models;
+﻿namespace AuthService.BLL.Models;
 
 /// <summary>
 /// Модель кредов пользователя
 /// </summary>
-public class UserCredentials
+public class UserCredentialsModel
 {
     /// <summary>
     /// Логин пользователя

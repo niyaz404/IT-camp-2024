@@ -1,81 +1,49 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AuthService.Helpers;
+﻿using AuthService.BLL.Models;
+using AuthService.BLL.Services.Interface;
 using AuthService.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AuthService.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class AuthController : ControllerBase
 {
-
-    [HttpPost("register")]
-    public IActionResult Register([FromBody] UserCredentials userCredentials)
+    private readonly IUserService _userService;
+    private readonly IMapper _mapper;
+    
+    public AuthController(IUserService userService, IMapper mapper)
     {
-        // if (_context.Users.Any(u => u.Username == userCredentials.Login))
-        // {
-        //     return BadRequest("User already exists.");
-        // }
-        //
-        // var salt = PasswordHelper.GenerateSalt();
-        // var hashedPassword = PasswordHelper.HashPassword(userCredentials.Password, salt);
-        //
-        // var newUser = new User
-        // {
-        //     Username = userCredentials.Username,
-        //     Login = userCredentials.Login,
-        //     PasswordHash = hashedPassword,
-        //     PasswordSalt = salt,
-        //     Role = userCredentials.Role
-        // };
-        //
-        // _context.Users.Add(newUser);
-        // _context.SaveChanges();
+        _userService = userService;
+        _mapper = mapper;
+    }
+    
+    /// <summary>
+    /// Регистрация пользователя
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> Register([FromBody]UserModel user)
+    {
+        try
+        {
+            await _userService.Register(_mapper.Map<UserModel>(user));
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
 
-        return Ok("User registered successfully.");
+        return Ok();
     }
 
-    [HttpPost("token")]
-    public IActionResult GenerateToken([FromBody] UserCredentials userCredentials)
+    /// <summary>
+    /// Генерация токена доступа
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> GenerateToken([FromBody] UserCredentials userCredentials)
     {
-        // var user = _context.Users.SingleOrDefault(u => u.Username == userCredentials.Username);
-        //
-        // if (user == null)
-        // {
-        //     return Unauthorized("Invalid username or password.");
-        // }
-        //
-        // // Hash the provided password with the stored salt
-        // var hashedPassword = PasswordHelper.HashPassword(userCredentials.Password, user.PasswordSalt);
-        //
-        // // Verify the hashed password matches the stored hash
-        // if (user.PasswordHash != hashedPassword)
-        // {
-        //     return Unauthorized("Invalid username or password.");
-        // }
-        //
-        // var tokenHandler = new JwtSecurityTokenHandler();
-        // var key = "your_secret_key_here"u8.ToArray();
-        //
-        // var tokenDescriptor = new SecurityTokenDescriptor
-        // {
-        //     Subject = new ClaimsIdentity(new[]
-        //     {
-        //         new Claim(ClaimTypes.Name, user.Username),
-        //         new Claim(ClaimTypes.Role, user.Role)
-        //     }),
-        //     Expires = DateTime.UtcNow.AddHours(1),
-        //     Issuer = "AuthService",
-        //     Audience = "WebAPI",
-        //     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        // };
-        //
-        // var token = tokenHandler.CreateToken(tokenDescriptor);
-        // var tokenString = tokenHandler.WriteToken(token);
+        await _userService.GenerateToken(_mapper.Map<UserCredentialsModel>(userCredentials));
 
         return Ok(new { Token = "tokenString" });
     }

@@ -7,14 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AuthService.DAL\AuthService.DAL.csproj" />
+      <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.8\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="13.0.1" />
-      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
+      <PackageReference Include="Dapper" Version="2.1.35" />
+      <PackageReference Include="Npgsql" Version="8.0.3" />
       <PackageReference Include="Unity.Abstractions" Version="5.11.2" />
-      <PackageReference Include="Unity.Microsoft.DependencyInjection" Version="5.11.5" />
     </ItemGroup>
 
 </Project>
