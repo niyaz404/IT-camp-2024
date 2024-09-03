@@ -1,0 +1,21 @@
+.defect {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  height: inherit;
+  top: 4rem;
+  cursor: pointer;
+}
+
+.structuralElement {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  height: inherit;
+  top: 3.5rem;
+  cursor: pointer;
+}
+
+.displayNone {
+  display: none;
+}

@@ -68,11 +68,17 @@ export const loadMagnetogramById =
 /**
  * Добавляет новый элемент магнитограмы
  * @param discrition описание
- * @param leftCoordinateX левая кооррдинато по оси Х
- * @param rightCoordinateX правая кооррдинато по оси Х
+ * @param type тип элемента
+ * @param leftCoordinateX левая кооррдината по оси Х
+ * @param rightCoordinateX правая кооррдината по оси Х
  */
 export const addMagnetogramElement =
-  (description: string, type: MagnetogramElementType, coordinateX: number) =>
+  (
+    description: string,
+    type: MagnetogramElementType,
+    leftCoordinateX: number,
+    rightCoordinateX: number
+  ) =>
   (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
 
@@ -89,8 +95,8 @@ export const addMagnetogramElement =
         id: "new",
         description: description,
         type: type,
-        leftCoordinateX: coordinateX,
-        rightCoordinateX: coordinateX,
+        leftCoordinateX: leftCoordinateX,
+        rightCoordinateX: rightCoordinateX,
         markerColor: `rgb(${getRandomNum()},${getRandomNum()},${getRandomNum()})`,
         isEditable: false,
         leftStructuralElementId: "",
@@ -103,8 +109,8 @@ export const addMagnetogramElement =
       const newStructuralElement: StructuralElement = {
         id: "new",
         type: type,
-        leftCoordinateX: coordinateX,
-        rightCoordinateX: coordinateX,
+        leftCoordinateX: leftCoordinateX,
+        rightCoordinateX: rightCoordinateX,
         markerColor: `rgb(${getRandomNum()},${getRandomNum()},${getRandomNum()})`,
         isEditable: false,
         structuralElementType: 1,

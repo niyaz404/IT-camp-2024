@@ -21,13 +21,19 @@ type Item = {
 export const AddNewMagnetogramElementForm: FC<
   AddNewMagnetogramElementProps
 > = ({ onCloseModal, newElenentCoordinate }) => {
-  const [coordinate, setCoordinate] = useState<number>(newElenentCoordinate);
-  const [isCoordinateInvalid, setIsCoordinateInvalid] =
+  const [leftCoordinate, setLeftCoordinate] =
+    useState<number>(newElenentCoordinate);
+  const [rightCoordinate, setRightCoordinate] = useState<number>(0);
+
+  const [isLeftCoordinateInvalid, setIsLeftCoordinateInvalid] =
     useState<boolean>(false);
+  const [isRightCoordinateInvalid, setIsRightCoordinateInvalid] =
+    useState<boolean>(false);
+
   const [isDefectCheked, setIsDefectCheked] = useState<boolean>(true);
   const [isStructuralElementCheked, setIsStructuralElementCheked] =
     useState<boolean>(false);
-  const [description, setDescription] = useState<string | null>(null);
+  const [description, setDescription] = useState<string>("");
   const [structuralElementType, setStructuralElementType] =
     useState<Item | null>(null);
 
@@ -42,13 +48,18 @@ export const AddNewMagnetogramElementForm: FC<
     setIsStructuralElementCheked(false);
   };
 
-  const onChangeCoordinate = ({ value }: { value: string | null }) => {
-    setIsCoordinateInvalid(Number(value) > MAX_MAGNETOGRAM_WIDTH);
-    setCoordinate(Number(value));
+  const onChangeLeftCoordinate = ({ value }: { value: string | null }) => {
+    setIsLeftCoordinateInvalid(Number(value) > MAX_MAGNETOGRAM_WIDTH);
+    setLeftCoordinate(Number(value));
+  };
+
+  const onChangeRightCoordinate = ({ value }: { value: string | null }) => {
+    setIsRightCoordinateInvalid(Number(value) > MAX_MAGNETOGRAM_WIDTH);
+    setRightCoordinate(Number(value));
   };
 
   const onChangeDescription = ({ value }: { value: string | null }) => {
-    setDescription(value);
+    setDescription(value ?? "");
   };
 
   const onChangeStructuralElementType = ({ value }: { value: Item | null }) => {
@@ -57,13 +68,17 @@ export const AddNewMagnetogramElementForm: FC<
 
   const onAddNewMagnetogramElement = () => {
     const type = isDefectCheked ? "defect" : "structuralElement";
-    dispatch(addMagnetogramElement("discrition", type, coordinate));
+    dispatch(
+      addMagnetogramElement(description, type, leftCoordinate, rightCoordinate)
+    );
     onCloseModal();
   };
 
   const isSaveDisabled =
-    !coordinate ||
-    isCoordinateInvalid ||
+    !leftCoordinate ||
+    isLeftCoordinateInvalid ||
+    !rightCoordinate ||
+    isRightCoordinateInvalid ||
     (!isDefectCheked && !isStructuralElementCheked) ||
     (isStructuralElementCheked && !structuralElementType) ||
     (isDefectCheked && !description);
@@ -109,34 +124,34 @@ export const AddNewMagnetogramElementForm: FC<
 
       <TextField
         className="m-r-3 m-b-4"
-        onChange={onChangeCoordinate}
-        value={String(coordinate)}
+        onChange={onChangeLeftCoordinate}
+        value={String(leftCoordinate)}
         type="number"
         label="Левая координата (Ось Х)"
         labelIcon={IconQuestion}
         required
         min={0}
         max={MAX_MAGNETOGRAM_WIDTH}
-        status={isCoordinateInvalid ? "alert" : undefined}
+        status={isLeftCoordinateInvalid ? "alert" : undefined}
         caption={
-          isCoordinateInvalid ? "Указано некорректное значение" : undefined
+          isLeftCoordinateInvalid ? "Указано некорректное значение" : undefined
         }
         width="full"
       />
 
       <TextField
         className="m-r-3 m-b-4"
-        onChange={onChangeCoordinate}
-        value={String(coordinate)}
+        onChange={onChangeRightCoordinate}
+        value={String(rightCoordinate)}
         type="number"
         label="Правая координата (Ось Х)"
         labelIcon={IconQuestion}
         required
         min={0}
         max={MAX_MAGNETOGRAM_WIDTH}
-        status={isCoordinateInvalid ? "alert" : undefined}
+        status={isRightCoordinateInvalid ? "alert" : undefined}
         caption={
-          isCoordinateInvalid ? "Указано некорректное значение" : undefined
+          isRightCoordinateInvalid ? "Указано некорректное значение" : undefined
         }
         width="full"
       />

@@ -9,4 +9,5 @@ export type MarkerProps = {
   scrollOffset: number;
   side: MarkerSide;
   isEditable: boolean;
+  setCoordinate: (side: MarkerSide, coordinate: number) => void;
 };

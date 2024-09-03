@@ -7,3 +7,4 @@ export { Auth } from "./Auth";
 export { AddNewMagnetogramElementForm } from "./AddNewMagnetogramElementForm";
 export { MagnetogramWrapper } from "./MagnetogramWrapper";
 export { Marker } from "./Marker";
+export { MarkerSegment } from "./MarkerSegment";

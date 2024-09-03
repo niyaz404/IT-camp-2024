@@ -1,7 +1,7 @@
 import { MarkerProps } from "./types";
-import React, { FC, MouseEvent, useRef, useState } from "react";
+import React, { FC, MouseEvent, useEffect, useRef, useState } from "react";
 import css from "./style.css";
-import Draggable, { DraggableEvent } from "react-draggable";
+import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import { withTooltip } from "../../hocs";
 import { Popover } from "@consta/uikit/Popover";
 import { Button } from "@consta/uikit/Button";
@@ -24,12 +24,23 @@ export const Marker: FC<MarkerProps> = ({
   scrollOffset,
   side,
   isEditable,
+  setCoordinate,
 }) => {
   const markerRef = useRef<HTMLDivElement | null>(null);
+  const draggableRef = useRef<Draggable>(null);
   const [isContextMenuVisible, setIsContextMenuVisible] =
     useState<boolean>(false);
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (draggableRef.current) {
+      // Получаем координату X при первом рендере
+      const state = draggableRef.current.state as DraggableData;
+      const coordinate = state.x;
+      setCoordinate(side, coordinate);
+    }
+  }, [coordinate]);
 
   const defectPoints = "0,0 16,0 9,10 9,522 16,532 0,532 7,522 7,10";
   const structutalElementPoints =
@@ -93,11 +104,10 @@ export const Marker: FC<MarkerProps> = ({
         defaultPosition={{ x: (coordinate - leftOffset) * 4, y: 0 }}
         position={{ x: coordinate * 4, y: 0 }}
         cancel=".isDisable"
+        ref={draggableRef}
       >
         <div
-          className={`${css.elementEdge} ${
-            isEditable === false && "isDisable"
-          }`}
+          className={`${css.marker} ${isEditable === false && "isDisable"}`}
           onContextMenu={onRightButtonMouseClick}
           ref={markerRef}
         >

@@ -1,5 +1,8 @@
+import { MagnetogramElementType } from "../../types";
+
 export type MarkerBackgroundProps = {
   color: string;
-  leftCoordinateX: number;
-  rightCoordinateX: number;
+  leftOffset: number | undefined;
+  width: number | undefined;
+  type: MagnetogramElementType;
 };

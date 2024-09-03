@@ -1,9 +1,8 @@
 import React, { FC, useEffect, useRef, useState, MouseEvent } from "react";
-import { Marker } from "../../module";
+import { MarkerSegment } from "../../module";
 import { useAppDispatch } from "../../store";
 import css from "./style.css";
 import { MagnetogramWrapperProps } from "./types";
-import { MarkerBackground } from "../../components";
 
 export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
   children,
@@ -13,6 +12,7 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
   onAddNewElement,
 }) => {
   const magnetogramRef = useRef<HTMLDivElement | null>(null);
+
   const [leftOffset, setLeftOffset] = useState<number>(0);
   const [scrollOffset, setScrollOffset] = useState<number>(0);
 
@@ -57,49 +57,15 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
     >
       {children}
 
-      <div>
-        {elements.map((element) => {
-          return (
-            <div
-              className={`${
-                element.type === "defect" ? css.edgesD : css.edgesS
-              } ${
-                (isDefectsCheked && element.type === "defect") ||
-                (isStructuralElementsCheked &&
-                  element.type === "structuralElement")
-                  ? ""
-                  : css.none
-              }`}
-            >
-              <Marker
-                id={element.id}
-                color={element.markerColor}
-                coordinate={element.leftCoordinateX}
-                type={element.type}
-                leftOffset={leftOffset}
-                scrollOffset={scrollOffset}
-                side="left"
-                isEditable={element.isEditable}
-              />
-              <MarkerBackground
-                color={element.markerColor}
-                leftCoordinateX={element.leftCoordinateX}
-                rightCoordinateX={element.rightCoordinateX}
-              />
-              <Marker
-                id={element.id}
-                color={element.markerColor}
-                coordinate={element.rightCoordinateX}
-                type={element.type}
-                leftOffset={leftOffset}
-                scrollOffset={scrollOffset}
-                side="right"
-                isEditable={element.isEditable}
-              />
-            </div>
-          );
-        })}
-      </div>
+      {elements.map((element) => (
+        <MarkerSegment
+          element={element}
+          isDefectsCheked={isDefectsCheked}
+          isStructuralElementsCheked={isStructuralElementsCheked}
+          leftOffset={leftOffset}
+          scrollOffset={scrollOffset}
+        />
+      ))}
     </div>
   );
 };
