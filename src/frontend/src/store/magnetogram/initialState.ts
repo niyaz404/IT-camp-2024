@@ -3,7 +3,7 @@ import { InitialMagnetogramState } from "./types";
 export const initialState: InitialMagnetogramState = {
   id: "",
   name: "",
-  processImage: "",
+  processedImage: "",
   defects: [],
   structuralElements: [],
   isLoading: false,

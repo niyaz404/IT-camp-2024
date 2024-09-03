@@ -1,1 +1,7 @@
-export { castDefect, castStructuralElement } from "./casts";
+export {
+  castDefect,
+  castStructuralElement,
+  castDefectToLocal,
+  castMagnetogram,
+  castStructuralElementToLocal,
+} from "./casts";

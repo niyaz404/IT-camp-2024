@@ -2,10 +2,10 @@ import { Defect, StructuralElement } from "../../types";
 
 export type InitialMagnetogramState = {
   id: string;
-  name: string,
+  name: string;
   defects: Defect[];
   structuralElements: StructuralElement[];
-  processImage: string;
+  processedImage: string | undefined;
   isLoading: boolean;
   isDefectsVisible: boolean;
   isStructuralElementsVisible: boolean;

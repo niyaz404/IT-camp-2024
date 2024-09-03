@@ -22,8 +22,12 @@ export type StructuralElement = MagnetogramElement & {
 };
 
 export type Magnetogram = {
-  id: string; // идентификатор
-  name: string; // наименование магнитограммы
-  data: File; // данные
-  createdAt: Date; // дата создания
+  id: string;
+  name: string;
+  createdAt: Date;
+  createdBy: string | undefined;
+  isDefective: boolean;
+  defects: Defect[];
+  structuralElements: StructuralElement[];
+  processedImage: string | undefined;
 };

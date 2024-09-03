@@ -155,21 +155,21 @@ export class CommitClient {
 
     /**
      * Получение обработки магнитограммы
-     * @param body (optional) Идентификатор обработки
+     * @param commitId (optional) Идентификатор обработки
      * @return OK
      */
-    get(body?: string | undefined, cancelToken?: CancelToken): Promise<CommitDto> {
-        let url_ = this.baseUrl + "/api/Commit/Get";
+    get(commitId?: string | undefined, cancelToken?: CancelToken): Promise<CommitDto> {
+        let url_ = this.baseUrl + "/api/Commit/Get?";
+        if (commitId === null)
+            throw new Error("The parameter 'commitId' cannot be null.");
+        else if (commitId !== undefined)
+            url_ += "commitId=" + encodeURIComponent("" + commitId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: AxiosRequestConfig = {
-            data: content_,
             method: "GET",
             url: url_,
             headers: {
-                "Content-Type": "application/json",
                 "Accept": "text/plain"
             },
             cancelToken

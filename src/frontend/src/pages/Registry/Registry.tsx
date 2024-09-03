@@ -3,7 +3,7 @@ import { ReportTable } from "../../module";
 import { AddNewReportForm, RegistryHeader } from "../../components";
 import { Modal } from "@consta/uikit/Modal";
 import { Layout } from "@consta/uikit/Layout";
-import { check, getAllReportRow } from "../../api";
+import { check } from "../../api";
 import {
   addNewMagnetogramReport,
   authSelector,

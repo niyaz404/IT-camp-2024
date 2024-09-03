@@ -10,3 +10,11 @@ export {
   removeMagnetogramElement,
   reverseMagnetogramElementEnable,
 } from "./actions";
+
+export {
+  castDefect,
+  castDefectToLocal,
+  castMagnetogram,
+  castStructuralElement,
+  castStructuralElementToLocal,
+} from "./utils";

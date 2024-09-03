@@ -5,6 +5,7 @@ export {
   downloadReport,
   removeReportRow,
   addNewMagnetogramReport,
+  castReportToLocal,
 } from "./report";
 export {
   magnetogramSelector,
@@ -16,5 +17,10 @@ export {
   saveMagnetogram,
   removeMagnetogramElement,
   reverseMagnetogramElementEnable,
+  castDefect,
+  castDefectToLocal,
+  castMagnetogram,
+  castStructuralElement,
+  castStructuralElementToLocal,
 } from "./magnetogram";
 export { authSelector } from "./auth";

@@ -6,3 +6,5 @@ export {
   downloadReport,
   addNewMagnetogramReport,
 } from "./actions";
+
+export { castReportToLocal } from "./utils";

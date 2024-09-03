@@ -1,7 +1,6 @@
-import { saveNewMagnetogram } from "../../api";
+import { getMagnetogramInfo, saveNewMagnetogram } from "../../api";
 import {
   Defect,
-  MagnetogramElement,
   MagnetogramElementType,
   MarkerSide,
   StructuralElement,
@@ -16,44 +15,15 @@ import { castDefect, castStructuralElement } from "./utils";
  * Подгружает данные для реестра отчетов
  */
 export const loadMagnetogramById =
-  (magnetogramId: string | undefined) => (dispatch: AppDispatch) => {
+  (magnetogramId: string | undefined) => async (dispatch: AppDispatch) => {
     dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(true));
-    //   const data = await getMagnetogramInfo(magnetogramId);
-    //   dispatch(reportSlice.actions.replaceReportRowData(data));
-
-    setTimeout(() => {
-      const data = {
-        id: "1",
-        name: "Отчет 1",
-        processImage:
-          "https://psv4.userapi.com/c909618/u181754921/docs/d59/70ca2237550b/magnetogram_output.png?extra=0VhFDVr55GXspkc73NxiSmi_1VOoBlwv0TU3D5xwHGTGcp4jrT5iyRcdQ8fYYvMl-WozpBYwE11rFho3a75uiFkaLm5SXsG9mVmwlltV2in8LEFn4Pn3IcdhidnjDR1AKPEdBJ5JR0_V2hQE9g86ky2mRQ",
-        defects: [
-          {
-            description: "Это дефект",
-            id: "1",
-            leftCoordinateX: 50,
-            rightCoordinateX: 150,
-            type: "defect",
-            markerColor: "rgb(255,0,255)",
-            isEditable: false,
-          },
-        ] as Defect[],
-        structuralElements: [
-          {
-            id: "1",
-            leftCoordinateX: 100,
-            rightCoordinateX: 200,
-            type: "structuralElement",
-            markerColor: "rgb(255,255,0)",
-            isEditable: false,
-          },
-        ] as StructuralElement[],
-      };
+    try {
+      const data = await getMagnetogramInfo(magnetogramId);
 
       dispatch(magnetogramSlice.actions.replaceMagnetogramId(data.id));
       dispatch(magnetogramSlice.actions.replaceName(data.name));
       dispatch(
-        magnetogramSlice.actions.replaceMagnetogramImage(data.processImage)
+        magnetogramSlice.actions.replaceMagnetogramImage(data.processedImage)
       );
       dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
       dispatch(
@@ -61,8 +31,56 @@ export const loadMagnetogramById =
           data.structuralElements
         )
       );
+
       dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
-    }, 0);
+
+      // setTimeout(() => {
+      //   const data = {
+      //     id: "1",
+      //     name: "Отчет 1",
+      //     // processImage:"data:image/jpeg;base64,",
+      //     processImage:
+      //       "https://psv4.userapi.com/c909618/u181754921/docs/d59/70ca2237550b/magnetogram_output.png?extra=0VhFDVr55GXspkc73NxiSmi_1VOoBlwv0TU3D5xwHGTGcp4jrT5iyRcdQ8fYYvMl-WozpBYwE11rFho3a75uiFkaLm5SXsG9mVmwlltV2in8LEFn4Pn3IcdhidnjDR1AKPEdBJ5JR0_V2hQE9g86ky2mRQ",
+      //     defects: [
+      //       {
+      //         description: "Это дефект",
+      //         id: "1",
+      //         leftCoordinateX: 50,
+      //         rightCoordinateX: 150,
+      //         type: "defect",
+      //         markerColor: "rgb(255,0,255)",
+      //         isEditable: false,
+      //       },
+      //     ] as Defect[],
+      //     structuralElements: [
+      //       {
+      //         id: "1",
+      //         leftCoordinateX: 100,
+      //         rightCoordinateX: 200,
+      //         type: "structuralElement",
+      //         markerColor: "rgb(255,255,0)",
+      //         isEditable: false,
+      //       },
+      //     ] as StructuralElement[],
+      //   };
+
+      //   dispatch(magnetogramSlice.actions.replaceMagnetogramId(data.id));
+      //   dispatch(magnetogramSlice.actions.replaceName(data.name));
+      //   dispatch(
+      //     magnetogramSlice.actions.replaceMagnetogramImage(data.processImage)
+      //   );
+      //   dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
+      //   dispatch(
+      //     magnetogramSlice.actions.replaceStructuralElements(
+      //       data.structuralElements
+      //     )
+      //   );
+      //   dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
+      // }, 0);
+    } catch (error) {
+      alert("Ошибка загрузки данных");
+      console.error(error);
+    }
   };
 
 /**
@@ -216,7 +234,7 @@ export const setIsDefectsVisible =
 export const saveMagnetogram =
   () => (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
-    const { defects, id, processImage, structuralElements, name } =
+    const { defects, id, processedImage, structuralElements, name } =
       magnetogramSelector(state);
     const { userName } = authSelector(state);
     try {
@@ -228,7 +246,7 @@ export const saveMagnetogram =
         !!defects.length,
         defects.map(castDefect),
         structuralElements.map(castStructuralElement),
-        processImage
+        processedImage
       );
     } catch (error) {
       alert("Ошибка сохранения изменений");

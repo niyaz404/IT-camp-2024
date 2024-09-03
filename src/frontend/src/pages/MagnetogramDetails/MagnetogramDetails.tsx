@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Modal } from "@consta/uikit/Modal";
 import { MagnetogramDetailsToolbar } from "../../components";
 import {
@@ -36,9 +36,9 @@ export const MagnetogramDetails = () => {
   const params = useParams();
   const magnetogramId = params.id;
 
-  useEffect(() => {
-    const loadMagnetogram = async () => {
-      await dispatch(loadMagnetogramById(magnetogramId));
+  useLayoutEffect(() => {
+    const loadMagnetogram = () => {
+      dispatch(loadMagnetogramById(magnetogramId));
     };
     loadMagnetogram();
   }, []);

@@ -15,12 +15,14 @@ import { FileParameter } from "src/api/Bff/BffClient";
  */
 export const loadReportRowData = () => async (dispatch: AppDispatch) => {
   dispatch(reportSlice.actions.replaceIsReportRowDataLoading(true));
-  //   const data = await getAllReportRow();
-  //   dispatch(reportSlice.actions.replaceReportRowData(data));
-  setTimeout(() => {
-    dispatch(reportSlice.actions.replaceReportRowData(mockReportTableData));
-    dispatch(reportSlice.actions.replaceIsReportRowDataLoading(false));
-  }, 1000);
+  const data = await getAllReportRow();
+  dispatch(reportSlice.actions.replaceReportRowData(data));
+  dispatch(reportSlice.actions.replaceIsReportRowDataLoading(false));
+
+  // setTimeout(() => {
+  //   dispatch(reportSlice.actions.replaceReportRowData(mockReportTableData));
+  //   dispatch(reportSlice.actions.replaceIsReportRowDataLoading(false));
+  // }, 1000);
 };
 
 /**

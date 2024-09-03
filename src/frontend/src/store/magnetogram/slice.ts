@@ -114,9 +114,9 @@ const replaceMagnetogramId = (
  */
 const replaceMagnetogramImage = (
   state: InitialMagnetogramState,
-  action: PayloadAction<string>
+  action: PayloadAction<string | undefined>
 ) => {
-  state.processImage = action.payload;
+  state.processedImage = action.payload;
 };
 
 /**

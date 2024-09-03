@@ -1,3 +1,4 @@
+import { castMagnetogram, castReportToLocal } from "../../store";
 import { axiosInstance } from "../axiosInstanse";
 import {
   AuthClient,
@@ -68,16 +69,18 @@ export const addMagnetogram = (
  */
 export const getAllReportRow = () => {
   const client = getClient(BffClients.commitClient);
-  return client.getAll();
+  return client.getAll().then((res) => res.map(castReportToLocal));
 };
 
 /**
  * Получаем информацию о конктреной магнитограмме
  * @returns
  */
-export const getMagnetogramInfo = (reportRowId: string) => {
+export const getMagnetogramInfo = (reportRowId: string | undefined) => {
   const client = getClient(BffClients.commitClient);
-  return client.get(reportRowId);
+  console.log("reportRowId", reportRowId);
+
+  return client.get(reportRowId).then((res) => castMagnetogram(res));
 };
 
 /**
