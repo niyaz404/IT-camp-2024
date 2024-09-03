@@ -3,6 +3,7 @@ import { Marker } from "../../module";
 import { useAppDispatch } from "../../store";
 import css from "./style.css";
 import { MagnetogramWrapperProps } from "./types";
+import { MarkerBackground } from "../../components";
 
 export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
   children,
@@ -79,6 +80,11 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
                 scrollOffset={scrollOffset}
                 side="left"
                 isEditable={element.isEditable}
+              />
+              <MarkerBackground
+                color={element.markerColor}
+                leftCoordinateX={element.leftCoordinateX}
+                rightCoordinateX={element.rightCoordinateX}
               />
               <Marker
                 id={element.id}
