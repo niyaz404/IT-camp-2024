@@ -11,4 +11,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build app/bin/Release/net8.0 .
 
-ENTRYPOINT ["dotnet", "PostgresMigrator.dll"]
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+ENTRYPOINT ["/wait-for-it.sh", "webapi_postgres_db:5432", "--", "dotnet", "PostgresMigrator.dll"]
