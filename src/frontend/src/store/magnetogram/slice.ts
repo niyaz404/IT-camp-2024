@@ -12,7 +12,7 @@ const replaceDefects = (
   state: InitialMagnetogramState,
   action: PayloadAction<Defect[]>
 ) => {
-  state.defects = [...state.defects, ...action.payload];
+  state.defects = action.payload;
 };
 
 /**
@@ -24,7 +24,7 @@ const replaceStructuralElements = (
   state: InitialMagnetogramState,
   action: PayloadAction<StructuralElement[]>
 ) => {
-  state.structuralElements = [...state.structuralElements, ...action.payload];
+  state.structuralElements = action.payload;
 };
 
 /**

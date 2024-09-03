@@ -76,6 +76,8 @@ export const addMagnetogramElement =
   (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
 
+    const { defects, structuralElements } = magnetogramSelector(state);
+
     const getRandomNum = () => {
       const min = 0;
       const max = 255;
@@ -94,7 +96,9 @@ export const addMagnetogramElement =
         leftStructuralElementId: "",
         rightStructuralElementId: "",
       };
-      dispatch(magnetogramSlice.actions.replaceDefects([newDefect]));
+      dispatch(
+        magnetogramSlice.actions.replaceDefects([...defects, newDefect])
+      );
     } else {
       const newStructuralElement: StructuralElement = {
         id: "new",
@@ -108,6 +112,7 @@ export const addMagnetogramElement =
 
       dispatch(
         magnetogramSlice.actions.replaceStructuralElements([
+          ...structuralElements,
           newStructuralElement,
         ])
       );
@@ -222,5 +227,73 @@ export const saveMagnetogram =
     } catch (error) {
       alert("Ошибка сохранения изменений");
       console.error(error);
+    }
+  };
+
+/**
+ * Удаляет элемент магнитограммы
+ * @param magnetogramElementId идентификатор элемента магнитограммы
+ * @param type тип элемента магнитограммы
+ */
+export const removeMagnetogramElement =
+  (magnetogramElementId: string, type: MagnetogramElementType) =>
+  (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+    const { defects, structuralElements } = magnetogramSelector(state);
+
+    if (type === "defect") {
+      const filtredDefects = defects.filter(
+        (defect) => defect.id !== magnetogramElementId
+      );
+      dispatch(magnetogramSlice.actions.replaceDefects(filtredDefects));
+    }
+    if (type === "structuralElement") {
+      const filtredStructuralElements = structuralElements.filter(
+        (structuralElement) => structuralElement.id !== magnetogramElementId
+      );
+      dispatch(
+        magnetogramSlice.actions.replaceStructuralElements(
+          filtredStructuralElements
+        )
+      );
+    }
+  };
+
+/**
+ * Заменяет признак блокировки элемента магнитограммы на противоположный
+ * @param magnetogramElementId идентификатор элемента магнитограммы
+ * @param type тип элемента магнитограммы
+ */
+export const reverseMagnetogramElementEnable =
+  (magnetogramElementId: string, type: MagnetogramElementType) =>
+  (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+    const { defects, structuralElements } = magnetogramSelector(state);
+
+    if (type === "defect") {
+      const currentDefect = defects.find(
+        (defect) => defect.id === magnetogramElementId
+      );
+      if (currentDefect) {
+        dispatch(
+          magnetogramSlice.actions.replaceDefect({
+            ...currentDefect,
+            isEditable: !currentDefect.isEditable,
+          })
+        );
+      }
+    }
+    if (type === "structuralElement") {
+      const currentStructuralElement = structuralElements.find(
+        (structuralElement) => structuralElement.id === magnetogramElementId
+      );
+      if (currentStructuralElement) {
+        dispatch(
+          magnetogramSlice.actions.replaceStructuralElement({
+            ...currentStructuralElement,
+            isEditable: !currentStructuralElement.isEditable,
+          })
+        );
+      }
     }
   };

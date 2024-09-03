@@ -8,7 +8,7 @@ export type MagnetogramElement = {
   leftCoordinateX: number; // левая координата по оси Х
   rightCoordinateX: number; // правая координата по оси Х
   markerColor: string;
-  isEditable: false;
+  isEditable: boolean;
 };
 
 export type Defect = MagnetogramElement & {

@@ -8,4 +8,5 @@ export type MarkerProps = {
   leftOffset: number;
   scrollOffset: number;
   side: MarkerSide;
+  isEditable: boolean;
 };

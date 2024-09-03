@@ -31,7 +31,7 @@ export const Auth: FC = () => {
           onChange={onChangeLogin}
           value={login}
           type="text"
-          placeholder="Введите логни"
+          placeholder="Введите логин"
           label="Логин"
           required
           withClearButton

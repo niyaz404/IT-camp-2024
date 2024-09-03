@@ -14,5 +14,7 @@ export {
   setIsStructuralElementsVisible,
   loadMagnetogramById,
   saveMagnetogram,
+  removeMagnetogramElement,
+  reverseMagnetogramElementEnable,
 } from "./magnetogram";
 export { authSelector } from "./auth";
