@@ -18,6 +18,7 @@ public class CommitController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> Save([FromBody]CommitDto commitDto)
     {
+        
         var magtenogramId = "12321";
         return Ok(magtenogramId);
     }
@@ -27,7 +28,7 @@ public class CommitController : ControllerBase
     /// </summary>
     /// <param name="commitId">Идентификатор обработки</param>
     [HttpGet]
-    public async Task<ActionResult<CommitDto>> Get([FromBody]string commitId)
+    public async Task<ActionResult<CommitDto>> Get(string commitId)
     {
         return Ok(new CommitDto()
         {
