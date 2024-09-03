@@ -9,7 +9,6 @@ namespace WebApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize]
 public class MagnetogramController : ControllerBase
 {
     /// <summary>
