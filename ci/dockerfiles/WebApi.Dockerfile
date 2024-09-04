@@ -2,6 +2,7 @@
 
 WORKDIR /app
 COPY /src/backend/cs/WebApi/ .
+COPY /src/backend/cs/Consts/ .
 
 RUN dotnet restore
 RUN dotnet build -c Release -o bin/Release/net8.0

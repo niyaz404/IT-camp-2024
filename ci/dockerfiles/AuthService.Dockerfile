@@ -4,6 +4,7 @@ WORKDIR /app
 COPY /src/backend/cs/AuthService/ ./AuthService/
 COPY /src/backend/cs/AuthService.BLL/ ./AuthService.BLL/
 COPY /src/backend/cs/AuthService.DAL/ ./AuthService.DAL/
+COPY /src/backend/cs/Consts/ ./Consts/
 
 # Восстанавливаем зависимости для проекта AuthService
 RUN dotnet restore AuthService/AuthService.csproj
