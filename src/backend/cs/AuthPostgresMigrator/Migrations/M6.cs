@@ -4,12 +4,14 @@ using FluentMigrator;
 namespace AuthPostgresMigrator.Migrations
 {
     /// <summary>
-    /// Миграция для создания таблицы USER
+    /// Миграция для создания таблицы USER_ROLE
     /// </summary>
-    [Migration(5, "Создание таблицы USER")]
-    public class M5 : Migration
+    [Migration(6, "Создание таблицы USER_ROLE")]
+    public class M6 : Migration
     {
-        private static readonly string _tableName = "user";
+        private static readonly string _tableName = "user_role";
+        private static readonly string _userTableName = "user";
+        private static readonly string _roleTableName = "role";
         
         public override void Up()
         {
@@ -18,19 +20,15 @@ namespace AuthPostgresMigrator.Migrations
             {
                 Create.Table(_tableName).InSchema(Const.Schema)
                     .WithColumn("id").AsGuid().PrimaryKey().WithDefault(SystemMethods.NewGuid)
+                    .WithColumnDescription("Идентификатор связи")
+
+                    .WithColumn("userid").AsGuid().NotNullable()
+                    .ForeignKey("userid", Const.Schema, _userTableName, "id")
                     .WithColumnDescription("Идентификатор пользователя")
 
-                    .WithColumn("username").AsString(255).NotNullable()
-                    .WithColumnDescription("ФИО пользователя")
-
-                    .WithColumn("login").AsString(255).NotNullable()
-                    .WithColumnDescription("Логин пользователя")
-
-                    .WithColumn("hash").AsString(255).NotNullable()
-                    .WithColumnDescription("Хеш пароля")
-
-                    .WithColumn("salt").AsString(255).NotNullable()
-                    .WithColumnDescription("Соль");
+                    .WithColumn("roleid").AsInt32().NotNullable()
+                    .ForeignKey("roleid", Const.Schema, _roleTableName, "id")
+                    .WithColumnDescription("Идентификатор роли");
             }
         }
 

@@ -4,42 +4,34 @@ using FluentMigrator;
 namespace AuthPostgresMigrator.Migrations
 {
     /// <summary>
-    /// Миграция для создания таблицы USER
+    /// Миграция для добавления записей в таблицу ROLE
     /// </summary>
-    [Migration(4, "Создание таблицы USER")]
+    [Migration(4, "Добавление записей в таблицу ROLE")]
     public class M4 : Migration
     {
-        private static readonly string _tableName = "user";
+        private static readonly string _tableName = "role";
         
         public override void Up()
         {
-            // Проверка на существование таблицы перед созданием
-            if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
+            // Проверка на существование таблицы перед добавлением записей
+            if (Schema.Schema(Const.Schema).Table(_tableName).Exists())
             {
-                Create.Table(_tableName).InSchema(Const.Schema)
-                    .WithColumn("id").AsString().PrimaryKey()
-                    .WithColumnDescription("Идентификатор пользователя")
-
-                    .WithColumn("username").AsString(255).NotNullable()
-                    .WithColumnDescription("ФИО пользователя")
-
-                    .WithColumn("login").AsString(255).NotNullable()
-                    .WithColumnDescription("Логин пользователя")
-
-                    .WithColumn("hash").AsString(255).NotNullable()
-                    .WithColumnDescription("Хеш пароля")
-
-                    .WithColumn("salt").AsString(255).NotNullable()
-                    .WithColumnDescription("Соль");
+                Insert.IntoTable(_tableName).InSchema(Const.Schema)
+                    .Row(new { id = 1, name = "ADMIN" })
+                    .Row(new { id = 2, name = "EXPERT" })
+                    .Row(new { id = 3, name = "OPERATOR" });
             }
         }
 
         public override void Down()
         {
-            // Проверка на существование таблицы перед удалением
+            // Проверка на существование таблицы перед удалением записей
             if (Schema.Schema(Const.Schema).Table(_tableName).Exists())
             {
-                Delete.Table(_tableName).InSchema(Const.Schema);
+                Delete.FromTable(_tableName)
+                    .Row(new { id = 1, name = "ADMIN" })
+                    .Row(new { id = 2, name = "EXPERT" })
+                    .Row(new { id = 3, name = "OPERATOR" });
             }
         }
     }

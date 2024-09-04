@@ -1,37 +1,18 @@
-using AuthPostgresMigrator.Consts;
 using FluentMigrator;
 
 namespace AuthPostgresMigrator.Migrations
 {
     /// <summary>
-    /// Миграция для создания таблицы ROLE
+    /// Миграция для создания модуля генерации UUID
     /// </summary>
-    [Migration(2, "Создание таблицы ROLE")]
+    [Migration(2, "Создания модуля генерации UUID")]
     public class M2 : Migration
     {
-        private static readonly string _tableName = "role";
-        
         public override void Up()
         {
-            // Проверка на существование таблицы перед созданием
-            if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
-            {
-                Create.Table(_tableName).InSchema(Const.Schema)
-                    .WithColumn("id").AsInt32().PrimaryKey()
-                    .WithColumnDescription("Идентификатор роли")
-
-                    .WithColumn("name").AsString(255).NotNullable()
-                    .WithColumnDescription("Название роли");
-            }
+            Execute.Sql("create extension if not exists \"uuid-ossp\";");
         }
 
-        public override void Down()
-        {
-            // Проверка на существование таблицы перед удалением
-            if (Schema.Schema(Const.Schema).Table(_tableName).Exists())
-            {
-                Delete.Table(_tableName).InSchema(Const.Schema);
-            }
-        }
+        public override void Down() { }
     }
 }
