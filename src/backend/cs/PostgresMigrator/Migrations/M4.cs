@@ -1,31 +1,28 @@
+using Consts;
 using FluentMigrator;
-using PostgresMigrator.Consts;
 
 namespace PostgresMigrator.Migrations
 {
     /// <summary>
     /// Миграция для создания таблицы STRUCTURALELEMENT
     /// </summary>
-    [Migration(4, "Создание таблицы STRUCTURALELEMENT")]
-    public class M9 : Migration
+    [Migration(4, $"Создание таблицы {PgTables.StructuralElement}")]
+    public class M4 : Migration
     {
-        private static readonly string _tableName = "structuralelement";
-        private static readonly string _elementTypeTableName = "structuralelementtype";
+        private static readonly string _tableName = PgTables.StructuralElement;
+        private static readonly string _elementTypeTableName = PgTables.StructuralElementType;
         
         public override void Up()
         {
             // Проверка на существование таблицы перед созданием
-            if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
+            if (!Schema.Schema(PgTables.Schema).Table(_tableName).Exists())
             {
-                Create.Table(_tableName).InSchema(Const.Schema)
-                    .WithColumn("id").AsGuid().PrimaryKey()
+                Create.Table(_tableName).InSchema(PgTables.Schema)
+                    .WithColumn("id").AsGuid().PrimaryKey().WithDefault(SystemMethods.NewGuid)
                     .WithColumnDescription("Идентификатор элемента")
 
-                    .WithColumn("color").AsString(30).Nullable()
-                    .WithColumnDescription("Цвет метки на магнитограмме")
-
                     .WithColumn("elementtypeid").AsInt32().NotNullable()
-                    .ForeignKey("elementtypeid", Const.Schema, _elementTypeTableName, "id")
+                    .ForeignKey("elementtypeid", PgTables.Schema, _elementTypeTableName, "id")
                     .WithColumnDescription("Идентификатор типа структурного элемента")
 
                     .WithColumn("startx").AsInt32().NotNullable()
@@ -39,9 +36,9 @@ namespace PostgresMigrator.Migrations
         public override void Down()
         {
             // Проверка на существование таблицы перед удалением
-            if (Schema.Schema(Const.Schema).Table(_tableName).Exists())
+            if (Schema.Schema(PgTables.Schema).Table(_tableName).Exists())
             {
-                Delete.Table(_tableName).InSchema(Const.Schema);
+                Delete.Table(_tableName).InSchema(PgTables.Schema);
             }
         }
     }

@@ -1,5 +1,5 @@
+using Consts;
 using FluentMigrator;
-using PostgresMigrator.Consts;
 
 namespace PostgresMigrator.Migrations
 {
@@ -12,9 +12,9 @@ namespace PostgresMigrator.Migrations
         public override void Up()
         {
             // Проверка на существование схемы
-            if (!Schema.Schema(Const.Schema).Exists())
+            if (!Schema.Schema(PgTables.Schema).Exists())
             {
-                Create.Schema(Const.Schema);
+                Create.Schema(PgTables.Schema);
             }
         }
 

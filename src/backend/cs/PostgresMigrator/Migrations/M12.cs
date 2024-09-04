@@ -1,33 +1,33 @@
+using Consts;
 using FluentMigrator;
-using PostgresMigrator.Consts;
 
 namespace PostgresMigrator.Migrations
 {
     /// <summary>
     /// Миграция для создания таблицы DEFECT_COMMIT
     /// </summary>
-    [Migration(12, "Создание таблицы DEFECT_COMMIT")]
+    [Migration(12, $"Создание таблицы {PgTables.DefectToCommit}")]
     public class M12 : Migration
     {
-        private static readonly string _tableName = "defect_commit";
-        private static readonly string _commitTableName = "commit";
-        private static readonly string _defectTableName = "defect";
+        private static readonly string _tableName = PgTables.DefectToCommit;
+        private static readonly string _commitTableName = PgTables.Commit;
+        private static readonly string _defectTableName = PgTables.Defect;
         
         public override void Up()
         {
             // Проверка на существование таблицы перед созданием
-            if (!Schema.Schema(Const.Schema).Table(_tableName).Exists())
+            if (!Schema.Schema(PgTables.Schema).Table(_tableName).Exists())
             {
-                Create.Table(_tableName).InSchema(Const.Schema)
-                    .WithColumn("id").AsGuid().PrimaryKey()
+                Create.Table(_tableName).InSchema(PgTables.Schema)
+                    .WithColumn("id").AsGuid().PrimaryKey().WithDefault(SystemMethods.NewGuid)
                     .WithColumnDescription("Идентификатор связи")
 
                     .WithColumn("commitid").AsGuid().NotNullable()
-                    .ForeignKey("commitid", Const.Schema, _commitTableName, "id")
+                    .ForeignKey("commitid", PgTables.Schema, _commitTableName, "id")
                     .WithColumnDescription("Идентификатор данных о магнитограмме")
 
                     .WithColumn("defectid").AsGuid().NotNullable()
-                    .ForeignKey("defectid", Const.Schema, _defectTableName, "id")
+                    .ForeignKey("defectid", PgTables.Schema, _defectTableName, "id")
                     .WithColumnDescription("Идентификатор дефекта");
             }
         }
@@ -35,9 +35,9 @@ namespace PostgresMigrator.Migrations
         public override void Down()
         {
             // Проверка на существование таблицы перед удалением
-            if (Schema.Schema(Const.Schema).Table(_tableName).Exists())
+            if (Schema.Schema(PgTables.Schema).Table(_tableName).Exists())
             {
-                Delete.Table(_tableName).InSchema(Const.Schema);
+                Delete.Table(_tableName).InSchema(PgTables.Schema);
             }
         }
     }
