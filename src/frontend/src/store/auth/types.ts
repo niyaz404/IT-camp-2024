@@ -1,4 +1,5 @@
+import { User } from "../../types";
+
 export type initialAuthState = {
-  id: string;
-  userName: string;
+  currentUser: User | null;
 };

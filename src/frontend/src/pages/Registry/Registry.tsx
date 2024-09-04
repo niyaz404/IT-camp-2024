@@ -17,7 +17,7 @@ import { Loader } from "@consta/uikit/Loader";
 export const Registry = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { reportRowData, isLoading } = useAppSelector(reportSelector);
-  const { userName } = useAppSelector(authSelector);
+  const { currentUser } = useAppSelector(authSelector);
 
   const dispatch = useAppDispatch();
 
@@ -32,7 +32,7 @@ export const Registry = () => {
 
   const onAddNewReport = (reportName: string | null, file: File | null) => {
     const createdAt = new Date();
-    const createdBy = userName;
+    const createdBy = currentUser?.userName ?? "";
     dispatch(addNewMagnetogramReport(reportName, createdBy, createdAt, file));
   };
 

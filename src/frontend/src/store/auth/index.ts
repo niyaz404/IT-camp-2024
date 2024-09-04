@@ -1,2 +1,3 @@
 export { authReducer, authSlice } from "./slice";
-export { authSelector } from "./selectors";
+export { authSelector, isUserAuthenticatedSelector } from "./selectors";
+export { authentication, setCurrentUser } from "./actions";

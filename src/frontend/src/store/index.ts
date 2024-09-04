@@ -25,4 +25,9 @@ export {
   defectSelector,
   structuralElementSelector,
 } from "./magnetogram";
-export { authSelector } from "./auth";
+export {
+  authSelector,
+  isUserAuthenticatedSelector,
+  authentication,
+  setCurrentUser,
+} from "./auth";

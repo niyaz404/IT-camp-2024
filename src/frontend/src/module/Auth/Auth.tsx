@@ -3,12 +3,16 @@ import { Button } from "@consta/uikit/Button";
 import { Text } from "@consta/uikit/Text";
 import { TextField } from "@consta/uikit/TextField";
 import css from "./style.css";
-import { useAppDispatch } from "../../store";
-import { loginInSystem } from "../../api";
+import { authentication, useAppDispatch } from "../../store";
+import { useNavigate } from "react-router-dom";
+import { RoutePaths } from "../../types";
 
 export const Auth: FC = () => {
   const [login, setLogin] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const onChangeLogin = ({ value }: { value: string | null }) =>
     setLogin(value);
@@ -17,7 +21,8 @@ export const Auth: FC = () => {
     setPassword(value);
 
   const onLogin = () => {
-    loginInSystem(login ?? "", password ?? "");
+    dispatch(authentication(login ?? "", password ?? ""));
+    navigate(RoutePaths.Registry);
   };
 
   return (

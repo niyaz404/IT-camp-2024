@@ -9,20 +9,29 @@ import { IconExit } from "@consta/uikit/IconExit";
 import css from "./style.css";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../../types";
+import {
+  authSelector,
+  isUserAuthenticatedSelector,
+  setCurrentUser,
+  useAppDispatch,
+  useAppSelector,
+} from "../../store";
 
 export const Navbar: FC<NavbarProps> = () => {
   const ref = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const isUserAuthenticated = useAppSelector(isUserAuthenticatedSelector);
+  const { currentUser } = useAppSelector(authSelector);
 
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
   const onLogout = () => {
-    // logout
+    dispatch(setCurrentUser(null));
     navigate(RoutePaths.Auth);
   };
 
   const onHeaderLoginClick = () => {
-    if (isLogged) {
+    if (isUserAuthenticated) {
       setIsMenuOpen(true);
     } else {
       navigate(RoutePaths.Auth);
@@ -33,8 +42,6 @@ export const Navbar: FC<NavbarProps> = () => {
     setIsMenuOpen(false);
   };
 
-  const isLogged = true;
-
   return (
     <div className="container-row justify-between align-center w-100">
       <Header
@@ -44,9 +51,8 @@ export const Navbar: FC<NavbarProps> = () => {
             <HeaderModule>
               <HeaderLogin
                 ref={ref}
-                isLogged={isLogged}
-                personName={"Дамир"}
-                personInfo="Доп. информация"
+                isLogged={isUserAuthenticated}
+                personName={currentUser?.userName ?? ""}
                 onClick={onHeaderLoginClick}
                 placeholder={undefined}
                 onPointerEnterCapture={undefined}

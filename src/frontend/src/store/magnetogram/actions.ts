@@ -66,7 +66,6 @@ export const addMagnetogramElement =
   ) =>
   (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
-
     const { defects, structuralElements } = magnetogramSelector(state);
 
     if (type === "defect") {
@@ -198,13 +197,13 @@ export const saveMagnetogram =
     const state = getState();
     const { defects, id, processedImage, structuralElements, name } =
       magnetogramSelector(state);
-    const { userName } = authSelector(state);
+    const { currentUser } = authSelector(state);
     try {
       saveNewMagnetogram(
         id,
         new Date(),
         name,
-        userName,
+        currentUser?.userName ?? "",
         !!defects.length,
         defects.map(castDefect),
         structuralElements.map(castStructuralElement),

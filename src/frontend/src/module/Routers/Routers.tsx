@@ -3,12 +3,15 @@ import { MagnetogramDetails, Registry } from "../../pages";
 import React from "react";
 import { RoutePaths } from "../../types";
 import { Auth, Navbar, PrivateRoute } from "..";
+import { isUserAuthenticatedSelector, useAppSelector } from "../../store";
 
 export const Routers: React.FC = () => {
+  const isUserAuthenticated = useAppSelector(isUserAuthenticatedSelector);
+
   return (
     <Router>
-      {/* Navbar отображается только, если пользователь авторизован */}
-      <Navbar />
+      {isUserAuthenticated === true && <Navbar />}
+
       <Routes>
         <Route
           path={`${RoutePaths.Magnetogram}/:id`}
@@ -35,14 +38,7 @@ export const Routers: React.FC = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path={RoutePaths.Auth}
-          element={
-            <PrivateRoute>
-              <Auth />
-            </PrivateRoute>
-          }
-        />
+        <Route path={RoutePaths.Auth} element={<Auth />} />
       </Routes>
     </Router>
   );

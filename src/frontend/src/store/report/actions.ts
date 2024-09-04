@@ -6,7 +6,6 @@ import {
 } from "../../api";
 import { AppDispatch, RootState } from "../store";
 import { reportSlice } from "./slice";
-import { mockReportTableData } from "./mockMetaData";
 import { reportSelector } from "./selectors";
 import { FileParameter } from "src/api/Bff/BffClient";
 
@@ -14,15 +13,15 @@ import { FileParameter } from "src/api/Bff/BffClient";
  * Подгружает данные для реестра отчетов
  */
 export const loadReportRowData = () => async (dispatch: AppDispatch) => {
-  dispatch(reportSlice.actions.replaceIsReportRowDataLoading(true));
-  const data = await getAllReportRow();
-  dispatch(reportSlice.actions.replaceReportRowData(data));
-  dispatch(reportSlice.actions.replaceIsReportRowDataLoading(false));
-
-  // setTimeout(() => {
-  //   dispatch(reportSlice.actions.replaceReportRowData(mockReportTableData));
-  //   dispatch(reportSlice.actions.replaceIsReportRowDataLoading(false));
-  // }, 1000);
+  try {
+    dispatch(reportSlice.actions.replaceIsReportRowDataLoading(true));
+    const data = await getAllReportRow();
+    dispatch(reportSlice.actions.replaceReportRowData(data));
+    dispatch(reportSlice.actions.replaceIsReportRowDataLoading(false));
+  } catch (error) {
+    alert("Ошибка загрузки отчетов");
+    console.error(error);
+  }
 };
 
 /**
@@ -76,8 +75,6 @@ export const addNewMagnetogramReport =
     file: File | null
   ) =>
   async (dispatch: AppDispatch) => {
-    console.log(name, file);
-
     try {
       if (name && file) {
         const parsedFile: FileParameter = {
