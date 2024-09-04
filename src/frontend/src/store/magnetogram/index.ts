@@ -1,5 +1,9 @@
 export { magnetogramReducer, magnetogramSlice } from "./slice";
-export { magnetogramSelector } from "./selectors";
+export {
+  magnetogramSelector,
+  defectSelector,
+  structuralElementSelector,
+} from "./selectors";
 export {
   addMagnetogramElement,
   updateElementCoordinates,

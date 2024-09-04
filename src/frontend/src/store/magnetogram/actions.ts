@@ -13,6 +13,7 @@ import { AppDispatch, RootState } from "../store";
 import { magnetogramSelector } from "./selectors";
 import { magnetogramSlice } from "./slice";
 import { castDefect, castStructuralElement } from "./utils";
+import { LeftRightSplit } from "./types";
 
 /**
  * Подгружает данные для реестра отчетов
@@ -31,6 +32,9 @@ export const loadMagnetogramById =
         )
       );
       dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
+
+      dispatch(сalculateDefectInfo(data.defects));
+
       dispatch(
         magnetogramSlice.actions.replaceStructuralElements(
           data.structuralElements
@@ -38,50 +42,6 @@ export const loadMagnetogramById =
       );
 
       dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
-
-      // setTimeout(() => {
-      //   const data = {
-      //     id: "1",
-      //     name: "Отчет 1",
-      //     // processImage:"data:image/jpeg;base64,",
-      //     processImage:
-      //       "https://psv4.userapi.com/c909618/u181754921/docs/d59/70ca2237550b/magnetogram_output.png?extra=0VhFDVr55GXspkc73NxiSmi_1VOoBlwv0TU3D5xwHGTGcp4jrT5iyRcdQ8fYYvMl-WozpBYwE11rFho3a75uiFkaLm5SXsG9mVmwlltV2in8LEFn4Pn3IcdhidnjDR1AKPEdBJ5JR0_V2hQE9g86ky2mRQ",
-      //     defects: [
-      //       {
-      //         description: "Это дефект",
-      //         id: "1",
-      //         leftCoordinateX: 50,
-      //         rightCoordinateX: 150,
-      //         type: "defect",
-      //         markerColor: "rgb(255,0,255)",
-      //         isEditable: false,
-      //       },
-      //     ] as Defect[],
-      //     structuralElements: [
-      //       {
-      //         id: "1",
-      //         leftCoordinateX: 100,
-      //         rightCoordinateX: 200,
-      //         type: "structuralElement",
-      //         markerColor: "rgb(255,255,0)",
-      //         isEditable: false,
-      //       },
-      //     ] as StructuralElement[],
-      //   };
-
-      //   dispatch(magnetogramSlice.actions.replaceMagnetogramId(data.id));
-      //   dispatch(magnetogramSlice.actions.replaceName(data.name));
-      //   dispatch(
-      //     magnetogramSlice.actions.replaceMagnetogramImage(data.processImage)
-      //   );
-      //   dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
-      //   dispatch(
-      //     magnetogramSlice.actions.replaceStructuralElements(
-      //       data.structuralElements
-      //     )
-      //   );
-      //   dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
-      // }, 0);
     } catch (error) {
       alert("Ошибка загрузки данных");
       console.error(error);
@@ -90,17 +50,18 @@ export const loadMagnetogramById =
 
 /**
  * Добавляет новый элемент магнитограмы
- * @param discrition описание
  * @param type тип элемента
  * @param leftCoordinateX левая кооррдината по оси Х
  * @param rightCoordinateX правая кооррдината по оси Х
+ * @param discrition описание
+ * @param structuralElementType тип конструктивного элемента
  */
 export const addMagnetogramElement =
   (
-    description: string,
     type: MagnetogramElementType,
     leftCoordinateX: number,
     rightCoordinateX: number,
+    description?: string,
     structuralElementType?: StructuralElementType
   ) =>
   (dispatch: AppDispatch, getState: () => RootState) => {
@@ -111,7 +72,7 @@ export const addMagnetogramElement =
     if (type === "defect") {
       const newDefect: Defect = {
         id: "",
-        description: description,
+        description: description ?? "",
         type: type,
         leftCoordinateX: leftCoordinateX,
         rightCoordinateX: rightCoordinateX,
@@ -139,6 +100,7 @@ export const addMagnetogramElement =
           newStructuralElement,
         ])
       );
+      dispatch(сalculateDefectInfo(defects));
     }
   };
 
@@ -205,6 +167,7 @@ export const updateElementCoordinates =
         );
       }
     }
+    dispatch(сalculateDefectInfo(defects));
   };
 
 /**
@@ -280,6 +243,7 @@ export const removeMagnetogramElement =
         )
       );
     }
+    dispatch(сalculateDefectInfo(defects));
   };
 
 /**
@@ -320,3 +284,67 @@ export const reverseMagnetogramElementEnable =
       }
     }
   };
+
+/**
+ * Для каждого дефекта расчитывает и устанавивает количество структурных элементов справа и слева
+ */
+export const сalculateDefectInfo =
+  (defects: Defect[]) => (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+    const { structuralElements } = magnetogramSelector(state);
+
+    const newDefects = defects.map((defect) => {
+      const { left, right } = structuralElements.reduce(
+        (acc: LeftRightSplit, structuralElement) => {
+          if (structuralElement.leftCoordinateX <= defect.leftCoordinateX) {
+            acc.left.push(structuralElement);
+          } else {
+            acc.right.push(structuralElement);
+          }
+          return acc;
+        },
+        {
+          left: [],
+          right: [],
+        }
+      );
+
+      const result: Defect = {
+        ...defect,
+        leftStructuralElementCount: {
+          None: 0,
+          WeldSeam: calculateCount(left, "WeldSeam"),
+          Bend: calculateCount(left, "Bend"),
+          Branching: calculateCount(left, "Branching"),
+          Patch: calculateCount(left, "Patch"),
+        },
+        rightStructuralElementCount: {
+          None: 0,
+          WeldSeam: calculateCount(right, "WeldSeam"),
+          Bend: calculateCount(right, "Bend"),
+          Branching: calculateCount(right, "Branching"),
+          Patch: calculateCount(right, "Patch"),
+        },
+      };
+
+      return result;
+    });
+
+    dispatch(magnetogramSlice.actions.replaceDefects(newDefects));
+    newDefects;
+  };
+
+/**
+ * Вычисляет количество структурных элементов определенного типа
+ * @param arr массив структурных элементов
+ * @param structuralElementType тип структурного элемента
+ * @returns количество структурных элементов
+ */
+const calculateCount = (
+  arr: StructuralElement[],
+  structuralElementType: StructuralElementType
+) => {
+  return arr.reduce((acc, item) => {
+    return item.structuralElementType === structuralElementType ? acc + 1 : acc;
+  }, 0);
+};

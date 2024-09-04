@@ -7,16 +7,20 @@ import { Text } from "@consta/uikit/Text";
 import { TextField } from "@consta/uikit/TextField";
 import { Switch } from "@consta/uikit/Switch";
 import { Select } from "@consta/uikit/Select";
-import { structuralElementConfig } from "./structuralElementConfig";
+import {
+  structuralElementConfig,
+  StructuralElementConfigItem,
+} from "./structuralElementConfig";
 import css from "./style.css";
 import { addMagnetogramElement, useAppDispatch } from "../../store";
+import {
+  StructuralElementNames,
+  StructuralElementType,
+  StructuralElementTypes,
+} from "../../types";
+import { getStructuralElementLocalType } from "../../utils";
 
 const MAX_MAGNETOGRAM_WIDTH = 4096;
-
-type Item = {
-  label: string;
-  id: number;
-};
 
 export const AddNewMagnetogramElementForm: FC<
   AddNewMagnetogramElementProps
@@ -35,7 +39,7 @@ export const AddNewMagnetogramElementForm: FC<
     useState<boolean>(false);
   const [description, setDescription] = useState<string>("");
   const [structuralElementType, setStructuralElementType] =
-    useState<Item | null>(null);
+    useState<StructuralElementConfigItem | null>(null);
 
   const dispatch = useAppDispatch();
 
@@ -62,14 +66,28 @@ export const AddNewMagnetogramElementForm: FC<
     setDescription(value ?? "");
   };
 
-  const onChangeStructuralElementType = ({ value }: { value: Item | null }) => {
+  const onChangeStructuralElementType = ({
+    value,
+  }: {
+    value: StructuralElementConfigItem | null;
+  }) => {
     setStructuralElementType(value);
   };
 
   const onAddNewMagnetogramElement = () => {
     const type = isDefectCheked ? "defect" : "structuralElement";
+    const seType = structuralElementType
+      ? getStructuralElementLocalType(structuralElementType.id)
+      : undefined;
+
     dispatch(
-      addMagnetogramElement(description, type, leftCoordinate, rightCoordinate)
+      addMagnetogramElement(
+        type,
+        leftCoordinate,
+        rightCoordinate,
+        description,
+        seType
+      )
     );
     onCloseModal();
   };

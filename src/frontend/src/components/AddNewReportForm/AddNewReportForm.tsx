@@ -10,6 +10,7 @@ import { DragNDropField } from "@consta/uikit/DragNDropField";
 import { Attachment } from "@consta/uikit/Attachment";
 
 import css from "./style.css";
+import { humanFileSize } from "../../utils";
 
 export const AddNewReportForm: FC<AddNewReportFormProps> = ({
   onAddNewReport,
@@ -27,13 +28,6 @@ export const AddNewReportForm: FC<AddNewReportFormProps> = ({
 
   const onDeleteFile = () => {
     setFile(null);
-  };
-
-  const humanFileSize = (size: number) => {
-    const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-    return `${Number(size / Math.pow(1024, i)).toFixed(2)} ${
-      ["Б", "Кб", "Мб", "Кб", "Тб"][i]
-    }`;
   };
 
   const isSaveDisabled = !reportName || !file;
@@ -107,6 +101,7 @@ export const AddNewReportForm: FC<AddNewReportFormProps> = ({
         size="m"
         onClick={() => {
           onAddNewReport(reportName, file);
+          onCloseModal();
         }}
         disabled={isSaveDisabled}
       />

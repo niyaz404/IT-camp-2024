@@ -1,3 +1,5 @@
+import { Values } from "../common";
+
 export type MagnetogramElementType = "defect" | "structuralElement";
 
 export type MarkerSide = "left" | "right";
@@ -10,6 +12,7 @@ export const StructuralElementNames = {
   Patch: "Заплатка",
 } as const;
 
+export type StructuralElementName = Values<typeof StructuralElementNames>;
 export type StructuralElementType = keyof typeof StructuralElementNames;
 
 export const StructuralElementTypes = {

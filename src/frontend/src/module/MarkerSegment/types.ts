@@ -1,4 +1,8 @@
-import { MagnetogramElement } from "../../types";
+import {
+  MagnetogramElement,
+  StructuralElementCount,
+  StructuralElementType,
+} from "../../types";
 
 export type MarkerSegmentProps = {
   element: MagnetogramElement;

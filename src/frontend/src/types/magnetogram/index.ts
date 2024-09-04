@@ -6,6 +6,8 @@ export type {
   StructuralElement,
   MarkerSide,
   StructuralElementType,
+  StructuralElementCount,
+  StructuralElementName,
 } from "./types";
 
 export { StructuralElementNames, StructuralElementTypes } from "./types";

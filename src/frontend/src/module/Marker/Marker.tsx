@@ -9,11 +9,15 @@ import { IconTrash } from "@consta/uikit/IconTrash";
 import { IconLock } from "@consta/uikit/IconLock";
 import { IconUnlock } from "@consta/uikit/IconUnlock";
 import {
+  defectSelector,
+  structuralElementSelector,
   removeMagnetogramElement,
   reverseMagnetogramElementEnable,
   updateElementCoordinates,
   useAppDispatch,
+  useAppSelector,
 } from "../../store";
+import { StructuralElementNames } from "../../types";
 
 export const Marker: FC<MarkerProps> = ({
   id,
@@ -31,6 +35,12 @@ export const Marker: FC<MarkerProps> = ({
   const [isContextMenuVisible, setIsContextMenuVisible] =
     useState<boolean>(false);
 
+  const currentDefect = useAppSelector((state) => defectSelector(state, id));
+
+  const currentStructuralElement = useAppSelector((state) =>
+    structuralElementSelector(state, id)
+  );
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -47,6 +57,15 @@ export const Marker: FC<MarkerProps> = ({
     "0,8 8,0 16,8 9,16 9,526 16,534 8,542 0,534 7,526 7,16";
 
   const points = type === "defect" ? defectPoints : structutalElementPoints;
+
+  const rightStructuralElementCount =
+    currentDefect && currentDefect.rightStructuralElementCount;
+
+  const leftStructuralElementCount =
+    currentDefect && currentDefect.leftStructuralElementCount;
+
+  const structuralElementType =
+    currentStructuralElement && currentStructuralElement.structuralElementType;
 
   const SvgWithTooltip = withTooltip(() => {
     return (
@@ -89,9 +108,15 @@ export const Marker: FC<MarkerProps> = ({
     dispatch(updateElementCoordinates(id, type, newCoordinate, side));
   };
 
-  const defectTooltipText = `Ближайший левый конструктивный элемент: Сварной шов №1. Ближайший правый конструктивный элемент: Сварной шов №2. Координата: ${coordinate}`;
+  const leftCounts = `Кол-во. структурных элементов слева: ${StructuralElementNames.WeldSeam} ${leftStructuralElementCount?.WeldSeam}, ${StructuralElementNames.Bend} ${leftStructuralElementCount?.Bend}, ${StructuralElementNames.Branching} ${leftStructuralElementCount?.Branching}, ${StructuralElementNames.Patch} ${leftStructuralElementCount?.Patch}`;
 
-  const structuralElementTooltipText = `Тип конструктивного элемента: Заплатка. Координата: ${coordinate}`;
+  const rightCounts = `Кол-во. структурных элементов справа: ${StructuralElementNames.WeldSeam} ${rightStructuralElementCount?.WeldSeam}, ${StructuralElementNames.Bend} ${rightStructuralElementCount?.Bend}, ${StructuralElementNames.Branching} ${rightStructuralElementCount?.Branching}, ${StructuralElementNames.Patch} ${rightStructuralElementCount?.Patch}`;
+
+  const defectTooltipText = `${leftCounts}. ${rightCounts}. Координата: ${coordinate}`;
+
+  const structuralElementTooltipText = `Тип конструктивного элемента: ${
+    structuralElementType && StructuralElementNames[structuralElementType]
+  }. Координата: ${coordinate}`;
 
   const tooltipText =
     type === "defect" ? defectTooltipText : structuralElementTooltipText;

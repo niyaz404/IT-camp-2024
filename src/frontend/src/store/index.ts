@@ -22,5 +22,7 @@ export {
   castMagnetogram,
   castStructuralElement,
   castStructuralElementToLocal,
+  defectSelector,
+  structuralElementSelector,
 } from "./magnetogram";
 export { authSelector } from "./auth";

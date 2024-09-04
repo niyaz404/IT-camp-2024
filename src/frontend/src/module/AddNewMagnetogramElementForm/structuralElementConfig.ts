@@ -1,22 +1,29 @@
-export const structuralElementConfig = [
+import { StructuralElementNames, StructuralElementName } from "../../types";
+
+export type StructuralElementConfigItem = {
+  id: number;
+  label: StructuralElementName;
+};
+
+export const structuralElementConfig: StructuralElementConfigItem[] = [
   {
     id: 0,
-    label: "Чистая труба",
+    label: StructuralElementNames.None,
   },
   {
     id: 1,
-    label: "Сварной шов",
+    label: StructuralElementNames.WeldSeam,
   },
   {
     id: 2,
-    label: "Изгиб",
+    label: StructuralElementNames.Bend,
   },
   {
     id: 3,
-    label: "Разветвление",
+    label: StructuralElementNames.Branching,
   },
   {
     id: 4,
-    label: "Заплатка",
+    label: StructuralElementNames.Patch,
   },
 ];

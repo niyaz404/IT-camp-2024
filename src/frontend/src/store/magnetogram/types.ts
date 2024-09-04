@@ -10,3 +10,8 @@ export type InitialMagnetogramState = {
   isDefectsVisible: boolean;
   isStructuralElementsVisible: boolean;
 };
+
+export type LeftRightSplit = {
+  left: StructuralElement[];
+  right: StructuralElement[];
+};
