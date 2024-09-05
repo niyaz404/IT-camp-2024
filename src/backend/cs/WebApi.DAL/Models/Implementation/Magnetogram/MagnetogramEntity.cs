@@ -12,7 +12,7 @@ public class MagnetogramEntity : BaseEntity
     /// Идентификатор магнитограммы
     /// </summary>
     [Column("id")]
-    public string Id { get; set; }
+    public Guid Id { get; set; }
     
     /// <summary>
     /// ФИО загрузившего магнитограмму

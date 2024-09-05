@@ -14,14 +14,4 @@ public class DefectDto : MagnetogramElementDto
     /// Дополнительное описание элемета
     /// </summary>
     public string Description { get; set; }
-    
-    /// <summary>
-    /// Идентификатор ближайшего структурного элемента слева
-    /// </summary>
-    public string LeftStructuralElementId { get; set; }
-    
-    /// <summary>
-    /// Идентификатор ближайшего структурного элемента справа
-    /// </summary>
-    public string RightStructuralElementId { get; set; }
 }

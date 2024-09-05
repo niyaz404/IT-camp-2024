@@ -10,12 +10,12 @@ public class CommitEntity : BaseEntity
     /// <summary>
     /// Идентификатор денных о магнитограмме
     /// </summary>
-    public string Id { get; set; }
+    public Guid Id { get; set; }
     
     /// <summary>
     /// Идентификатор магнитограммы
     /// </summary>
-    public string MagnetogramId { get; set; }
+    public Guid MagnetogramId { get; set; }
     
     /// <summary>
     /// Наименование фиксации
@@ -35,12 +35,12 @@ public class CommitEntity : BaseEntity
     /// <summary>
     /// Список идентификаторов дефектов
     /// </summary>
-    public string[] DefectIds { get; set; }
+    public Guid[] DefectIds { get; set; }
     
     /// <summary>
     /// Список идентификаторов конструктивных элементов
     /// </summary>
-    public string[] StructuralElementIds { get; set; }
+    public Guid[] StructuralElementIds { get; set; }
     
     /// <summary>
     /// Файл обработанной магнитограммы

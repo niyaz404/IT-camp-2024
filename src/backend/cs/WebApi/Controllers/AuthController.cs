@@ -31,15 +31,6 @@ namespace WebAPI.Controllers
             var requestContent = new StringContent(JsonConvert.SerializeObject(userCredentials), Encoding.UTF8, "application/json");
             
             var authServiceUrl = _configuration.GetValue<string>("AuthService:Url");
-            var check = await _httpClient.GetAsync($"{authServiceUrl}/health/check");
-            var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("http://localhost:5000/");
-            
-            // Настройка HttpClient, если требуется (например, заголовки)
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            
-            var ch = await httpClient.GetAsync("http://localhost:5000/health/check");
             var response = await _httpClient.PostAsync($"{authServiceUrl}/api/auth/generatetoken", requestContent);
             
             if (!response.IsSuccessStatusCode)
@@ -54,7 +45,7 @@ namespace WebAPI.Controllers
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(tokenResponse.Token) as JwtSecurityToken;
             var role = jsonToken?.Claims.First(claim => claim.Type == "role").Value;
-
+            
             return Ok(new { Token = tokenResponse.Token, Role = role });
         }
     }

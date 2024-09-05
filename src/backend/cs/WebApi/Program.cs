@@ -3,6 +3,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Unity.Microsoft.DependencyInjection;
+using WebApi.Mappings;
 
 namespace WebApi;
 
@@ -18,13 +20,17 @@ public class Program
                 policy  =>
                 {
                     policy
-                        .AllowAnyOrigin()
-                        //.WithOrigins("http://localhost:80", "http://frontend:80", "http://localhost:3000", "http://frontend:3000", "http://webapi:8002")
+                        .WithOrigins("http://localhost:80", "http://frontend:80", "http://localhost:3000", "http://frontend:3000", "http://webapi:8002")
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });  
         });  
 
+        builder.Services.AddAutoMapper(
+            typeof(MappingProfile).Assembly, 
+            typeof(WebApi.BLL.Mappings.MappingProfile).Assembly
+        );
+        
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

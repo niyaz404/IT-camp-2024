@@ -8,12 +8,12 @@ public class ReportModel
     /// <summary>
     /// Идентификатор отчета
     /// </summary>
-    public string Id { get; set; }
+    public Guid Id { get; set; }
     
     /// <summary>
     /// Идентификатор данных о магнитограмме
     /// </summary>
-    public string CommitId { get; set; }
+    public Guid CommitId { get; set; }
     
     /// <summary>
     /// Дата создания отчета

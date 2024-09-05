@@ -8,7 +8,7 @@ public class CommitDto
     /// <summary>
     /// Идентификатор исходной магнитограммы
     /// </summary>
-    public string MagnetogramId { get; set; }
+    public Guid MagnetogramId { get; set; }
     
     /// <summary>
     /// Наименование фиксации
