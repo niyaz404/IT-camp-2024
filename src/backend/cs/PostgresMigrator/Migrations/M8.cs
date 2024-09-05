@@ -25,7 +25,7 @@ namespace PostgresMigrator.Migrations
                     .ForeignKey("magnetogramid", PgTables.Schema, _magnetogramTableName, "id")
                     .WithColumnDescription("Идентификатор магнитограммы")
 
-                    .WithColumn("name").AsString()
+                    .WithColumn("name").AsString().Nullable()
                     .WithColumnDescription("Название обработки")
 
                     .WithColumn("createdat").AsDateTime().NotNullable()
