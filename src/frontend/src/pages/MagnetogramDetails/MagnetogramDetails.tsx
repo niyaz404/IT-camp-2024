@@ -11,6 +11,7 @@ import {
   magnetogramSelector,
   saveMagnetogram,
   setIsDefectsVisible,
+  setIsShowOriginalImage,
   setIsStructuralElementsVisible,
   useAppDispatch,
   useAppSelector,
@@ -29,6 +30,7 @@ export const MagnetogramDetails = () => {
     isDefectsVisible,
     isStructuralElementsVisible,
     isLoading,
+    isShowOriginalImage,
   } = useAppSelector(magnetogramSelector);
 
   const dispatch = useAppDispatch();
@@ -64,6 +66,10 @@ export const MagnetogramDetails = () => {
     dispatch(setIsStructuralElementsVisible(checked));
   };
 
+  const onShowOriginalImageSwitchChange = (checked: boolean) => {
+    dispatch(setIsShowOriginalImage(checked));
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -78,6 +84,8 @@ export const MagnetogramDetails = () => {
         onStructuralElementsSwitchChange={onStructuralElementsSwitchChange}
         onAddNewElement={onOpenModal}
         onSave={onSave}
+        isShowOriginalImageCheked={isShowOriginalImage}
+        onShowOriginalImageSwitchChange={onShowOriginalImageSwitchChange}
       />
 
       <MagnetogramWrapper

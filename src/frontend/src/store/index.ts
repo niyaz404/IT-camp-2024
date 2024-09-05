@@ -24,6 +24,7 @@ export {
   castStructuralElementToLocal,
   defectSelector,
   structuralElementSelector,
+  setIsShowOriginalImage,
 } from "./magnetogram";
 export {
   authSelector,

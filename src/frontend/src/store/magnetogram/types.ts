@@ -6,9 +6,11 @@ export type InitialMagnetogramState = {
   defects: Defect[];
   structuralElements: StructuralElement[];
   processedImage: string | undefined;
+  originalImage: string | undefined;
   isLoading: boolean;
   isDefectsVisible: boolean;
   isStructuralElementsVisible: boolean;
+  isShowOriginalImage: boolean;
 };
 
 export type LeftRightSplit = {

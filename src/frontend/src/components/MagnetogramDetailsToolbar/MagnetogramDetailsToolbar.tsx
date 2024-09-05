@@ -15,6 +15,8 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
   name,
   isDefectsCheked,
   isStructuralElementsCheked,
+  isShowOriginalImageCheked,
+  onShowOriginalImageSwitchChange,
   onDefectsSwitchChange,
   onStructuralElementsSwitchChange,
   onAddNewElement,
@@ -22,7 +24,7 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
 }) => {
   return (
     <div
-      className={`container-row justify-between w-100 p-h-8 p-v-4 ${css.toolbar}`}
+      className={`container-row justify-between align-center w-100 p-h-8 p-v-4 ${css.toolbar}`}
     >
       <div className="container-row align-center">
         <Text size="2xl" weight="bold">
@@ -56,6 +58,15 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
           onChange={({ checked }) => onStructuralElementsSwitchChange(checked)}
         />
         <IconStop size="s" className={css.rotate} view="secondary" />
+
+        <Delimiter />
+
+        <Switch
+          size="s"
+          label="Исходная магнитограмма"
+          checked={isShowOriginalImageCheked}
+          onChange={({ checked }) => onShowOriginalImageSwitchChange(checked)}
+        />
       </div>
       <Button
         label="Сохранить"

@@ -96,6 +96,18 @@ const replaceIsMagnetogramLoading = (
 };
 
 /**
+ * Заменяет признак отображения магнитограммы без обработки
+ * @param state текущее состояние
+ * @param action признак отображения магнитограммы без обработки
+ */
+const replaceIsShowOriginalImage = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<boolean>
+) => {
+  state.isShowOriginalImage = action.payload;
+};
+
+/**
  * Заменяет идентификатор текущей магнитограммы
  * @param state текущее состояние
  * @param action идентификатор текущей магнитограммы
@@ -108,15 +120,27 @@ const replaceMagnetogramId = (
 };
 
 /**
- * Заменяет изображение текущей магнитограммы
+ * Заменяет изображение текущей обработанной магнитограммы
  * @param state текущее состояние
- * @param action изображение текущей магнитограммы
+ * @param action изображение текущей обработанной магнитограммы
  */
-const replaceMagnetogramImage = (
+const replaceProcessedMagnetogramImage = (
   state: InitialMagnetogramState,
   action: PayloadAction<string | undefined>
 ) => {
   state.processedImage = action.payload;
+};
+
+/**
+ * Заменяет изображение текущей магнитограммы без обработки
+ * @param state текущее состояние
+ * @param action изображение текущей магнитограммы без обработки
+ */
+const replaceOriginalMagnetogramImage = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<string | undefined>
+) => {
+  state.originalImage = action.payload;
 };
 
 /**
@@ -143,8 +167,10 @@ export const magnetogramSlice = createSlice({
     replaceIsStructuralElementsVisible,
     replaceIsMagnetogramLoading,
     replaceMagnetogramId,
-    replaceMagnetogramImage,
+    replaceProcessedMagnetogramImage,
+    replaceOriginalMagnetogramImage,
     replaceName,
+    replaceIsShowOriginalImage,
   },
 });
 

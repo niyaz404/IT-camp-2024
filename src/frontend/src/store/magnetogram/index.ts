@@ -13,6 +13,7 @@ export {
   saveMagnetogram,
   removeMagnetogramElement,
   reverseMagnetogramElementEnable,
+  setIsShowOriginalImage,
 } from "./actions";
 
 export {

@@ -27,8 +27,15 @@ export const loadMagnetogramById =
       dispatch(magnetogramSlice.actions.replaceMagnetogramId(data.id));
       dispatch(magnetogramSlice.actions.replaceName(data.name));
       dispatch(
-        magnetogramSlice.actions.replaceMagnetogramImage(
-          `data:image/jpeg;base64,${data.processedImage}`
+        magnetogramSlice.actions.replaceOriginalMagnetogramImage(
+          // `data:image/jpeg;base64,${data.processedImage}`
+          "https://sun9-29.userapi.com/impg/NTJDGnhj-1aBEUJ9z0jT8zc5i4Uis8bk5TRoeQ/wAlso5jESrY.jpg?size=1280x40&quality=96&sign=e27f53dd0274d91594e1650708a0a80a&type=album"
+        )
+      );
+      dispatch(
+        magnetogramSlice.actions.replaceProcessedMagnetogramImage(
+          // `data:image/jpeg;base64,${data.processedImage}`
+          "https://psv4.userapi.com/c909618/u181754921/docs/d59/5c7bd20217eb/magnetogram_output.png?extra=TtuI8C_oP4kLOnRAMyOsLd-G7XmPklOE-MmUBB8QAExs5qlywJZR3Gk2CWs9p_nuEXF4r1PpxdK73Z9xbcUCoAUBu76fycQl2Hw2u8jZs4apJNXf7o3XnHeeJl6dctwU3tvp5Skle9cGj0RZE__eQ0aAAg"
         )
       );
       dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
@@ -41,7 +48,9 @@ export const loadMagnetogramById =
         )
       );
 
-      dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
+      setTimeout(() => {
+        dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
+      }, 5000);
     } catch (error) {
       alert("Ошибка загрузки данных");
       console.error(error);
@@ -99,6 +108,7 @@ export const addMagnetogramElement =
           newStructuralElement,
         ])
       );
+
       dispatch(сalculateDefectInfo(defects));
     }
   };
@@ -138,6 +148,7 @@ export const updateElementCoordinates =
                 rightCoordinateX: coordinateX,
               };
         dispatch(magnetogramSlice.actions.replaceDefect(newCurrentDefect));
+        dispatch(coordinatesCorrection(newCurrentDefect));
       }
     }
 
@@ -164,6 +175,7 @@ export const updateElementCoordinates =
             newCurrentStructuralElement
           )
         );
+        dispatch(coordinatesCorrection(newCurrentStructuralElement));
       }
     }
     dispatch(сalculateDefectInfo(defects));
@@ -178,6 +190,15 @@ export const setIsStructuralElementsVisible =
     dispatch(
       magnetogramSlice.actions.replaceIsStructuralElementsVisible(isVisible)
     );
+  };
+
+/**
+ * Устанавливает признак видимости структурных элементов
+ * @param value признак видимости структурных элементов
+ */
+export const setIsShowOriginalImage =
+  (value: boolean) => (dispatch: AppDispatch) => {
+    dispatch(magnetogramSlice.actions.replaceIsShowOriginalImage(value));
   };
 
 /**
@@ -347,3 +368,38 @@ const calculateCount = (
     return item.structuralElementType === structuralElementType ? acc + 1 : acc;
   }, 0);
 };
+
+/**
+ * Проверяет координаты элемента магнитограммы и при необходимости меняет их местами
+ * @param magnetogramElement элемент магнитограммы
+ */
+export const coordinatesCorrection =
+  (magnetogramElement: StructuralElement | Defect) =>
+  (dispatch: AppDispatch) => {
+    if (
+      magnetogramElement.leftCoordinateX > magnetogramElement.rightCoordinateX
+    ) {
+      if (magnetogramElement.type === "defect") {
+        const newCurrentDefect: Defect = {
+          ...(magnetogramElement as Defect),
+          leftCoordinateX: magnetogramElement.rightCoordinateX,
+          rightCoordinateX: magnetogramElement.leftCoordinateX,
+        };
+
+        dispatch(magnetogramSlice.actions.replaceDefect(newCurrentDefect));
+      }
+      if (magnetogramElement.type === "structuralElement") {
+        const newCurrentStructuralElement: StructuralElement = {
+          ...(magnetogramElement as StructuralElement),
+          leftCoordinateX: magnetogramElement.rightCoordinateX,
+          rightCoordinateX: magnetogramElement.leftCoordinateX,
+        };
+
+        dispatch(
+          magnetogramSlice.actions.replaceStructuralElement(
+            newCurrentStructuralElement
+          )
+        );
+      }
+    }
+  };

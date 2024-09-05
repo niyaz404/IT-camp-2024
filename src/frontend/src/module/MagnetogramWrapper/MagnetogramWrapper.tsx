@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useRef, useState, MouseEvent } from "react";
 import { MarkerSegment } from "../../module";
-import { useAppDispatch } from "../../store";
 import css from "./style.css";
 import { MagnetogramWrapperProps } from "./types";
 
@@ -15,8 +14,6 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
 
   const [leftOffset, setLeftOffset] = useState<number>(0);
   const [scrollOffset, setScrollOffset] = useState<number>(0);
-
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (magnetogramRef.current) {
