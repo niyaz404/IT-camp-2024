@@ -155,6 +155,18 @@ const replaceName = (
   state.name = action.payload;
 };
 
+/**
+ * Заменяет масштаб
+ * @param state текущее состояние
+ * @param action значение масштаба
+ */
+const replaceScale = (
+  state: InitialMagnetogramState,
+  action: PayloadAction<number>
+) => {
+  state.scale = action.payload;
+};
+
 export const magnetogramSlice = createSlice({
   name: "magnetogramSlice",
   initialState: initialState,
@@ -171,6 +183,7 @@ export const magnetogramSlice = createSlice({
     replaceOriginalMagnetogramImage,
     replaceName,
     replaceIsShowOriginalImage,
+    replaceScale,
   },
 });
 

@@ -11,6 +11,7 @@ export type InitialMagnetogramState = {
   isDefectsVisible: boolean;
   isStructuralElementsVisible: boolean;
   isShowOriginalImage: boolean;
+  scale: number;
 };
 
 export type LeftRightSplit = {

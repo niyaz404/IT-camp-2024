@@ -403,3 +403,11 @@ export const coordinatesCorrection =
       }
     }
   };
+
+/**
+ *  Устанавливает значение масштаба
+ * @param value значение масштаба
+ */
+export const setScale = (value: number) => (dispatch: AppDispatch) => {
+  dispatch(magnetogramSlice.actions.replaceScale(value));
+};

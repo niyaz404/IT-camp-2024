@@ -11,4 +11,5 @@ export const initialState: InitialMagnetogramState = {
   isDefectsVisible: true,
   isStructuralElementsVisible: true,
   isShowOriginalImage: false,
+  scale: 0,
 };

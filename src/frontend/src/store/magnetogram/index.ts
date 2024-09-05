@@ -14,6 +14,7 @@ export {
   removeMagnetogramElement,
   reverseMagnetogramElementEnable,
   setIsShowOriginalImage,
+  setScale,
 } from "./actions";
 
 export {

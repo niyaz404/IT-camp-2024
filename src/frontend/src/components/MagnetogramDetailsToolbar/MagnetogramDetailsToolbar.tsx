@@ -7,6 +7,7 @@ import { IconShape } from "@consta/uikit/IconShape";
 import { IconSelect } from "@consta/uikit/IconSelect";
 import { IconStop } from "@consta/uikit/IconStop";
 import { IconAllDone } from "@consta/uikit/IconAllDone";
+import { Slider } from "@consta/uikit/Slider";
 
 import css from "./style.css";
 import { Delimiter } from "../../components";
@@ -21,6 +22,8 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
   onStructuralElementsSwitchChange,
   onAddNewElement,
   onSave,
+  onChangeScale,
+  scale,
 }) => {
   return (
     <div
@@ -66,6 +69,14 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
           label="Исходная магнитограмма"
           checked={isShowOriginalImageCheked}
           onChange={({ checked }) => onShowOriginalImageSwitchChange(checked)}
+        />
+
+        <Delimiter />
+
+        <Slider
+          label={`Значение ${scale}`}
+          onChange={onChangeScale}
+          value={scale}
         />
       </div>
       <Button

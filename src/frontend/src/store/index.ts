@@ -25,6 +25,7 @@ export {
   defectSelector,
   structuralElementSelector,
   setIsShowOriginalImage,
+  setScale,
 } from "./magnetogram";
 export {
   authSelector,
