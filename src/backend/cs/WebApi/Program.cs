@@ -1,9 +1,17 @@
-using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Unity.Microsoft.DependencyInjection;
+using WebApi.BLL.Services.Implementation.Auth;
+using WebApi.BLL.Services.Implementation.Commit;
+using WebApi.BLL.Services.Implementation.Magnetogram;
+using WebApi.BLL.Services.Implementation.Report;
+using WebApi.BLL.Services.Interface.Auth;
+using WebApi.BLL.Services.Interface.Commit;
+using WebApi.BLL.Services.Interface.Magnetogram;
+using WebApi.BLL.Services.Interface.Report;
+using WebApi.DAL.Providers.Implementation;
+using WebApi.DAL.Providers.Interface;
 using WebApi.Mappings;
 
 namespace WebApi;
@@ -13,23 +21,21 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+        var hosts = new[]
+            { "http://localhost:3000", "http://frontend:3000", "http://localhost:8081", "http://frontend:8081" };
         builder.Services.AddCors(options =>  
         {  
             options.AddDefaultPolicy(
                 policy  =>
                 {
                     policy
-                        .WithOrigins("http://localhost:80", "http://frontend:80", "http://localhost:3000", "http://frontend:3000", "http://webapi:8002")
+                        .WithOrigins(hosts)
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });  
-        });  
+        });
 
-        builder.Services.AddAutoMapper(
-            typeof(MappingProfile).Assembly, 
-            typeof(WebApi.BLL.Mappings.MappingProfile).Assembly
-        );
+        ConfigureService(builder.Services);
         
         builder.Services.AddAuthentication(options =>
             {
@@ -46,7 +52,7 @@ public class Program
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = "AuthService",
                     ValidAudience = "WebAPI",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key_here"))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("itcamp_secretkey"))
                 };
             });
 
@@ -62,8 +68,7 @@ public class Program
             options.IncludeXmlComments(xmlPath);
         });
         
-        builder.Services.AddHttpClient();
-        builder.Services.AddTransient<MyCustomService>(); 
+        builder.Services.AddHttpClient(); 
 
         var app = builder.Build();
 
@@ -100,20 +105,30 @@ public class Program
         
         app.Run();
     }
-    
-    public class MyCustomService
+
+    public static void ConfigureService(IServiceCollection services)
     {
-        private readonly HttpClient _httpClient;
+        bool isRunningInDocker = Environment.GetEnvironmentVariable("IS_DOCKER_CONTAINER") == "true";
+        var authServiceUrl =
+            isRunningInDocker ? Environment.GetEnvironmentVariable("AUTH_SERVICE_URL") : "http://localhost:5000";
+        var reportServiceUrl =
+            isRunningInDocker ? Environment.GetEnvironmentVariable("REPORT_SERVICE_URL") : "http://localhost:5001";
+        var mlServiceUrl =
+            isRunningInDocker ? Environment.GetEnvironmentVariable("ML_SERVICE_URL") : "http://localhost:8080";
 
-        public MyCustomService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
-        public async Task<string> GetDataAsync(string url)
-        {
-            var response = await _httpClient.GetStringAsync(url);
-            return response;
-        }
+        services.AddScoped(_ =>  new HttpClient());
+        services.AddScoped<IAuthProvider>(p => new AuthProvider(authServiceUrl, p.GetRequiredService<HttpClient>()));
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IReportProvider>(p => new ReportProvider(reportServiceUrl, p.GetRequiredService<HttpClient>()));
+        services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<ICommitService, CommitService>();
+        services.AddScoped<IMagnetogramService, MagnetogramService>();
+        services.AddScoped<IProcessingProvider>(p => new ProcessingProvider(mlServiceUrl, p.GetRequiredService<HttpClient>()));
+        
+        services.AddAutoMapper(
+            typeof(MappingProfile).Assembly,
+            typeof(WebApi.BLL.Mappings.MappingProfile).Assembly
+        );
     }
 }

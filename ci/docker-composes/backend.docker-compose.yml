@@ -21,11 +21,11 @@ services:
       context: /../../
       dockerfile: /ci/dockerfiles/MLService.Dockerfile
     environment:
-      POSTGRES_DB: $POSTGRES_DB
-      POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-      POSTGRES_HOST: $POSTGRES_HOST
-      POSTGRES_PORT: $POSTGRES_PORT
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - "${ML_SERVICE_PORT}:${ML_SERVICE_PORT}"
     networks:
@@ -35,10 +35,10 @@ services:
     container_name: webapi_postgres_db
     image: postgres:latest
     environment:
-      POSTGRES_DB: $POSTGRES_DB
-      POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-      POSTGRES_HOST: $POSTGRES_HOST
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
     ports:
       - "5432:5432"
     volumes:
@@ -54,11 +54,11 @@ services:
     depends_on:
       - webapi_postgres
     environment:
-      POSTGRES_HOST: $POSTGRES_HOST
-      POSTGRES_PORT: $POSTGRES_PORT
-      POSTGRES_DB: $POSTGRES_DB
-      POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - itcamp_network
 
@@ -67,6 +67,11 @@ services:
     build:
       context: /../../
       dockerfile: /ci/dockerfiles/WebApi.Dockerfile
+    environment:    
+      FRONTEND_URL: ${FRONT_HOST}:${FRONT_PORT}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_HOST}:${AUTH_SERVICE_PORT}
+      REPORT_SERVICE_URL: ${REPORT_SERVICE_HOST}:${REPORT_SERVICE_HOST}
+      ML_SERVICE_URL: ${ML_SERVICE_HOST}:${ML_SERVICE_PORT}
     ports:
       - "${BFF_PORT}:${BFF_PORT}"
     networks:
@@ -102,9 +107,9 @@ services:
       context: /../../
       dockerfile: /ci/dockerfiles/AuthPostgres.Dockerfile
       args:
-        POSTGRES_DB: $AUTH_POSTGRES_DB
-        POSTGRES_USER: $AUTH_POSTGRES_USER
-        POSTGRES_PASSWORD: $AUTH_POSTGRES_PASSWORD
+        POSTGRES_DB: ${AUTH_POSTGRES_DB}
+        POSTGRES_USER: ${AUTH_POSTGRES_USER}
+        POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
@@ -120,11 +125,11 @@ services:
     depends_on:
       - auth_postgres
     environment:
-      POSTGRES_HOST: $AUTH_POSTGRES_HOST
-      POSTGRES_DB: $AUTH_POSTGRES_DB
-      POSTGRES_USER: $AUTH_POSTGRES_USER
-      POSTGRES_PASSWORD: $AUTH_POSTGRES_PASSWORD
-      POSTGRES_PORT: $POSTGRES_PORT
+      POSTGRES_HOST: ${AUTH_POSTGRES_HOST}
+      POSTGRES_DB: ${AUTH_POSTGRES_DB}
+      POSTGRES_USER: ${AUTH_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
     networks:
       - itcamp_network
 
