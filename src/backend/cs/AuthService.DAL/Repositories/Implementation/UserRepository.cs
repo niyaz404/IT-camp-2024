@@ -18,6 +18,14 @@ public class UserRepository(string connectionString) : Repository(connectionStri
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryFirstOrDefaultAsync<UserEntity>(sql, new { login });
     }
+    
+    public async Task<Guid> SelectIdByLogin(string login)
+    {
+        var sql = $"select id from {_mainTableName} where login=:login";
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+        return await connection.QueryFirstOrDefaultAsync<Guid>(sql, new { login });
+    }
 
     public async Task Insert(UserEntity user)
     {

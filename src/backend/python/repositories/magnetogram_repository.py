@@ -139,8 +139,8 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                 c.createdat,
                 c.createdby,
                 c.magnetogramid,
-                m.name file_name,
-                m.processedmagnetogram,
+                m.file file_name,
+                c.processedimage,
                 d.id defect_id,
                 d.description defect_description,
                 d.startx defect_startx,
@@ -186,10 +186,9 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                 row["structural_element_id"],
                 magnetogram.StructuralUnitResponse(
                     id=row["structural_element_id"],
-                    description=row["structural_element_description"],
                     startx=row["structural_element_startx"],
                     endx=row["structural_element_endx"],
-                    type_id=row["typeid"],
+                    type_id=row["elementtypeid"],
                     type_name=row["name"]
                 )
             )
@@ -198,7 +197,7 @@ class MagnetogramRepository(base_repository.AbstractRepository):
             id=rows[0]["id"],
             user_name=rows[0]["createdby"],
             name=rows[0]["file_name"],
-            processed_magnetogram=rows[0]["processedmagnetogram"],
+            processed_magnetogram=rows[0]["processedimage"],
             created_at=rows[0]["createdat"],
             defects=list(unique_defects.values()),
             structural_units=list(unique_structural_elements.values())
@@ -259,13 +258,19 @@ class MagnetogramRepository(base_repository.AbstractRepository):
             ) for defect in defect_params
         ]
 
+        created_at = commit_data.created_at
+
+        if created_at.tzinfo is None:
+            # Если tzinfo отсутствует, добавляем UTC
+            created_at = created_at.replace(tzinfo=timezone.utc);
+
         async with self.pool.acquire() as connection:
             async with connection.transaction():
                 await connection.execute(
                     insert_commit_query,
                     commit_id,
                     commit_data.magnetogram_id,
-                    commit_data.created_at,
+                    created_at,
                     commit_data.user_name
                 )
 

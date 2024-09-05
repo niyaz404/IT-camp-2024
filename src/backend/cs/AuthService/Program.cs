@@ -1,9 +1,11 @@
 using System.Text;
-using AuthService.DI;
+using AuthService.BLL.Services.Implementation;
+using AuthService.BLL.Services.Interface;
+using AuthService.DAL.Repositories.Implementation;
+using AuthService.DAL.Repositories.Interface;
 using AuthService.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Unity;
 
 namespace AuthService;
 
@@ -12,33 +14,9 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-        builder.Services.AddCors(options =>  
-        {  
-            options.AddDefaultPolicy(
-                policy  =>
-                {
-                    policy
-                        .AllowAnyOrigin()
-                        //.WithOrigins("http://localhost:80", "http://frontend:80", "http://localhost:3000", "http://frontend:3000", "http://webapi:8002")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
-                });  
-        });
         
-        var container = new UnityContainer();
-                        
-        // Регистрация зависимостей в Unity
-        UnityConfig.ConfigureServices(builder.Services);
-                        
-        // Использование UnityServiceProvider для интеграции с ASP.NET Core DI
-        //builder.Services.AddSingleton<IServiceProvider>(new UnityServiceProviderFactory(container));
-        
-        builder.Services.AddAutoMapper(
-            typeof(MappingProfile).Assembly, 
-            typeof(AuthService.BLL.Mappings.MappingProfile).Assembly
-            );
+        ConfigureService(builder.Services);
+       
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -86,5 +64,20 @@ public class Program
         });
 
         app.Run();
+    }
+
+    public static void ConfigureService(IServiceCollection services)
+    {
+        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
+                               "Host=localhost;Port=5433;Username=auth;Password=password;Database=auth;";
+        
+        services.AddScoped<IUserRepository>(_ =>  new UserRepository(connectionString));
+        services.AddScoped<IUserToRoleRepository>(_ => new UserToToRoleRepository(connectionString));
+        services.AddScoped<IUserService, UserService>();
+        
+        services.AddAutoMapper(
+            typeof(MappingProfile).Assembly, 
+            typeof(AuthService.BLL.Mappings.MappingProfile).Assembly
+        );
     }
 }

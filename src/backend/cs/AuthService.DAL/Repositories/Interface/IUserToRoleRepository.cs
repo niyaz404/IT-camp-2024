@@ -1,16 +1,18 @@
-﻿namespace AuthService.DAL.Repositories.Interface;
+﻿using AuthService.DAL.Models;
+
+namespace AuthService.DAL.Repositories.Interface;
 
 /// <summary>
 /// Интерфейс репозитория Связи пользователя и роли
 /// </summary>
-public interface IUserRoleRepository
+public interface IUserToRoleRepository
 {
     /// <summary>
     /// Добавление связи пользователя и роли
     /// </summary>
     /// <param name="userId">Идентификатор пользователя</param>
     /// <param name="roleId">Идентификатор роли</param>
-    public Task Insert(string userId, int roleId);
+    public Task Insert(UserToRoleEntity userToRole);
 
     /// <summary>
     /// Получение идентификаторов ролей по идентификатору пользователя

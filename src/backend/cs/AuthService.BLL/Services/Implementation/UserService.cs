@@ -16,11 +16,13 @@ namespace AuthService.BLL.Services.Implementation;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IUserToRoleRepository _userToRoleRepository;
     private readonly IMapper _mapper;
 
-    public UserService(IUserRepository userRepository, IMapper mapper)
+    public UserService(IUserRepository userRepository, IUserToRoleRepository userToRoleRepository, IMapper mapper)
     {
         _userRepository = userRepository;
+        _userToRoleRepository = userToRoleRepository;
         _mapper = mapper;
     }
     
@@ -62,14 +64,14 @@ public class UserService : IUserService
 
     public async Task Register(UserModel user)
     {
-        if(_userRepository.SelectByLogin(user.Login) != null)
+        if(await _userRepository.SelectByLogin(user.Login) != null)
             throw new Exception("User already exist");
 
-        var salt = PasswordHelper.GenerateSalt();
-        var hashedPassword = PasswordHelper.HashPassword(user.Password, salt);
-
-        var userEntity = new UserEntity();
+        var userEntity = _mapper.Map<UserEntity>(user);
 
         await _userRepository.Insert(userEntity);
+
+        await _userToRoleRepository.Insert(new UserToRoleEntity
+            { UserId = await _userRepository.SelectIdByLogin(user.Login), RoleId = user.RoleId });
     }
 }

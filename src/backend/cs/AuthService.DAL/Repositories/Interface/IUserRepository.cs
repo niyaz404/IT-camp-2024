@@ -18,4 +18,10 @@ public interface IUserRepository
     /// </summary>
     /// <param name="user">Сущность ползователя</param>
     public Task Insert(UserEntity user);
+    
+    /// <summary>
+    /// Получение идентификатора пользователя по логину
+    /// </summary>
+    /// <param name="login">Логин ползователя</param>
+    public Task<Guid> SelectIdByLogin(string login);
 }

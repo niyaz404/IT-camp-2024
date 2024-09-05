@@ -8,7 +8,7 @@ public class UserEntity
     /// <summary>
     /// Идентификатор пользователя
     /// </summary>
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     
     /// <summary>
     /// Фио пользователя
