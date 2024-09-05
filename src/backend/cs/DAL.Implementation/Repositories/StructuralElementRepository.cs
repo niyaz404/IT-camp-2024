@@ -25,14 +25,16 @@ public class StructuralElementRepository : Repository, IStructuralElementReposit
     public async Task<IEnumerable<StructuralElementEntity>> SelectByCommitId(Guid commitId)
     {
         var structuralElementIds = await _structuralElementToCommitRepository.SelectStructuralElementIdsByCommitIds(commitId);
-            
+        
         var sql = $@"
-            select id,
-                   elementtypeid as structuralelementtypeid,
-                   startx as startxcoordinate,
-                   endx as endxcoordinate
-            from {_mainTableName} 
-            where id = any(:structuralElementIds)";
+            select se.id,
+                   se.elementtypeid as typeid,
+                   t.name as typename,
+                   se.startx as startxcoordinate,
+                   se.endx as endxcoordinate
+            from {_mainTableName} se
+            join itcamp.structuralelementtype t on se.elementtypeid = t.id
+            where se.id = any(:structuralElementIds)";
     
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryAsync<StructuralElementEntity>(sql, new { structuralElementIds });
