@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ReportTable } from "../../module";
-import { AddNewReportForm, RegistryHeader } from "../../components";
+import {
+  AddNewReportForm,
+  RegistryHeader,
+  RegistryPlaceholder,
+} from "../../components";
 import { Modal } from "@consta/uikit/Modal";
 import { Layout } from "@consta/uikit/Layout";
 import { check } from "../../api";
@@ -46,6 +50,10 @@ export const Registry = () => {
 
   if (isLoading === true) {
     return <Loader />;
+  }
+
+  if (reportRowData.length === 0 && isLoading === false) {
+    return <RegistryPlaceholder onOpenModal={onOpenModal} />;
   }
 
   return (

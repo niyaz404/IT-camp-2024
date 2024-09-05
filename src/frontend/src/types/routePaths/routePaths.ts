@@ -3,4 +3,5 @@ export const RoutePaths = {
   Registry: "/registry",
   Auth: "/auth",
   All: "/*",
+  Home: "/",
 } as const;

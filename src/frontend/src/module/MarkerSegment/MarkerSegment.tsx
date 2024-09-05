@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState, MouseEvent } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Marker } from "../../module";
 import css from "./style.css";
 import { MarkerSegmentProps } from "./types";
