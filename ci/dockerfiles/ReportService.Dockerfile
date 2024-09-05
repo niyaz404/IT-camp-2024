@@ -3,7 +3,9 @@
 WORKDIR /app
 COPY /src/backend/cs/ReportService/ ./ReportService/
 COPY /src/backend/cs/ReportService.BLL/ ./ReportService.BLL/
-COPY /src/backend/cs/ReportService.DAL/ ./ReportService.DAL/
+COPY /src/backend/cs/Consts/ ./Consts/
+COPY /src/backend/cs/DAL.Abstract/ ./DAL.Abstract/
+COPY /src/backend/cs/DAL.Implementation/ ./DAL.Implementation/
 
 # Восстанавливаем зависимости для проекта ReportService
 RUN dotnet restore ReportService/ReportService.csproj
