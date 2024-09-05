@@ -1,4 +1,5 @@
 import uuid
+import pytz
 
 import asyncpg
 
@@ -41,8 +42,8 @@ class MagnetogramRepository(base_repository.AbstractRepository):
             VALUES ($1, $2, $3, $4)
         """
         insert_commit_query = """
-            INSERT INTO itcamp.commit (id, magnetogramid, createdat, createdby)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO itcamp.commit (id, magnetogramid, name, createdat, createdby)
+            VALUES ($1, $2, $3, $4, $5)
         """
         insert_defects_query = """
             INSERT INTO itcamp.defect (id, description, startx, endx)
@@ -101,6 +102,7 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                     insert_commit_query,
                     commit_id,
                     magnetogram_model.id,
+                    magnetogram_model.name,
                     magnetogram_model.created_at,
                     magnetogram_model.user_name
                 )
@@ -220,8 +222,8 @@ class MagnetogramRepository(base_repository.AbstractRepository):
             VALUES ($1, $2, $3, $4)
         """
         insert_structural_elements_query = """
-            INSERT INTO itcamp.structuralelement (id, typeid, startx, endx)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO itcamp.structuralelement (id, elementtypeid, startx, endx)
+            VALUES ($1, $2, $3, $4)
         """
         insert_structural_elements_commit_query = """
             INSERT INTO itcamp.structuralelement_commit (id, commitid, structuralelementid)
@@ -262,7 +264,7 @@ class MagnetogramRepository(base_repository.AbstractRepository):
 
         if created_at.tzinfo is None:
             # Если tzinfo отсутствует, добавляем UTC
-            created_at = created_at.replace(tzinfo=timezone.utc);
+            created_at = created_at.replace(tzinfo=pytz.timezone('Europe/Moscow'));
 
         async with self.pool.acquire() as connection:
             async with connection.transaction():
