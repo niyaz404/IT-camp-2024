@@ -31,7 +31,6 @@ class AIService:
             id=uuid.uuid4(),
             user_name=magnetogram_model.user_name,
             name=magnetogram_model.name,
-            object_name=magnetogram_model.object_name,
             file=magnetogram_model.file,
             created_at=magnetogram_model.created_at,
             processed_magnetogram=image

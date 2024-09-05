@@ -37,39 +37,39 @@ class MagnetogramRepository(base_repository.AbstractRepository):
         commit_id = uuid.uuid4()
 
         insert_magnetogram_query = """
-            INSERT INTO magnetogram (id, name, objectname, file, createdat, createdby, processedmagnetogram)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO itcamp.magnetogram (id, file, createdat, createdby)
+            VALUES ($1, $2, $3, $4)
         """
         insert_commit_query = """
-            INSERT INTO commit (id, magnetogramid, createdat, createdby)
+            INSERT INTO itcamp.commit (id, magnetogramid, createdat, createdby)
             VALUES ($1, $2, $3, $4)
         """
         insert_defects_query = """
-            INSERT INTO defect (id, description, x)
-            VALUES ($1, $2, $3)
+            INSERT INTO itcamp.defect (id, description, startx, endx)
+            VALUES ($1, $2, $3, $4)
         """
         insert_structural_elements_query = """
-            INSERT INTO structural_element (id, typeid, description, x)
+            INSERT INTO itcamp.structuralelement (id, elementtypeid, startx, endx)
             VALUES ($1, $2, $3, $4)
         """
         insert_structural_elements_commit_query = """
-            INSERT INTO structural_element_commit (id, commitid, structuralelementid)
+            INSERT INTO itcamp.structuralelement_commit (id, commitid, structuralelementid)
             VALUES ($1, $2, $3)
         """
         insert_defects_commit_query = """
-            INSERT INTO defect_commit (id, commitid, defectid)
+            INSERT INTO itcamp.defect_commit (id, commitid, defectid)
             VALUES ($1, $2, $3)
         """
 
         defect_params = [
-            (uuid.uuid4(), defect.description, defect.x) for defect in defects
+            (uuid.uuid4(), defect.description, defect.startx, defect.endx) for defect in defects
         ]
         structural_element_params = [
             (
                 uuid.uuid4(),
                 structural_element.type_id,
-                structural_element.description,
-                structural_element.x
+                structural_element.startx,
+                structural_element.endx,
             ) for structural_element in structural_elements
         ]
         structural_elements_commit_params = [
@@ -92,12 +92,9 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                 await connection.execute(
                     insert_magnetogram_query,
                     magnetogram_model.id,
-                    magnetogram_model.name,
-                    magnetogram_model.object_name,
                     magnetogram_model.file,
                     magnetogram_model.created_at,
-                    magnetogram_model.user_name,
-                    magnetogram_model.processed_magnetogram
+                    magnetogram_model.user_name
                 )
 
                 await connection.execute(
@@ -142,30 +139,30 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                 c.createdat,
                 c.createdby,
                 c.magnetogramid,
-                m.objectname,
                 m.name file_name,
                 m.processedmagnetogram,
                 d.id defect_id,
                 d.description defect_description,
-                d.x defect_x,
+                d.startx defect_startx,
+                d.endx defect_endx,
                 se.id structural_element_id,
-                se.description structural_element_description,
-                se.x structural_element_x,
-                se.typeid,
+                se.startx structural_element_startx,
+                se.endx structural_element_endx,
+                se.elementtypeid,
                 set.name
-            FROM commit c
-            JOIN magnetogram m
+            FROM itcamp.commit c
+            JOIN itcamp.magnetogram m
                 ON c.magnetogramid = m.id
-            JOIN defect_commit dc
+            JOIN itcamp.defect_commit dc
                 ON dc.commitid = c.id
-            JOIN structural_element_commit sec
+            JOIN itcamp.structuralelement_commit sec
                 ON sec.commitid = c.id
-            JOIN defect d
+            JOIN itcamp.defect d
                 ON dc.defectid = d.id
-            JOIN structural_element se
+            JOIN itcamp.structuralelement se
                 ON sec.structuralelementid = se.id
-            JOIN structural_element_type set
-                ON set.id = se.typeid
+            JOIN itcamp.structuralelementtype set
+                ON set.id = se.elementtypeid
             WHERE c.id = $1
         """
 
@@ -181,7 +178,8 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                 magnetogram.DefectResponse(
                     id=row["defect_id"],
                     description=row["defect_description"],
-                    x=row["defect_x"]
+                    startx=row["defect_startx"],
+                    endx=row["defect_endx"]
                 )
             )
             unique_structural_elements[row["structural_element_id"]] = unique_structural_elements.get(
@@ -189,7 +187,8 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                 magnetogram.StructuralUnitResponse(
                     id=row["structural_element_id"],
                     description=row["structural_element_description"],
-                    x=row["structural_element_x"],
+                    startx=row["structural_element_startx"],
+                    endx=row["structural_element_endx"],
                     type_id=row["typeid"],
                     type_name=row["name"]
                 )
@@ -199,7 +198,6 @@ class MagnetogramRepository(base_repository.AbstractRepository):
             id=rows[0]["id"],
             user_name=rows[0]["createdby"],
             name=rows[0]["file_name"],
-            object_name=rows[0]["objectname"],
             processed_magnetogram=rows[0]["processedmagnetogram"],
             created_at=rows[0]["createdat"],
             defects=list(unique_defects.values()),
@@ -215,35 +213,35 @@ class MagnetogramRepository(base_repository.AbstractRepository):
         commit_id = uuid.uuid4()
 
         insert_commit_query = """
-            INSERT INTO commit (id, magnetogramid, createdat, createdby)
+            INSERT INTO itcamp.commit (id, magnetogramid, createdat, createdby)
             VALUES ($1, $2, $3, $4)
         """
         insert_defects_query = """
-            INSERT INTO defect (id, description, x)
-            VALUES ($1, $2, $3)
-        """
-        insert_structural_elements_query = """
-            INSERT INTO structural_element (id, typeid, description, x)
+            INSERT INTO itcamp.defect (id, description, startx, endx)
             VALUES ($1, $2, $3, $4)
         """
+        insert_structural_elements_query = """
+            INSERT INTO itcamp.structuralelement (id, typeid, startx, endx)
+            VALUES ($1, $2, $3, $4, $5)
+        """
         insert_structural_elements_commit_query = """
-            INSERT INTO structural_element_commit (id, commitid, structuralelementid)
+            INSERT INTO itcamp.structuralelement_commit (id, commitid, structuralelementid)
             VALUES ($1, $2, $3)
         """
         insert_defects_commit_query = """
-            INSERT INTO defect_commit (id, commitid, defectid)
+            INSERT INTO itcamp.defect_commit (id, commitid, defectid)
             VALUES ($1, $2, $3)
         """
 
         defect_params = [
-            (uuid.uuid4(), defect.description, defect.x) for defect in commit_data.defects
+            (uuid.uuid4(), defect.description, defect.startx, defect.endx) for defect in commit_data.defects
         ]
         structural_element_params = [
             (
                 uuid.uuid4(),
                 structural_element.type_id,
-                structural_element.description,
-                structural_element.x
+                structural_element.startx,
+                structural_element.endx
             ) for structural_element in commit_data.structural_units
         ]
         structural_elements_commit_params = [

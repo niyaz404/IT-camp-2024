@@ -13,7 +13,8 @@ class Defect(base_model.BaseModel):
     """
 
     description: str = Field(description="Описание дефекта")
-    x: int = Field(description="Координата по оси X")
+    startx: int = Field(description="Координата по оси X(нач)")    
+    endx: int = Field(description="Координата по оси X(кон)")
 
 
 class DefectRequest(Defect):
@@ -38,8 +39,8 @@ class StructuralUnit(base_model.BaseModel):
     """
 
     type_id: int = Field(description="Идентификатор типа структурного элемента", alias="typeId")
-    description: str = Field(description="Описание структурного элемента")
-    x: int = Field(description="Координата по оси X", alias="x")
+    startx: int = Field(description="Координата по оси X(нач)", alias="startx")
+    endx: int = Field(description="Координата по оси X(конч)", alias="endx")
 
 
 class StructuralUnitRequest(StructuralUnit):
@@ -67,7 +68,6 @@ class Magnetogram(base_model.BaseModel):
     id: uuid.UUID | None = Field(description="Идентификатор магнитограммы", default=None)
     user_name: str = Field(description="Имя пользователя", alias="userName")
     name: str = Field(description="Название файла")
-    object_name: str = Field(description="Название объекта", alias="objectName")
     file: bytes = Field(description="Магнитограмма в формате pickle")
     created_at: datetime.datetime = Field(
         description="Дата создания магнитограммы",
@@ -111,7 +111,6 @@ class Commit(base_model.BaseModel):
     id: uuid.UUID | None = Field(description="Идентификатор коммита", default=None)
     user_name: str = Field(description="Имя пользователя", alias="createdBy")
     name: str = Field(description="Название файла")
-    object_name: str = Field(description="Название объекта", alias="objectName")
     processed_magnetogram: bytes = Field(description="Магнитограмма в формате png", alias="proccessedMagnetogram")
     created_at: datetime.datetime = Field(
         description="Дата создания магнитограммы",

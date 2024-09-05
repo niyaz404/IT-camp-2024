@@ -23,7 +23,10 @@ public class MappingProfile : Profile
         CreateMap<DefectEntity, DefectModel>();
         
         CreateMap<StructuralElementModel, StructuralElementEntity>();
-        CreateMap<StructuralElementEntity, StructuralElementModel>();
+        CreateMap<StructuralElementEntity, StructuralElementModel>()
+            .ForMember(dest => dest.Type,
+                opt => opt.MapFrom(src => new StructuralElementType { Id = src.TypeId, Name = src.TypeName }));
+
         
         CreateMap<ReportModel, ReportEntity>();
         CreateMap<ReportEntity, ReportModel>();

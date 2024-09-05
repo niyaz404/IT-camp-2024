@@ -12,7 +12,8 @@ class Defect(base_model.BaseModel):
 
     id: uuid.UUID = Field(description="Идентификатор дефекта")
     description: str | None = Field(description="Комментарий", default=None)
-    x: int = Field(description="Координата по оси X")
+    startx: int = Field(description="Координата по оси X (нач)")
+    endx: int = Field(description="Координата по оси X (КОНЧ)")
 
 
 class StructuralUnit(base_model.BaseModel):
@@ -22,9 +23,8 @@ class StructuralUnit(base_model.BaseModel):
 
     id: uuid.UUID = Field(description="Идентификатор структурного элемента")
     type_id: int = Field(description="Идентификатор структурного элемента")
-    description: str | None = Field(description="Комментарий", default=None)
-    x: int = Field(description="Координата по оси X")
-    name: str | None = Field(description="Название типа структурного элемента", default=None)
+    startx: int = Field(description="Координата по оси X (нач)")
+    endx: int = Field(description="Координата по оси X (конч)")
 
 
 class ProcessorDto(base_model.BaseModel):

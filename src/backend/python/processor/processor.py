@@ -52,10 +52,10 @@ class Processor(base_processor.AbstractProcessor):
             """
 
             if isinstance(element, ai_dto.Defect):
-                return elements[index].x - 1 == elements[index - 1].x
+                return elements[index].startx - 1 == elements[index - 1].startx
 
             return (
-                elements[index].x - 1 == elements[index - 1].x
+                elements[index].startx - 1 == elements[index - 1].startx
                 and elements[index].type_id == elements[index - 1].type_id
             )
 
@@ -77,7 +77,7 @@ class Processor(base_processor.AbstractProcessor):
                 else:
                     break
 
-            current_element.x = (elements[right_index - 1].x - elements[left_index].x) // 2 + elements[left_index].x
+            current_element.startx = (elements[right_index - 1].startx - elements[left_index].startx) // 2 + elements[left_index].startx
             left_index = right_index
             formatted.append(current_element)
 
@@ -93,30 +93,36 @@ class Processor(base_processor.AbstractProcessor):
             ai_dto.Defect(
                 id=uuid.uuid4(),
                 description="Вау, дефект",
-                x=1
+                startx=1,
+                endx=2
             ),
             ai_dto.Defect(
                 id=uuid.uuid4(),
                 description="Еще дефект",
-                x=5
+                startx=1,
+                endx=2
             ),
             ai_dto.Defect(
                 id=uuid.uuid4(),
-                x=6
+                startx=1,
+                endx=2
             ),
             ai_dto.Defect(
                 id=uuid.uuid4(),
                 description="Пупупу...",
-                x=7
+                startx=1,
+                endx=2
             ),
             ai_dto.Defect(
                 id=uuid.uuid4(),
-                x=8
+                startx=1,
+                endx=2
             ),
             ai_dto.Defect(
                 id=uuid.uuid4(),
                 description="Дефектик",
-                x=11
+                startx=1,
+                endx=2
             )
         ]
 
@@ -124,38 +130,38 @@ class Processor(base_processor.AbstractProcessor):
             ai_dto.StructuralUnit(
                 id=uuid.uuid4(),
                 type_id=enums.StructuralElement.JOINT.id,
-                description="Соединение",
-                x=5
+                startx=5,
+                endx=6
             ),
             ai_dto.StructuralUnit(
                 id=uuid.uuid4(),
                 type_id=enums.StructuralElement.JOINT.id,
-                description="Чо",
-                x=6
+                startx=5,
+                endx=6
             ),
             ai_dto.StructuralUnit(
                 id=uuid.uuid4(),
                 type_id=enums.StructuralElement.PATCH.id,
-                description="Хз",
-                x=8
+                startx=5,
+                endx=6
             ),
             ai_dto.StructuralUnit(
                 id=uuid.uuid4(),
                 type_id=enums.StructuralElement.PATCH.id,
-                description="Соединение",
-                x=9
+                startx=5,
+                endx=6
             ),
             ai_dto.StructuralUnit(
                 id=uuid.uuid4(),
                 type_id=enums.StructuralElement.PATCH.id,
-                description="Кек",
-                x=10
+                startx=5,
+                endx=6
             ),
             ai_dto.StructuralUnit(
                 id=uuid.uuid4(),
                 type_id=enums.StructuralElement.BRANCHING.id,
-                description="Разветвление",
-                x=13
+                startx=5,
+                endx=6
             )
         ]
 
