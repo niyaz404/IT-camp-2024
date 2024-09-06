@@ -2,6 +2,7 @@ import { InitialMagnetogramState } from "./types";
 
 export const initialState: InitialMagnetogramState = {
   commitId: "",
+  magnetogrammId: "",
   name: "",
   processedImage: "",
   originalImage: "",

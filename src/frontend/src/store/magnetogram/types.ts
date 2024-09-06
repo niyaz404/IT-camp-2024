@@ -2,6 +2,7 @@ import { Defect, StructuralElement } from "../../types";
 
 export type InitialMagnetogramState = {
   commitId: string;
+  magnetogrammId: string;
   name: string;
   defects: Defect[];
   structuralElements: StructuralElement[];

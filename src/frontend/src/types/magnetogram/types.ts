@@ -52,6 +52,7 @@ export type StructuralElement = MagnetogramElement & {
 };
 
 export type Magnetogram = {
+  magnetogramId: string;
   commitId: string;
   name: string;
   createdAt: Date;

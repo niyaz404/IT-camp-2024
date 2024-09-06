@@ -26,20 +26,23 @@ export const loadMagnetogramById =
       const data = await getMagnetogramInfo(magnetogramId);
 
       dispatch(magnetogramSlice.actions.replaceCommitId(data.commitId));
+      dispatch(
+        magnetogramSlice.actions.replaceMagnetogramId(data.magnetogramId)
+      );
 
       dispatch(magnetogramSlice.actions.replaceName(data.name));
       dispatch(
         magnetogramSlice.actions.replaceOriginalMagnetogramImage(
           // `data:image/jpeg;base64,${data.processedImage}`
-          "https://sun9-23.userapi.com/impg/kJ22PWyYRcZ0V-Lkww_tFPZnLLgt8gI5RBJISw/YRQLsjAcg9Y.jpg?size=1280x40&quality=96&sign=eab5cf28aac95eed962d744252f68ffa&type=album"
-          // "https://sun9-29.userapi.com/impg/NTJDGnhj-1aBEUJ9z0jT8zc5i4Uis8bk5TRoeQ/wAlso5jESrY.jpg?size=1280x40&quality=96&sign=e27f53dd0274d91594e1650708a0a80a&type=album"
+          // "https://sun9-23.userapi.com/impg/kJ22PWyYRcZ0V-Lkww_tFPZnLLgt8gI5RBJISw/YRQLsjAcg9Y.jpg?size=1280x40&quality=96&sign=eab5cf28aac95eed962d744252f68ffa&type=album"
+          "https://sun9-29.userapi.com/impg/NTJDGnhj-1aBEUJ9z0jT8zc5i4Uis8bk5TRoeQ/wAlso5jESrY.jpg?size=1280x40&quality=96&sign=e27f53dd0274d91594e1650708a0a80a&type=album"
         )
       );
       dispatch(
         magnetogramSlice.actions.replaceProcessedMagnetogramImage(
           // `data:image/jpeg;base64,${data.processedImage}`
-          "https://sun9-56.userapi.com/impg/1tRq08Du23PXRx6UsctCe_brx_bo5QU86fT1IA/CvVXmCbNBz0.jpg?size=1280x40&quality=96&sign=76263c9cbaa6e5b1edc0b6bf049de726&type=album"
-          // "https://psv4.userapi.com/c909628/u181754921/docs/d2/8e788a45ca20/magnetogram_output.png?extra=xHS1L4ScAeKZTx3iUM_Opaq1Y8szqK5ceTOuXC3L2PSIHkUySG50jdprdMsDq4XqGhJhl22Dt293LZAaz5uIBxuJfo38uKMWSJfxQ6QrVekhi_lo1CdVb_DrBj7NtXGGHKA9ycE6sKizbpR1zDEGig6C4Ek"
+          // "https://sun9-56.userapi.com/impg/1tRq08Du23PXRx6UsctCe_brx_bo5QU86fT1IA/CvVXmCbNBz0.jpg?size=1280x40&quality=96&sign=76263c9cbaa6e5b1edc0b6bf049de726&type=album"
+          "https://psv4.userapi.com/c909628/u181754921/docs/d2/8e788a45ca20/magnetogram_output.png?extra=xHS1L4ScAeKZTx3iUM_Opaq1Y8szqK5ceTOuXC3L2PSIHkUySG50jdprdMsDq4XqGhJhl22Dt293LZAaz5uIBxuJfo38uKMWSJfxQ6QrVekhi_lo1CdVb_DrBj7NtXGGHKA9ycE6sKizbpR1zDEGig6C4Ek"
         )
       );
 
@@ -51,7 +54,7 @@ export const loadMagnetogramById =
 
       dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
 
-      dispatch(сalculateDefectInfo(data.defects));
+      dispatch(сalculateDefectInfo());
 
       dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
     } catch (error) {
@@ -95,7 +98,7 @@ export const addMagnetogramElement =
         magnetogramSlice.actions.replaceDefects([...defects, newDefect])
       );
       dispatch(coordinatesCorrection(newDefect));
-      dispatch(сalculateDefectInfo([newDefect]));
+      dispatch(сalculateDefectInfo());
     } else {
       const newStructuralElement: StructuralElement = {
         id: uuidv4(),
@@ -115,7 +118,7 @@ export const addMagnetogramElement =
         ])
       );
 
-      dispatch(сalculateDefectInfo(defects));
+      dispatch(сalculateDefectInfo());
     }
   };
 
@@ -155,7 +158,7 @@ export const updateElementCoordinates =
               };
         dispatch(coordinatesCorrection(newCurrentDefect));
         dispatch(magnetogramSlice.actions.replaceDefect(newCurrentDefect));
-        dispatch(сalculateDefectInfo([newCurrentDefect]));
+        dispatch(сalculateDefectInfo());
       }
     }
 
@@ -184,7 +187,7 @@ export const updateElementCoordinates =
             newCurrentStructuralElement
           )
         );
-        dispatch(сalculateDefectInfo(defects));
+        dispatch(сalculateDefectInfo());
       }
     }
   };
@@ -224,8 +227,14 @@ export const setIsDefectsVisible =
 export const saveMagnetogram =
   () => (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
-    const { defects, processedImage, structuralElements, name } =
-      magnetogramSelector(state);
+    const {
+      defects,
+      processedImage,
+      structuralElements,
+      name,
+      commitId,
+      magnetogrammId,
+    } = magnetogramSelector(state);
     const { currentUser } = authSelector(state);
     try {
       defects.forEach((defect) => {
@@ -236,13 +245,13 @@ export const saveMagnetogram =
         dispatch(coordinatesCorrection(structuralElement));
       });
 
-      dispatch(сalculateDefectInfo(defects));
+      dispatch(сalculateDefectInfo());
 
       saveNewMagnetogram(
         // "00000000-0000-0000-0000-000000000000",
         // "00000000-0000-0000-0000-000000000000",
-        "",
-        "",
+        commitId,
+        magnetogrammIds,
         new Date(),
         name,
         currentUser?.userName ?? "",
@@ -276,7 +285,7 @@ export const removeMagnetogramElement =
       filtredDefects.forEach((defect) => {
         dispatch(coordinatesCorrection(defect));
       });
-      dispatch(сalculateDefectInfo(filtredDefects));
+      dispatch(сalculateDefectInfo());
     }
     if (type === "structuralElement") {
       const filtredStructuralElements = [...structuralElements].filter(
@@ -336,48 +345,48 @@ export const reverseMagnetogramElementEnable =
  * Для каждого дефекта расчитывает и устанавивает количество структурных элементов справа и слева
  */
 export const сalculateDefectInfo =
-  (defects: Defect[]) => (dispatch: AppDispatch, getState: () => RootState) => {
-    // const state = getState();
-    // const { structuralElements } = magnetogramSelector(state);
+  () => (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+    const { defects, structuralElements } = magnetogramSelector(state);
 
-    // const newDefects = defects.map((defect) => {
-    //   const { left, right } = structuralElements.reduce(
-    //     (acc: LeftRightSplit, structuralElement) => {
-    //       if (structuralElement.leftCoordinateX <= defect.leftCoordinateX) {
-    //         acc.left.push(structuralElement);
-    //       } else {
-    //         acc.right.push(structuralElement);
-    //       }
-    //       return acc;
-    //     },
-    //     {
-    //       left: [],
-    //       right: [],
-    //     }
-    //   );
+    const newDefects = defects.map((defect) => {
+      const { left, right } = structuralElements.reduce(
+        (acc: LeftRightSplit, structuralElement) => {
+          if (structuralElement.leftCoordinateX <= defect.leftCoordinateX) {
+            acc.left.push(structuralElement);
+          } else {
+            acc.right.push(structuralElement);
+          }
+          return acc;
+        },
+        {
+          left: [],
+          right: [],
+        }
+      );
 
-    //   const result: Defect = {
-    //     ...defect,
-    //     leftStructuralElementCount: {
-    //       None: 0,
-    //       WeldSeam: calculateCount(left, "WeldSeam"),
-    //       Bend: calculateCount(left, "Bend"),
-    //       Branching: calculateCount(left, "Branching"),
-    //       Patch: calculateCount(left, "Patch"),
-    //     },
-    //     rightStructuralElementCount: {
-    //       None: 0,
-    //       WeldSeam: calculateCount(right, "WeldSeam"),
-    //       Bend: calculateCount(right, "Bend"),
-    //       Branching: calculateCount(right, "Branching"),
-    //       Patch: calculateCount(right, "Patch"),
-    //     },
-    //   };
+      const result: Defect = {
+        ...defect,
+        leftStructuralElementCount: {
+          None: 0,
+          WeldSeam: calculateCount(left, "WeldSeam"),
+          Bend: calculateCount(left, "Bend"),
+          Branching: calculateCount(left, "Branching"),
+          Patch: calculateCount(left, "Patch"),
+        },
+        rightStructuralElementCount: {
+          None: 0,
+          WeldSeam: calculateCount(right, "WeldSeam"),
+          Bend: calculateCount(right, "Bend"),
+          Branching: calculateCount(right, "Branching"),
+          Patch: calculateCount(right, "Patch"),
+        },
+      };
 
-    //   return result;
-    // });
+      return result;
+    });
 
-    // dispatch(magnetogramSlice.actions.replaceDefects(newDefects));
+    dispatch(magnetogramSlice.actions.replaceDefects(newDefects));
   };
 
 /**
@@ -390,9 +399,9 @@ const calculateCount = (
   arr: StructuralElement[],
   structuralElementType: StructuralElementType
 ) => {
-  // return arr.reduce((acc, item) => {
-  //   return item.structuralElementType === structuralElementType ? acc + 1 : acc;
-  // }, 0);
+  return arr.reduce((acc, item) => {
+    return item.structuralElementType === structuralElementType ? acc + 1 : acc;
+  }, 0);
 };
 
 /**
@@ -402,38 +411,38 @@ const calculateCount = (
 export const coordinatesCorrection =
   (magnetogramElement: StructuralElement | Defect) =>
   (dispatch: AppDispatch) => {
-    // if (
-    //   magnetogramElement.leftCoordinateX > magnetogramElement.rightCoordinateX
-    // ) {
-    //   if (magnetogramElement.type === "defect") {
-    //     const newCurrentDefect: Defect = {
-    //       ...(magnetogramElement as Defect),
-    //       leftCoordinateX: formatCoordinate(
-    //         magnetogramElement.rightCoordinateX
-    //       ),
-    //       rightCoordinateX: formatCoordinate(
-    //         magnetogramElement.leftCoordinateX
-    //       ),
-    //     };
-    //     dispatch(magnetogramSlice.actions.replaceDefect(newCurrentDefect));
-    //   }
-    //   if (magnetogramElement.type === "structuralElement") {
-    //     const newCurrentStructuralElement: StructuralElement = {
-    //       ...(magnetogramElement as StructuralElement),
-    //       leftCoordinateX: formatCoordinate(
-    //         magnetogramElement.rightCoordinateX
-    //       ),
-    //       rightCoordinateX: formatCoordinate(
-    //         magnetogramElement.leftCoordinateX
-    //       ),
-    //     };
-    //     dispatch(
-    //       magnetogramSlice.actions.replaceStructuralElement(
-    //         newCurrentStructuralElement
-    //       )
-    //     );
-    //   }
-    // }
+    if (
+      magnetogramElement.leftCoordinateX > magnetogramElement.rightCoordinateX
+    ) {
+      if (magnetogramElement.type === "defect") {
+        const newCurrentDefect: Defect = {
+          ...(magnetogramElement as Defect),
+          leftCoordinateX: formatCoordinate(
+            magnetogramElement.rightCoordinateX
+          ),
+          rightCoordinateX: formatCoordinate(
+            magnetogramElement.leftCoordinateX
+          ),
+        };
+        dispatch(magnetogramSlice.actions.replaceDefect(newCurrentDefect));
+      }
+      if (magnetogramElement.type === "structuralElement") {
+        const newCurrentStructuralElement: StructuralElement = {
+          ...(magnetogramElement as StructuralElement),
+          leftCoordinateX: formatCoordinate(
+            magnetogramElement.rightCoordinateX
+          ),
+          rightCoordinateX: formatCoordinate(
+            magnetogramElement.leftCoordinateX
+          ),
+        };
+        dispatch(
+          magnetogramSlice.actions.replaceStructuralElement(
+            newCurrentStructuralElement
+          )
+        );
+      }
+    }
   };
 
 /**
