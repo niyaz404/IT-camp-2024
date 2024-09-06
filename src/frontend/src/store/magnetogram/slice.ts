@@ -108,15 +108,15 @@ const replaceIsShowOriginalImage = (
 };
 
 /**
- * Заменяет идентификатор текущей магнитограммы
+ * Заменяет идентификатор текущей обработки магнитограммы (commitId)
  * @param state текущее состояние
- * @param action идентификатор текущей магнитограммы
+ * @param action идентификатор текущей обработки магнитограммы
  */
-const replaceMagnetogramId = (
+const replaceCommitId = (
   state: InitialMagnetogramState,
   action: PayloadAction<string>
 ) => {
-  state.id = action.payload;
+  state.commitId = action.payload;
 };
 
 /**
@@ -178,12 +178,12 @@ export const magnetogramSlice = createSlice({
     replaceIsDefectsVisible,
     replaceIsStructuralElementsVisible,
     replaceIsMagnetogramLoading,
-    replaceMagnetogramId,
     replaceProcessedMagnetogramImage,
     replaceOriginalMagnetogramImage,
     replaceName,
     replaceIsShowOriginalImage,
     replaceScale,
+    replaceCommitId,
   },
 });
 

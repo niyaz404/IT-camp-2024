@@ -80,6 +80,7 @@ export const addNewMagnetogramReport =
     file: File | null
   ) =>
   async (dispatch: AppDispatch) => {
+    reportSlice.actions.replaceIsReportRowDataLoading(true);
     try {
       if (name && file) {
         const parsedFile: FileParameter = {
@@ -93,5 +94,7 @@ export const addNewMagnetogramReport =
     } catch (error) {
       console.error(error);
       alert("Ошибка создания отчета");
+    } finally {
+      reportSlice.actions.replaceIsReportRowDataLoading(false);
     }
   };

@@ -24,7 +24,8 @@ export const loadMagnetogramById =
     try {
       const data = await getMagnetogramInfo(magnetogramId);
 
-      dispatch(magnetogramSlice.actions.replaceMagnetogramId(data.id));
+      dispatch(magnetogramSlice.actions.replaceCommitId(data.commitId));
+
       dispatch(magnetogramSlice.actions.replaceName(data.name));
       dispatch(
         magnetogramSlice.actions.replaceOriginalMagnetogramImage(
@@ -221,7 +222,7 @@ export const setIsDefectsVisible =
 export const saveMagnetogram =
   () => async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
-    const { defects, id, processedImage, structuralElements, name } =
+    const { defects, processedImage, structuralElements, name } =
       magnetogramSelector(state);
     const { currentUser } = authSelector(state);
     try {
@@ -236,7 +237,8 @@ export const saveMagnetogram =
       await dispatch(сalculateDefectInfo(defects));
 
       saveNewMagnetogram(
-        id,
+        "00000000-0000-0000-0000-000000000000",
+        "00000000-0000-0000-0000-000000000000",
         new Date(),
         name,
         currentUser?.userName ?? "",
