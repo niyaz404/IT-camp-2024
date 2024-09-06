@@ -1,7 +1,7 @@
 import { InitialMagnetogramState } from "./types";
 
 export const initialState: InitialMagnetogramState = {
-  id: "",
+  commitId: "",
   name: "",
   processedImage: "",
   originalImage: "",

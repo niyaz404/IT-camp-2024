@@ -38,6 +38,7 @@ export const Registry = () => {
     const createdAt = new Date();
     const createdBy = currentUser?.userName ?? "";
     dispatch(addNewMagnetogramReport(reportName, createdBy, createdAt, file));
+    
   };
 
   const onOpenModal = () => {
@@ -52,17 +53,23 @@ export const Registry = () => {
     return <Loader />;
   }
 
-  if (reportRowData.length === 0 && isLoading === false) {
-    return <RegistryPlaceholder onOpenModal={onOpenModal} />;
-  }
+  const isPlaceHolderVisible =
+    reportRowData.length === 0 && isLoading === false;
 
   return (
     <Layout direction="row" className="container-column w-100 h-100">
       <Layout flex={1}></Layout>
       <Layout flex={4}>
         <div className="w-100">
-          <RegistryHeader onAddNewReport={onOpenModal} />
-          <ReportTable rowData={reportRowData} />
+          {!isPlaceHolderVisible ? (
+            <>
+              <RegistryHeader onAddNewReport={onOpenModal} />
+              <ReportTable rowData={reportRowData} />
+            </>
+          ) : (
+            <RegistryPlaceholder onOpenModal={onOpenModal} />
+          )}
+
           <Modal
             isOpen={isModalOpen}
             hasOverlay

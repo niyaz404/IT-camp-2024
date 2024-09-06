@@ -19,7 +19,7 @@ import {
 
 export const castMagnetogram = (res: CommitDto): Magnetogram => {
   const result: Magnetogram = {
-    id: res.magnetogramId ?? "",
+    commitId: res.id ?? "",
     name: res.name ?? "",
     createdAt: res.createdAt,
     createdBy: res.createdBy,

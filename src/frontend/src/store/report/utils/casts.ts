@@ -8,11 +8,12 @@ import { ReportTableData } from "../../../types";
  */
 export const castReportToLocal = (res: CommitDto): ReportTableData => {
   const result: ReportTableData = {
-    id: res.magnetogramId ?? "",
+    id: res.id ?? "",
     name: res.name ?? "",
     createdAt: getRuDate(res.createdAt),
     createdBy: res.createdBy ?? "",
     isDefective: res.isDefective,
+    magnetogramId: res.magnetogramId,
   };
   return result;
 };

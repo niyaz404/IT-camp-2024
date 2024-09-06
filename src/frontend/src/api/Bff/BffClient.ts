@@ -558,6 +558,8 @@ export class ReportClient {
 
 /** Dto данных об обработке магнитограммы */
 export class CommitDto implements ICommitDto {
+    /** Идентификатор обработки */
+    id!: string;
     /** Идентификатор исходной магнитограммы */
     magnetogramId!: string;
     /** Наименование фиксации */
@@ -586,6 +588,7 @@ export class CommitDto implements ICommitDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.magnetogramId = _data["magnetogramId"];
             this.name = _data["name"];
             this.createdAt = _data["createdAt"] ? new Date(_data["createdAt"].toString()) : <any>undefined;
@@ -614,6 +617,7 @@ export class CommitDto implements ICommitDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["magnetogramId"] = this.magnetogramId;
         data["name"] = this.name;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
@@ -636,6 +640,8 @@ export class CommitDto implements ICommitDto {
 
 /** Dto данных об обработке магнитограммы */
 export interface ICommitDto {
+    /** Идентификатор обработки */
+    id: string;
     /** Идентификатор исходной магнитограммы */
     magnetogramId: string;
     /** Наименование фиксации */
