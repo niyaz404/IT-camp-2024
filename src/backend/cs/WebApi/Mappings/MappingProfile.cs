@@ -27,8 +27,11 @@ public class MappingProfile : Profile
         
         CreateMap<StructuralElementDto, StructuralElementModel>();
         CreateMap<StructuralElementModel, StructuralElementDto>();
-        
-        CreateMap<CommitDto, CommitModel>();
+
+        CreateMap<CommitDto, CommitModel>()
+            //.ForMember(dest => dest.ProcessedImage,
+            // opt => opt.MapFrom(src => Convert.FromBase64String(src.ProcessedImage)));
+            ;
         CreateMap<CommitModel, CommitDto>();
 
         CreateMap<MagnetogramDto, MagnetogramModel>()

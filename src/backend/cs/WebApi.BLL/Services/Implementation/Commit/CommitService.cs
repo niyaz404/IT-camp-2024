@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using WebApi.BLL.Models.Implementation.Commit;
 using WebApi.BLL.Services.Interface.Commit;
+using WebApi.DAL.Models.Implementation.Commit;
 using WebApi.DAL.Providers.Interface;
 
 namespace WebApi.BLL.Services.Implementation.Commit;
@@ -20,7 +21,7 @@ public class CommitService : ICommitService
     }
     public async Task Save(CommitModel commit)
     {
-        return;
+        await _reportProvider.SaveCommit(_mapper.Map<CommitEntity>(commit));
     }
 
     public async Task<CommitModel> Get(Guid commitId)

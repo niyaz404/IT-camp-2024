@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using WebApi.DAL.Models.Implementation.Commit;
 using WebApi.DAL.Models.Implementation.Report;
 using WebApi.DAL.Providers.Interface;
@@ -53,5 +55,32 @@ public class ReportProvider : IReportProvider
         
         var responseContent = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<CommitEntity>(responseContent);
+    }
+
+    public async Task SaveCommit(CommitEntity commit)
+    {
+        var requestContent = new StringContent(JsonConvert.SerializeObject(commit), Encoding.UTF8,
+            "application/json");
+        var response = await _httpClient.PostAsync($"{_url}/commit/save", requestContent);
+            
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response.ReasonPhrase);
+        }
+            
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var commitEntity = JsonConvert.DeserializeObject<CommitEntity>(responseContent); 
+    }
+
+    public async Task DeleteCommit(Guid commitId)
+    {
+        var requestContent = new StringContent(JsonConvert.SerializeObject(commitId), Encoding.UTF8,
+            "application/json");
+        var response = await _httpClient.DeleteAsync($"{_url}/commit/delete?commitid={commitId}");
+            
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response.ReasonPhrase);
+        } 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.BLL.Models.Implementation.Commit;
 using WebApi.BLL.Services.Interface.Commit;
 using WebApi.Enums;
 using WebApi.Models.Implementation.Commit;
@@ -28,9 +29,8 @@ public class CommitController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> Save([FromBody]CommitDto commitDto)
     {
-        
-        var magtenogramId = "12321";
-        return Ok(magtenogramId);
+        await _commitService.Save(_mapper.Map<CommitModel>(commitDto));
+        return Ok();
     }
     
     /// <summary>

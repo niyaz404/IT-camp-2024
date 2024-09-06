@@ -8,6 +8,11 @@ public class CommitModel
     /// <summary>
     /// Идентификатор исходной магнитограммы
     /// </summary>
+    public Guid Id { get; set; }
+    
+    /// <summary>
+    /// Идентификатор исходной магнитограммы
+    /// </summary>
     public Guid MagnetogramId { get; set; }
     
     /// <summary>

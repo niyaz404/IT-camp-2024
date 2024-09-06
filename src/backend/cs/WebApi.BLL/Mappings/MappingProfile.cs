@@ -25,9 +25,11 @@ public class MappingProfile : Profile
         
         CreateMap<StructuralElementEntity, StructuralElementModel>();
         CreateMap<StructuralElementModel, StructuralElementEntity>();
-        
+
         CreateMap<CommitEntity, CommitModel>();
-        CreateMap<CommitModel, CommitEntity>();
+        CreateMap<CommitModel, CommitEntity>()
+            .ForMember(dest => dest.ProcessedImage, opt => opt.MapFrom(src => Convert2(src.ProcessedImage)
+            ));;
         
         CreateMap<MagnetogramEntity, MagnetogramModel>();
         CreateMap<MagnetogramModel, MagnetogramEntity>()
@@ -36,5 +38,23 @@ public class MappingProfile : Profile
         
         CreateMap<ReportEntity, ReportModel>();
         CreateMap<ReportModel, ReportEntity>();
+    }
+
+    public byte[] Convert2(string s)
+    {
+        // Преобразование строки Base64 в массив байтов
+        if (string.IsNullOrEmpty(s))
+        {
+            return null;
+        }
+        try
+        {
+            return Convert.FromBase64String(s);
+        }
+        catch (FormatException)
+        {
+            // Обработка ошибки в случае некорректной строки Base64
+            return null;
+        }
     }
 }

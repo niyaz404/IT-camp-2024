@@ -109,12 +109,9 @@ public class Program
     public static void ConfigureService(IServiceCollection services)
     {
         bool isRunningInDocker = Environment.GetEnvironmentVariable("IS_DOCKER_CONTAINER") == "true";
-        var authServiceUrl =
-            isRunningInDocker ? Environment.GetEnvironmentVariable("AUTH_SERVICE_URL") : "http://localhost:5000";
-        var reportServiceUrl =
-            isRunningInDocker ? Environment.GetEnvironmentVariable("REPORT_SERVICE_URL") : "http://localhost:5001";
-        var mlServiceUrl =
-            isRunningInDocker ? Environment.GetEnvironmentVariable("ML_SERVICE_URL") : "http://localhost:8080";
+        var authServiceUrl = Environment.GetEnvironmentVariable("AUTH_SERVICE_URL") ?? "http://localhost:5000";
+        var reportServiceUrl = Environment.GetEnvironmentVariable("REPORT_SERVICE_URL") ?? "http://localhost:5001";
+        var mlServiceUrl = Environment.GetEnvironmentVariable("ML_SERVICE_URL") ?? "http://localhost:8080";
 
         services.AddScoped(_ =>  new HttpClient());
         services.AddScoped<IAuthProvider>(p => new AuthProvider(authServiceUrl, p.GetRequiredService<HttpClient>()));

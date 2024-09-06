@@ -6,6 +6,11 @@
 public class CommitDto
 {
     /// <summary>
+    /// Идентификатор обработки
+    /// </summary>
+    public Guid Id { get; set; }
+    
+    /// <summary>
     /// Идентификатор исходной магнитограммы
     /// </summary>
     public Guid MagnetogramId { get; set; }
@@ -28,17 +33,17 @@ public class CommitDto
     /// <summary>
     /// Наличие дефектов в магнитограмме
     /// </summary>
-    public bool IsDefective => Defects.Any();
-    
+    public bool IsDefective => Defects?.Any() ?? false;
+
     /// <summary>
     /// Список дефектов
     /// </summary>
-    public List<DefectDto> Defects { get; set; }
-    
+    public List<DefectDto> Defects { get; set; } = new ();
+
     /// <summary>
     /// Список конструктивных элементов
     /// </summary>
-    public List<StructuralElementDto> StructuralElements { get; set; }
+    public List<StructuralElementDto> StructuralElements { get; set; } = new ();
     
     /// <summary>
     /// Обработанная магнитограмма

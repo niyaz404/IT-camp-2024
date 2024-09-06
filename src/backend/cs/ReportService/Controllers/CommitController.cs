@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using ReportService.BLL.Models;
 using ReportService.BLL.Services.Interface;
 using ReportService.Models;
 
@@ -70,6 +71,24 @@ namespace ReportService.Controllers
                 await _commitService.Delete(commitId);
                 
                 return Ok("Commit deleted");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        
+        /// <summary>
+        /// Метод удаления обработки магнитограммы
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> Save(CommitDto commit)
+        {
+            try
+            {
+                await _commitService.Save(_mapper.Map<CommitModel>(commit));
+                
+                return Ok("Commit saved");
             }
             catch (Exception e)
             {

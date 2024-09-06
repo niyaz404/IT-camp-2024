@@ -22,4 +22,14 @@ public interface IReportProvider
     /// Получение обработки магнитограммы по идентификатору обработки
     /// </summary>
     public Task<CommitEntity> GetCommitById(Guid commitId);
+    
+    /// <summary>
+    /// Сохранение новой обработки
+    /// </summary>
+    public Task SaveCommit(CommitEntity commit);
+    
+    /// <summary>
+    /// Удаление обработки
+    /// </summary>
+    public Task DeleteCommit(Guid commitId);
 }
