@@ -34,11 +34,12 @@ export function withTooltip<T>(WrappedComponent: React.ComponentType<T>) {
             anchorRef={ref}
             direction={props.direction ?? "upCenter"}
             size="l"
-            children={props.tooltipText}
             placeholder={undefined}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
-          />
+          >
+            {props.children}
+          </Tooltip>
         )}
       </div>
     );

@@ -18,6 +18,7 @@ import {
   useAppSelector,
 } from "../../store";
 import { StructuralElementNames } from "../../types";
+import { Text } from "@consta/uikit/Text";
 
 export const Marker: FC<MarkerProps> = ({
   id,
@@ -112,14 +113,63 @@ export const Marker: FC<MarkerProps> = ({
 
   const rightCounts = `Кол-во. структурных элементов справа: ${StructuralElementNames.WeldSeam} ${rightStructuralElementCount?.WeldSeam}, ${StructuralElementNames.Bend} ${rightStructuralElementCount?.Bend}, ${StructuralElementNames.Branching} ${rightStructuralElementCount?.Branching}, ${StructuralElementNames.Patch} ${rightStructuralElementCount?.Patch}`;
 
-  const defectTooltipText = `${leftCounts}. ${rightCounts}. Координата: ${coordinate}`;
+  const defectTooltipContent = () => {
+    return (
+      <>
+        <Text view="normal" size="xs">{`Дефект`}</Text>
+        <Text view="primary" size="xs">{`Координата: ${coordinate}`}</Text>
+        <br />
+        <Text view="primary" size="xs">
+          Кол-во. структурных элементов слева:
+        </Text>
+        <Text view="primary" size="xs">
+          {`${StructuralElementNames.WeldSeam}: ${rightStructuralElementCount?.WeldSeam}`}
+        </Text>
+        <Text view="primary" size="xs">
+          {`${StructuralElementNames.Bend}: ${leftStructuralElementCount?.Bend}`}
+        </Text>
+        <Text view="primary" size="xs">
+          {`${StructuralElementNames.Branching}: ${leftStructuralElementCount?.Branching}`}
+        </Text>
+        <Text view="primary" size="xs">
+          {`${StructuralElementNames.Patch}: ${leftStructuralElementCount?.Patch}`}
+        </Text>
 
-  const structuralElementTooltipText = `Тип конструктивного элемента: ${
-    structuralElementType && StructuralElementNames[structuralElementType]
-  }. Координата: ${coordinate}`;
+        <br />
+        <Text view="primary" size="xs">
+          Кол-во. структурных элементов справа:
+        </Text>
+        <Text view="primary" size="xs">
+          {`${StructuralElementNames.WeldSeam}: ${rightStructuralElementCount?.WeldSeam}`}
+        </Text>
+        <Text view="primary" size="xs">
+          {`${StructuralElementNames.Bend}: ${rightStructuralElementCount?.Bend}`}
+        </Text>
+        <Text view="primary" size="xs">
+          {`${StructuralElementNames.Branching}: ${rightStructuralElementCount?.Branching}`}
+        </Text>
+        <Text view="primary" size="xs">
+          {`${StructuralElementNames.Patch}: ${rightStructuralElementCount?.Patch}`}
+        </Text>
+      </>
+    );
+  };
 
-  const tooltipText =
-    type === "defect" ? defectTooltipText : structuralElementTooltipText;
+  const structuralElementTooltipContent = () => {
+    return (
+      <>
+        <Text view="normal" size="xs">{`Конструктивный элемент типа: ${
+          structuralElementType && StructuralElementNames[structuralElementType]
+        }`}</Text>
+        <Text view="primary" size="xs">{`Координата: ${coordinate}`}</Text>
+      </>
+    );
+  };
+
+  const tooltipContent =
+    type === "defect"
+      ? defectTooltipContent()
+      : structuralElementTooltipContent();
 
   return (
     <>
@@ -136,7 +186,9 @@ export const Marker: FC<MarkerProps> = ({
           onContextMenu={onRightButtonMouseClick}
           ref={markerRef}
         >
-          <SvgWithTooltip tooltipText={tooltipText} />
+          <SvgWithTooltip>
+            <div>{tooltipContent}</div>
+          </SvgWithTooltip>
         </div>
       </Draggable>
       {isContextMenuVisible && (
