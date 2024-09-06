@@ -251,7 +251,7 @@ export const saveMagnetogram =
         // "00000000-0000-0000-0000-000000000000",
         // "00000000-0000-0000-0000-000000000000",
         commitId,
-        magnetogrammIds,
+        magnetogrammId,
         new Date(),
         name,
         currentUser?.userName ?? "",
