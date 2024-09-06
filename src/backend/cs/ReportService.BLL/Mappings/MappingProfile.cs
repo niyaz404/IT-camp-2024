@@ -12,7 +12,9 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<CommitModel, CommitEntity>();
+        CreateMap<CommitModel, CommitEntity>()
+            .ForMember(dest => dest.ProcessedImage, opt => opt.MapFrom(src => Convert2(src.ProcessedImage)
+            ));;
         CreateMap<CommitEntity, CommitModel>()
             .ForMember(dest => dest.Defects, opt => opt.MapFrom(src => new List<DefectModel>()))
             .ForMember(dest => dest.StructuralElements,
@@ -30,5 +32,23 @@ public class MappingProfile : Profile
         
         CreateMap<ReportModel, ReportEntity>();
         CreateMap<ReportEntity, ReportModel>();
+    }
+    
+    public byte[] Convert2(string s)
+    {
+        // Преобразование строки Base64 в массив байтов
+        if (string.IsNullOrEmpty(s))
+        {
+            return null;
+        }
+        try
+        {
+            return Convert.FromBase64String(s);
+        }
+        catch (FormatException)
+        {
+            // Обработка ошибки в случае некорректной строки Base64
+            return null;
+        }
     }
 }
