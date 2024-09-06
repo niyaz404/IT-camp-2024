@@ -282,8 +282,8 @@ class Processor(base_processor.AbstractProcessor):
 
 
         ##################################
-        image_array = (image_array * 255).astype(np.uint8)
-        image = Image.fromarray(image_array)
+        mag = (mag * 255).astype(np.uint8)
+        image = Image.fromarray(mag)
         buffered_image = io.BytesIO()
         image.save(buffered_image, format="PNG")
         image_byte = buffered_image.getvalue()
