@@ -29,7 +29,7 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
     <div
       className={`container-row justify-between align-center w-100 p-h-8 p-v-4 ${css.toolbar}`}
     >
-      <div className="container-row align-center">
+      <div className="container-row align-center w-100">
         <Text size="2xl" weight="bold">
           {name}
         </Text>
@@ -54,7 +54,7 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
         <IconSelect size="l" view="secondary" />
 
         <Switch
-          className="m-l-4 m-r-1"
+          className="m-l-2"
           size="s"
           label="Конструктивные элементы"
           checked={isStructuralElementsCheked}
@@ -70,15 +70,16 @@ export const MagnetogramDetailsToolbar: FC<MagnetogramDetailsToolbarProps> = ({
           checked={isShowOriginalImageCheked}
           onChange={({ checked }) => onShowOriginalImageSwitchChange(checked)}
         />
-
-        <Delimiter />
-
-        <Slider
-          label={`Значение ${scale}`}
-          onChange={onChangeScale}
-          value={scale}
-        />
       </div>
+      <Delimiter />
+
+      <Slider
+        className="p-v-2 m-h-2"
+        label={`Масштаб ${scale}%`}
+        onChange={onChangeScale}
+        value={scale}
+      />
+
       <Button
         label="Сохранить"
         size="s"
