@@ -13,12 +13,7 @@ import {
 } from "./structuralElementConfig";
 import css from "./style.css";
 import { addMagnetogramElement, useAppDispatch } from "../../store";
-import {
-  StructuralElementNames,
-  StructuralElementType,
-  StructuralElementTypes,
-} from "../../types";
-import { getStructuralElementLocalType } from "../../utils";
+import { formatCoordinate, getStructuralElementLocalType } from "../../utils";
 
 const MAX_MAGNETOGRAM_WIDTH = 4096;
 
@@ -54,12 +49,12 @@ export const AddNewMagnetogramElementForm: FC<
 
   const onChangeLeftCoordinate = ({ value }: { value: string | null }) => {
     setIsLeftCoordinateInvalid(Number(value) > MAX_MAGNETOGRAM_WIDTH);
-    setLeftCoordinate(Number(value));
+    setLeftCoordinate(formatCoordinate(Number(value)));
   };
 
   const onChangeRightCoordinate = ({ value }: { value: string | null }) => {
     setIsRightCoordinateInvalid(Number(value) > MAX_MAGNETOGRAM_WIDTH);
-    setRightCoordinate(Number(value));
+    setRightCoordinate(formatCoordinate(Number(value)));
   };
 
   const onChangeDescription = ({ value }: { value: string | null }) => {

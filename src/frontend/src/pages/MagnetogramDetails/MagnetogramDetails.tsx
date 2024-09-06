@@ -19,6 +19,7 @@ import {
 } from "../../store";
 import { Loader } from "@consta/uikit/Loader";
 import { useParams } from "react-router-dom";
+import { formatCoordinate } from "../../utils";
 
 export const MagnetogramDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -98,10 +99,9 @@ export const MagnetogramDetails = () => {
 
       <MagnetogramWrapper
         onAddNewElement={(coordinate: number) => {
-          setNewElementCoordinate(coordinate);
+          setNewElementCoordinate(formatCoordinate(coordinate));
           onOpenModal();
         }}
-        elements={[...defects, ...structuralElements]}
         isDefectsCheked={isDefectsVisible}
         isStructuralElementsCheked={isStructuralElementsVisible}
       >

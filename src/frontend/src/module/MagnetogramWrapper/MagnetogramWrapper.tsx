@@ -2,10 +2,10 @@ import React, { FC, useEffect, useRef, useState, MouseEvent } from "react";
 import { MarkerSegment } from "../../module";
 import css from "./style.css";
 import { MagnetogramWrapperProps } from "./types";
+import { magnetogramSelector, useAppSelector } from "../../store";
 
 export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
   children,
-  elements,
   isDefectsCheked,
   isStructuralElementsCheked,
   onAddNewElement,
@@ -14,6 +14,8 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
 
   const [leftOffset, setLeftOffset] = useState<number>(0);
   const [scrollOffset, setScrollOffset] = useState<number>(0);
+
+  const { defects, structuralElements } = useAppSelector(magnetogramSelector);
 
   useEffect(() => {
     if (magnetogramRef.current) {
@@ -54,13 +56,14 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
     >
       {children}
 
-      {elements.map((element) => (
+      {[...defects, ...structuralElements].map((element) => (
         <MarkerSegment
           element={element}
           isDefectsCheked={isDefectsCheked}
           isStructuralElementsCheked={isStructuralElementsCheked}
           leftOffset={leftOffset}
           scrollOffset={scrollOffset}
+          key={element.id}
         />
       ))}
     </div>
