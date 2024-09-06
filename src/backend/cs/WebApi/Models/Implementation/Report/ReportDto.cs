@@ -1,4 +1,6 @@
-﻿namespace WebApi.Models.Implementation.Report;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace WebApi.Models.Implementation.Report;
 
 /// <summary>
 /// Dto отчета
@@ -8,5 +10,5 @@ public class ReportDto
     /// <summary>
     /// Файл отчета
     /// </summary>
-    public byte[] File { get; set; }
+    public FileContentResult File { get; set; }
 }

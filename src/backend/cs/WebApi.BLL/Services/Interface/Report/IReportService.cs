@@ -4,5 +4,5 @@ namespace WebApi.BLL.Services.Interface.Report;
 
 public interface IReportService
 {
-    Task<ReportModel> Get(string commitId);
+    Task<ReportModel> Get(Guid commitId);
 }

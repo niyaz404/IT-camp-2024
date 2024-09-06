@@ -11,7 +11,7 @@ public interface IReportProvider
     /// <summary>
     /// Получение отчета по идентификатору обработки
     /// </summary>
-    public Task<ReportEntity> GetReport(string commitId);
+    public Task<ReportEntity> GetReport(Guid commitId);
 
     /// <summary>
     /// Получение списка всех обработок магнитограмм

@@ -24,9 +24,9 @@ public class ReportProvider : IReportProvider
     /// <summary>
     /// Метод получения отчета по идентификатору обработки
     /// </summary>
-    public async Task<ReportEntity> GetReport(string commitId)
+    public async Task<ReportEntity> GetReport(Guid commitId)
     {
-        var response = await _httpClient.GetAsync($"{_url}/report/get");
+        var response = await _httpClient.GetAsync($"{_url}/report/get?commitId={commitId}");
         
         if(!response.IsSuccessStatusCode)
             throw new Exception(response.StatusCode.ToString());

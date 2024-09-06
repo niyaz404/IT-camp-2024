@@ -14,7 +14,7 @@ public class ReportService : IReportService
         _reportProvider = reportProvider;
         _mapper = mapper;
     }
-    public async Task<ReportModel> Get(string commitId)
+    public async Task<ReportModel> Get(Guid commitId)
     {
         var reportEntity = await _reportProvider.GetReport(commitId);
         return _mapper.Map<ReportModel>(reportEntity);
