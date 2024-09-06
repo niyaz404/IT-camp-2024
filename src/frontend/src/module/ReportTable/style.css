@@ -1,0 +1,9 @@
+.table {
+  display: flex;
+  width: 100%;
+  border: 0.1rem solid var(--color-bg-secondary);
+}
+
+.link{
+  cursor: pointer;
+}

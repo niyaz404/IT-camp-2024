@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="PdfSharpCore" Version="1.3.65" />
+      <PackageReference Include="Unity.Abstractions" Version="5.11.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DAL.Abstract\DAL.Abstract.csproj" />
+      <ProjectReference Include="..\DAL.Implementation\DAL.Implementation.csproj" />
+    </ItemGroup>
+
+</Project>

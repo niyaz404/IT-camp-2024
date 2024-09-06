@@ -1,0 +1,1 @@
+export { MagnetogramDetails } from "./MagnetogramDetails";

@@ -1,0 +1,9 @@
+.magnetogram {
+  position: absolute;
+  height: calc(100vh - 18rem);
+}
+
+.edge {
+  border: 0.1rem solid #000;
+  image-rendering: auto;
+}
