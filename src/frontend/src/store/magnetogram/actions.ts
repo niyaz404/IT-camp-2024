@@ -142,16 +142,10 @@ export const updateElementCoordinates =
           side === "left"
             ? {
                 ...currentDefect,
-                // rightCoordinateX: formatCoordinate(
-                //   currentDefect.leftCoordinateX
-                // ),
                 leftCoordinateX: formatCoordinate(coordinateX),
               }
             : {
                 ...currentDefect,
-                // leftCoordinateX: formatCoordinate(
-                //   currentDefect.rightCoordinateX
-                // ),
                 rightCoordinateX: formatCoordinate(coordinateX),
               };
         await dispatch(coordinatesCorrection(newCurrentDefect));
@@ -174,16 +168,10 @@ export const updateElementCoordinates =
           side === "left"
             ? {
                 ...currentStructuralElement,
-                // rightCoordinateX: formatCoordinate(
-                //   currentStructuralElement.leftCoordinateX
-                // ),
                 leftCoordinateX: formatCoordinate(coordinateX),
               }
             : {
                 ...currentStructuralElement,
-                // leftCoordinateX: formatCoordinate(
-                //   currentStructuralElement.rightCoordinateX
-                // ),
                 rightCoordinateX: formatCoordinate(coordinateX),
               };
 

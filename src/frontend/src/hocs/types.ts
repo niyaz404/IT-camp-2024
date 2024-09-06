@@ -1,5 +1,7 @@
+import React from "react";
+
 export type ComponentWithTooltipProps = {
-  tooltipText: string;
+  children: React.ReactNode;
   direction?:
     | "downCenter"
     | "upCenter"
