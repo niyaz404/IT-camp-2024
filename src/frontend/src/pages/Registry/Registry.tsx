@@ -20,7 +20,7 @@ import { Loader } from "@consta/uikit/Loader";
 
 export const Registry = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { reportRowData, isLoading } = useAppSelector(reportSelector);
+  const { reportRowData, isReportLoading } = useAppSelector(reportSelector);
   const { currentUser } = useAppSelector(authSelector);
 
   const dispatch = useAppDispatch();
@@ -38,7 +38,6 @@ export const Registry = () => {
     const createdAt = new Date();
     const createdBy = currentUser?.userName ?? "";
     dispatch(addNewMagnetogramReport(reportName, createdBy, createdAt, file));
-    
   };
 
   const onOpenModal = () => {
@@ -49,26 +48,28 @@ export const Registry = () => {
     setIsModalOpen(false);
   };
 
-  if (isLoading === true) {
+  if (isReportLoading === true) {
     return <Loader />;
   }
 
+  console.log("isReportLoading", isReportLoading);
+
   const isPlaceHolderVisible =
-    reportRowData.length === 0 && isLoading === false;
+    reportRowData.length === 0 && isReportLoading === false;
 
   return (
     <Layout direction="row" className="container-column w-100 h-100">
       <Layout flex={1}></Layout>
       <Layout flex={4}>
         <div className="w-100">
-          {!isPlaceHolderVisible ? (
-            <>
-              <RegistryHeader onAddNewReport={onOpenModal} />
-              <ReportTable rowData={reportRowData} />
-            </>
+          {/* {!isPlaceHolderVisible ? (
+            <> */}
+          <RegistryHeader onAddNewReport={onOpenModal} />
+          <ReportTable rowData={reportRowData} />
+          {/* </>
           ) : (
             <RegistryPlaceholder onOpenModal={onOpenModal} />
-          )}
+          )} */}
 
           <Modal
             isOpen={isModalOpen}

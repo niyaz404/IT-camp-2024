@@ -30,6 +30,7 @@ export type MagnetogramElement = {
   rightCoordinateX: number; // правая координата по оси Х
   markerColor: string;
   isEditable: boolean;
+  structuralElementType?: StructuralElementType;
 };
 
 export type StructuralElementCount = {

@@ -18,6 +18,11 @@ export const MagnetogramWrapper: FC<MagnetogramWrapperProps> = ({
   const { defects, structuralElements } = useAppSelector(magnetogramSelector);
 
   useEffect(() => {
+    console.log("w d", defects);
+    console.log("w d", structuralElements);
+  }, [defects, structuralElements]);
+
+  useEffect(() => {
     if (magnetogramRef.current) {
       // Значение левого отпступа картинки, которое было задано стилем магнитограммы
       const paddingLeftValue = parseInt(
