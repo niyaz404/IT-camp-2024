@@ -26,16 +26,13 @@ public class ReportController : ControllerBase
     /// <param name="commitId">Идентификатор обработки</param>
     /// <returns>Отчет</returns>
     [HttpGet]
-    public async Task<ActionResult<ReportDto>> Get(Guid commitId)
+    public async Task<ActionResult> Get(Guid commitId)
     {
         var report = await _reportService.Get(commitId);
         var file = File(report.File, "application/pdf", "report.pdf");
 
-        
-        return Ok(new ReportDto()
-        {
-            File = file
-        });
+
+        return file;
     }
 }
 

@@ -246,7 +246,7 @@ class Processor(base_processor.AbstractProcessor):
         image = torch.tensor(image)
         
         ### предикт
-        input_image = image.clone().detach().to(torch.float32).to(device)
+        input_image = image.clone().detach().to(torch.float32).to('cpu')
         input_image = input_image.unsqueeze(0)
 
         self.model.eval()
