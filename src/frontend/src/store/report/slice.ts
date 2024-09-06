@@ -24,7 +24,7 @@ const replaceIsReportRowDataLoading = (
   state: initialReportState,
   action: PayloadAction<boolean>
 ) => {
-  state.isLoading = action.payload;
+  state.isReportLoading = action.payload;
 };
 
 export const reportSlice = createSlice({

@@ -10,7 +10,7 @@ import { IconLock } from "@consta/uikit/IconLock";
 import { IconUnlock } from "@consta/uikit/IconUnlock";
 import {
   defectSelector,
-  structuralElementSelector,
+  // structuralElementSelector,
   removeMagnetogramElement,
   reverseMagnetogramElementEnable,
   updateElementCoordinates,
@@ -30,6 +30,7 @@ export const Marker: FC<MarkerProps> = ({
   side,
   isEditable,
   setCoordinate,
+  structuralElementType,
 }) => {
   const markerRef = useRef<HTMLDivElement | null>(null);
   const draggableRef = useRef<Draggable>(null);
@@ -38,9 +39,9 @@ export const Marker: FC<MarkerProps> = ({
 
   const currentDefect = useAppSelector((state) => defectSelector(state, id));
 
-  const currentStructuralElement = useAppSelector((state) =>
-    structuralElementSelector(state, id)
-  );
+  // const currentStructuralElement = useAppSelector((state) =>
+  //   structuralElementSelector(state, id)
+  // );
 
   const dispatch = useAppDispatch();
 
@@ -65,8 +66,8 @@ export const Marker: FC<MarkerProps> = ({
   const leftStructuralElementCount =
     currentDefect && currentDefect.leftStructuralElementCount;
 
-  const structuralElementType =
-    currentStructuralElement && currentStructuralElement.structuralElementType;
+  // const structuralElementType =
+  //   currentStructuralElement && currentStructuralElement.structuralElementType;
 
   const SvgWithTooltip = withTooltip(() => {
     return (
@@ -123,7 +124,7 @@ export const Marker: FC<MarkerProps> = ({
           Кол-во. структурных элементов слева:
         </Text>
         <Text view="primary" size="xs">
-          {`${StructuralElementNames.WeldSeam}: ${rightStructuralElementCount?.WeldSeam}`}
+          {`${StructuralElementNames.WeldSeam}: ${leftStructuralElementCount?.WeldSeam}`}
         </Text>
         <Text view="primary" size="xs">
           {`${StructuralElementNames.Bend}: ${leftStructuralElementCount?.Bend}`}

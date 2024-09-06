@@ -1,7 +1,6 @@
 import {
   MagnetogramElementType,
   MarkerSide,
-  StructuralElementCount,
   StructuralElementType,
 } from "../../types";
 
@@ -15,4 +14,5 @@ export type MarkerProps = {
   side: MarkerSide;
   isEditable: boolean;
   setCoordinate: (side: MarkerSide, coordinate: number) => void;
+  structuralElementType?: StructuralElementType;
 };

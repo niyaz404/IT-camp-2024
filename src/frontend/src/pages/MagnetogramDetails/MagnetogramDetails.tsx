@@ -27,8 +27,6 @@ export const MagnetogramDetails = () => {
 
   const {
     name,
-    defects,
-    structuralElements,
     isDefectsVisible,
     isStructuralElementsVisible,
     isLoading,

@@ -3,7 +3,7 @@ import { Marker } from "../../module";
 import css from "./style.css";
 import { MarkerSegmentProps } from "./types";
 import { MarkerBackground } from "../../components";
-import { MarkerSide } from "../../types";
+import { MarkerSide, StructuralElementType } from "../../types";
 
 export const MarkerSegment: FC<MarkerSegmentProps> = ({
   element,
@@ -55,6 +55,11 @@ export const MarkerSegment: FC<MarkerSegmentProps> = ({
         side="left"
         isEditable={element.isEditable}
         setCoordinate={setCoordinate}
+        structuralElementType={
+          element.type === "structuralElement"
+            ? (element.structuralElementType as StructuralElementType)
+            : undefined
+        }
       />
 
       <MarkerBackground
@@ -76,6 +81,11 @@ export const MarkerSegment: FC<MarkerSegmentProps> = ({
         side="right"
         isEditable={element.isEditable}
         setCoordinate={setCoordinate}
+        structuralElementType={
+          element.type === "structuralElement"
+            ? (element.structuralElementType as StructuralElementType)
+            : undefined
+        }
       />
     </div>
   );

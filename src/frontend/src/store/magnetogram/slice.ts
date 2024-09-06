@@ -12,6 +12,8 @@ const replaceDefects = (
   state: InitialMagnetogramState,
   action: PayloadAction<Defect[]>
 ) => {
+  console.log("action.payload", action.payload);
+
   state.defects = action.payload;
 };
 
