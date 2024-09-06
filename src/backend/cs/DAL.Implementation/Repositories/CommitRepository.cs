@@ -53,7 +53,7 @@ public class CommitRepository(string connectionString) : Repository(connectionSt
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.ExecuteScalarAsync<Guid>(sql, new
         {
-            commit.MagnetogramId, commit.Name, commit.CreatedAt, commit.CreatedBy, commit.ProcessedImage
+            commit.MagnetogramId, commit.Name, commit.CreatedAt, commit.CreatedBy, processedimage = commit.ProcessedImage.Length > 0 ? commit.ProcessedImage : null
         });
     }
 
