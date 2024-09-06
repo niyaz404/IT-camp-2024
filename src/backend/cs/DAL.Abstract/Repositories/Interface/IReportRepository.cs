@@ -1,4 +1,5 @@
-﻿using DAL.Models.Implementation.Report;
+﻿using DAL.Models.Implementation.Commit;
+using DAL.Models.Implementation.Report;
 
 namespace DAL.Repositories.Interface;
 
@@ -18,4 +19,6 @@ public interface IReportRepository
     /// </summary>
     /// <param name="report"></param>
     public Task Insert(ReportEntity report);
+
+    public Task<IEnumerable<CommitEntity>> SelectAllCommits();
 }

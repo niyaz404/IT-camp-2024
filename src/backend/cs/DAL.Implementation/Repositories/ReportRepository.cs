@@ -1,4 +1,5 @@
 ﻿using Consts;
+using DAL.Models.Implementation.Commit;
 using DAL.Models.Implementation.Report;
 using DAL.Repositories.Abstract;
 using DAL.Repositories.Interface;
@@ -33,5 +34,16 @@ public class ReportRepository(string connectionString) : Repository(connectionSt
 
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryFirstOrDefaultAsync<ReportEntity>(sql, new { commitId });
+    }
+    
+    
+    public async Task<IEnumerable<CommitEntity>> SelectAllCommits()
+    {
+        var sql = $@"
+            select *
+            from itcamp.commit";
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+        return await connection.QueryAsync<CommitEntity>(sql);
     }
 }

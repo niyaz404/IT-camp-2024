@@ -11,24 +11,27 @@ public class MagnetogramEntity : BaseEntity
     /// <summary>
     /// Идентификатор магнитограммы
     /// </summary>
-    [Column("id")]
     public Guid Id { get; set; }
     
     /// <summary>
     /// ФИО загрузившего магнитограмму
     /// </summary>
-    [Column("createdby")]
-    public string CreatedBy { get; set; }
-    
+    public string UserName { get; set; }
+
+    /// <summary>
+    /// ФИО загрузившего магнитограмму
+    /// </summary>
+    public string Name { get; set; } = "dfg";
+
+    private DateTime _createdAt;
+
     /// <summary>
     /// Дата загрузки файла магнитограммы
     /// </summary>
-    [Column("createdat")]
     public DateTime CreatedAt { get; set; }
     
     /// <summary>
     /// Файл магнитограммы в двоичном формате
     /// </summary>
-    [Column("file")]
-    public byte[] File { get; set; }
+    public string File { get; set; }
 }

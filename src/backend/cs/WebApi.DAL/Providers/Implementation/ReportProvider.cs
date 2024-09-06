@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using WebApi.DAL.Models.Implementation.Commit;
 using WebApi.DAL.Models.Implementation.Report;
 using WebApi.DAL.Providers.Interface;
 
@@ -12,10 +13,10 @@ public class ReportProvider : IReportProvider
     private readonly HttpClient _httpClient;
     private readonly string _url;
 
-    public ReportProvider()
+    public ReportProvider(string url, HttpClient httClient)
     {
-        _url = Environment.GetEnvironmentVariable("REPORT_SERVICE_URL") ?? "http://localhost:8005";
-        _httpClient = new HttpClient();
+        _url = url;//Environment.GetEnvironmentVariable("REPORT_SERVICE_URL") ?? "http://localhost:8005";
+        _httpClient = httClient;
     }
     
     /// <summary>
@@ -23,12 +24,34 @@ public class ReportProvider : IReportProvider
     /// </summary>
     public async Task<ReportEntity> GetReport(string commitId)
     {
-        var response = await _httpClient.GetAsync($"{_url}/api/report/get");
+        var response = await _httpClient.GetAsync($"{_url}/report/get");
         
         if(!response.IsSuccessStatusCode)
             throw new Exception(response.StatusCode.ToString());
         
         var responseContent = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<ReportEntity>(responseContent);
+    }
+
+    public async Task<IEnumerable<CommitEntity>> GetAllCommits()
+    {
+        var response = await _httpClient.GetAsync($"{_url}/commit/getall");
+        
+        if(!response.IsSuccessStatusCode)
+            throw new Exception(response.StatusCode.ToString());
+        
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<IEnumerable<CommitEntity>>(responseContent);
+    }
+
+    public async Task<CommitEntity> GetCommitById(Guid commitId)
+    {
+        var response = await _httpClient.GetAsync($"{_url}/commit/get?commitid={commitId}");
+        
+        if(!response.IsSuccessStatusCode)
+            throw new Exception(response.StatusCode.ToString());
+        
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<CommitEntity>(responseContent);
     }
 }

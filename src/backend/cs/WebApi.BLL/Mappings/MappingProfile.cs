@@ -30,7 +30,9 @@ public class MappingProfile : Profile
         CreateMap<CommitModel, CommitEntity>();
         
         CreateMap<MagnetogramEntity, MagnetogramModel>();
-        CreateMap<MagnetogramModel, MagnetogramEntity>();
+        CreateMap<MagnetogramModel, MagnetogramEntity>()
+            .ForMember(dest => dest.UserName,
+                opt => opt.MapFrom(src => src.CreatedBy));
         
         CreateMap<ReportEntity, ReportModel>();
         CreateMap<ReportModel, ReportEntity>();

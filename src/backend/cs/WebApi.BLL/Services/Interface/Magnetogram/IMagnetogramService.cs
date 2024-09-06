@@ -1,6 +1,9 @@
 ﻿namespace WebApi.BLL.Services.Interface.Magnetogram;
 
+/// <summary>
+/// Интерфейс
+/// </summary>
 public interface IMagnetogramService
 {
-    Task SaveMagnetogram(Models.Implementation.Magnetogram.MagnetogramModel magnetogramModel);
+    public Task<string> SaveMagnetogram(Models.Implementation.Magnetogram.MagnetogramModel magnetogramModel);
 }

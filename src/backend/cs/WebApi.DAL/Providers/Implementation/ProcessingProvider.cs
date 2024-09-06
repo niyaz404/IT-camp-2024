@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using WebApi.DAL.Models.Implementation.Commit;
 using WebApi.DAL.Models.Implementation.Magnetogram;
 using WebApi.DAL.Providers.Interface;
@@ -13,24 +15,35 @@ public class ProcessingProvider : IProcessingProvider
     private readonly HttpClient _httpClient;
     private readonly string _url;
 
-    public ProcessingProvider()
+    public ProcessingProvider(string url, HttpClient httClient)
     {
-        _url = Environment.GetEnvironmentVariable("PROCESSING_SERVICE_URL") ?? "http://localhost:8010";
-        _httpClient = new HttpClient();
+        _url = url;//Environment.GetEnvironmentVariable("REPORT_SERVICE_URL") ?? "http://localhost:8005";
+        _httpClient = httClient;
     }
     
     /// <summary>
-    /// Метод получения отчета по идентификатору обработки
+    /// Метод загрузки магнитограммы
     /// </summary>
-    public async Task<CommitEntity> Process(MagnetogramEntity magnetogram)
+    /// <returns>Идентификатор обработки (Commit)</returns>
+    public async Task<string> SaveMagnetogram(MagnetogramEntity magnetogram)
     {
-        ////////////////////////////////////////////////////////////////////
-        var response = await _httpClient.GetAsync($"{_url}/api/report/get");
-        
-        if(!response.IsSuccessStatusCode)
-            throw new Exception(response.StatusCode.ToString());
-        
+        var settings = new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
+        // Создаем HTTP-запрос для MLService
+        var requestContent = new StringContent(JsonConvert.SerializeObject(magnetogram, settings), Encoding.UTF8,
+            "application/json");
+        var response = await _httpClient.PostAsync($"{_url}/ai/load", requestContent);
+            
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(response.ReasonPhrase);
+        }
+            
         var responseContent = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<CommitEntity>(responseContent);
+        var commitId = JsonConvert.DeserializeObject<dynamic>(responseContent).commitId;
+
+        return commitId;
     }
 }

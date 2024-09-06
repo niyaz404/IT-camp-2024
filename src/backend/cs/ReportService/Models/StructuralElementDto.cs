@@ -1,9 +1,9 @@
-﻿namespace ReportService.BLL.Models;
+﻿namespace ReportService.Models;
 
 /// <summary>
-/// Модель дефекта
+/// Dto структурного элемента
 /// </summary>
-public class DefectModel
+public class StructuralElementDto
 {
     /// <summary>
     /// Идентификатор элемента
@@ -11,9 +11,9 @@ public class DefectModel
     public Guid Id { get; set; }
     
     /// <summary>
-    /// Дополнительное описание элемета
+    /// Тип структурного элемента
     /// </summary>
-    public string Description { get; set; }
+    public StructuralElementTypeDto Type { get; set; }
     
     /// <summary>
     /// Х-координата начала области

@@ -22,8 +22,10 @@ public class CommitEntity : BaseEntity
     /// </summary>
     public string Name { get; set; }
     
+    private DateTime _createdAt;
+
     /// <summary>
-    /// Дата обработка магнитограммы
+    /// Дата загрузки обработка магнитограммы
     /// </summary>
     public DateTime CreatedAt { get; set; }
     

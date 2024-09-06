@@ -1,24 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using WebApi.BLL.Models.Implementation.Auth;
+using WebApi.BLL.Services.Interface.Auth;
 using WebApi.Models.Implementation.Auth;
 
 namespace WebAPI.Controllers
 {
+    /// <summary>
+    /// Контроллер авторизации
+    /// </summary>
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class AuthController : ControllerBase
     {
-        private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration;
+        private readonly IAuthService _authService;
+        private readonly IMapper _mapper;
 
-        public AuthController(HttpClient httpClient, IConfiguration configuration)
+        public AuthController( IAuthService authService, IMapper mapper)
         {
-            _httpClient = httpClient;
-            _configuration = configuration;
+            _authService = authService;
+            _mapper = mapper;
         }
         
         /// <summary>
@@ -27,31 +31,15 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<string>> Login([FromBody] UserCredentialsDto userCredentials)
         {
-            // Создаем HTTP-запрос для AuthService
-            var requestContent = new StringContent(JsonConvert.SerializeObject(userCredentials), Encoding.UTF8, "application/json");
-            
-            var authServiceUrl = _configuration.GetValue<string>("AuthService:Url");
-            var response = await _httpClient.PostAsync($"{authServiceUrl}/api/auth/generatetoken", requestContent);
-            
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                return Unauthorized("Invalid username or password.");
+                var result = await _authService.Login(_mapper.Map<UserCredentialsModel>(userCredentials));
+                return result.Token;
             }
-            
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseContent);
-            
-            // Проверка и обработка JWT-токена
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(tokenResponse.Token) as JwtSecurityToken;
-            var role = jsonToken?.Claims.First(claim => claim.Type == "role").Value;
-            
-            return Ok(new { Token = tokenResponse.Token, Role = role });
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
-    }
-
-    public class TokenResponse
-    {
-        public string Token { get; set; }
     }
 }

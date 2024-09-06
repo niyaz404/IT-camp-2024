@@ -23,5 +23,5 @@ public class MagnetogramModel
     /// <summary>
     /// Файл магнитограммы в формате .pkl
     /// </summary>
-    public byte[] File { get; set; }
+    public string File { get; set; }
 }

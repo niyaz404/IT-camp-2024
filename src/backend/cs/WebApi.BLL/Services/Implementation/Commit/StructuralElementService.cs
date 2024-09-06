@@ -5,7 +5,7 @@ namespace WebApi.BLL.Services.Implementation.Commit;
 
 public class StructuralElementService : IStructuralElementService
 {
-    public Task<IEnumerable<DefectModel>> GetStructuralElement(string[] elementIds)
+    public Task<IEnumerable<DefectModel>> GetStructuralElements(string[] elementIds)
     {
         return null;
     }

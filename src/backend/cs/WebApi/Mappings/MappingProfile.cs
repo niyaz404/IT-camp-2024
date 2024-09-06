@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Buffers.Text;
+using AutoMapper;
 using WebApi.BLL.Models.Implementation.Auth;
 using WebApi.BLL.Models.Implementation.Commit;
 using WebApi.BLL.Models.Implementation.Magnetogram;
@@ -29,11 +30,45 @@ public class MappingProfile : Profile
         
         CreateMap<CommitDto, CommitModel>();
         CreateMap<CommitModel, CommitDto>();
-        
-        CreateMap<MagnetogramDto, MagnetogramModel>();
+
+        CreateMap<MagnetogramDto, MagnetogramModel>()
+            .ForMember(dest => dest.File,
+                opt => opt.MapFrom(src => ConvertFormFileToBase64(src.File)));
         CreateMap<MagnetogramModel, MagnetogramDto>();
         
         CreateMap<ReportDto, ReportModel>();
         CreateMap<ReportModel, ReportDto>();
     }
+    
+    public byte[] ConvertFormFileToByteArray(IFormFile formFile)
+    {
+        if (formFile == null || formFile.Length == 0)
+            return null;
+
+        using (var memoryStream = new MemoryStream())
+        {
+            formFile.CopyTo(memoryStream); // Синхронный вызов
+            return memoryStream.ToArray();
+        }
+    }
+    
+    public static string ConvertFormFileToBase64(IFormFile formFile)
+    {
+        if (formFile == null || formFile.Length == 0)
+        {
+            throw new ArgumentException("File is empty or null");
+        }
+
+        // Читаем содержимое IFormFile в байтовый массив
+        byte[] fileBytes;
+        using (var memoryStream = new MemoryStream())
+        {
+            formFile.CopyTo(memoryStream);
+            fileBytes = memoryStream.ToArray();
+        }
+
+        // Преобразуем байты в строку Base64
+        return Convert.ToBase64String(fileBytes);
+    }
+
 }

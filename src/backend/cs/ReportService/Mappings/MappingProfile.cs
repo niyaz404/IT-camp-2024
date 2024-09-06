@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DAL.Models.Implementation.Commit;
-using DAL.Models.Implementation.Report;
 using ReportService.BLL.Models;
+using ReportService.Models;
+using StructuralElementTypeDto = ReportService.BLL.Models.StructuralElementTypeDto;
 
 namespace ReportService.Mappings;
 
@@ -12,23 +12,16 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<CommitModel, CommitEntity>();
-        CreateMap<CommitEntity, CommitModel>()
-            .ForMember(dest => dest.Defects, opt => opt.MapFrom(src => new List<DefectModel>()))
-            .ForMember(dest => dest.StructuralElements,
-                opt => opt.MapFrom((src, trg) => new List<StructuralElementModel>()));
-        ;
+        CreateMap<CommitModel, CommitDto>();
+        CreateMap<CommitDto, CommitModel>();
         
-        CreateMap<DefectModel, DefectEntity>();
-        CreateMap<DefectEntity, DefectModel>();
+        CreateMap<DefectModel, DefectDto>();
+        CreateMap<DefectDto, DefectModel>();
         
-        CreateMap<StructuralElementModel, StructuralElementEntity>();
-        CreateMap<StructuralElementEntity, StructuralElementModel>()
-            .ForMember(dest => dest.Type,
-                opt => opt.MapFrom(src => new StructuralElementType { Id = src.TypeId, Name = src.TypeName }));
-
+        CreateMap<StructuralElementModel, StructuralElementDto>();
+        CreateMap<StructuralElementDto, StructuralElementModel>();
         
-        CreateMap<ReportModel, ReportEntity>();
-        CreateMap<ReportEntity, ReportModel>();
+        CreateMap<ReportModel, ReportDto>();
+        CreateMap<ReportDto, ReportModel>();
     }
 }

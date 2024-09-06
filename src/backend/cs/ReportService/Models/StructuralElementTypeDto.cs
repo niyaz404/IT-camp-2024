@@ -1,9 +1,9 @@
-﻿namespace ReportService.BLL.Models;
+﻿namespace ReportService.Models;
 
 /// <summary>
-/// Модель типа структурного элемента
+/// Dto типа структурного элемента
 /// </summary>
-public class StructuralElementType
+public class StructuralElementTypeDto
 {
     /// <summary>
     /// Идентификатор типа

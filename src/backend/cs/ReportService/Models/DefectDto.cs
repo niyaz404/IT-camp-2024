@@ -1,9 +1,9 @@
-﻿namespace ReportService.BLL.Models;
+﻿namespace ReportService.Models;
 
 /// <summary>
-/// Модель дефекта
+/// Dto дефекта
 /// </summary>
-public class DefectModel
+public class DefectDto
 {
     /// <summary>
     /// Идентификатор элемента

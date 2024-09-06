@@ -14,24 +14,18 @@ namespace ReportService.BLL.Services.Implementation;
 public class FileReportService : IReportService
 {
     private readonly IReportRepository _reportRepository;
-    private readonly ICommitRepository _commitRepository;
-    private readonly IDefectRepository _defectRepository;
-    private readonly IStructuralElementRepository _structuralElementRepository;
+    private readonly ICommitService _commitService;
     private readonly IReportGenerator _reportGenerator;
     private readonly IMapper _mapper;
         
     public FileReportService(
         IReportRepository reportRepository, 
-        ICommitRepository commitRepository,
-        IDefectRepository defectRepository,
-        IStructuralElementRepository structuralElementRepository,
+        ICommitService commitService,
         IReportGenerator reportGenerator, 
         IMapper mapper)
     {
         _reportRepository = reportRepository;
-        _commitRepository = commitRepository;
-        _defectRepository = defectRepository;
-        _structuralElementRepository = structuralElementRepository;
+        _commitService = commitService;
         _reportGenerator = reportGenerator;
         _mapper = mapper;
     }
@@ -45,10 +39,7 @@ public class FileReportService : IReportService
             return _mapper.Map<ReportModel>(reportEntity);
         }
 
-        var commitEntity = await _commitRepository.SelectById(commitId);
-        var commit = _mapper.Map<CommitModel>(commitEntity);
-        commit.Defects = _mapper.Map<List<DefectModel>>(await _defectRepository.SelectByCommitId(commitId));
-        commit.StructuralElements = _mapper.Map<List<StructuralElementModel>>(await _structuralElementRepository.SelectByCommitId(commitId));
+        var commit = await _commitService.GetById(commitId);
         
         var report = new ReportModel
         {
@@ -60,5 +51,11 @@ public class FileReportService : IReportService
         await _reportRepository.Insert(_mapper.Map<ReportEntity>(report));
 
         return report;
+    }
+
+
+    public async Task<IEnumerable<CommitModel>> GetAllCommits()
+    {
+        return _mapper.Map<IEnumerable<CommitModel>>(await _reportRepository.SelectAllCommits());
     }
 }

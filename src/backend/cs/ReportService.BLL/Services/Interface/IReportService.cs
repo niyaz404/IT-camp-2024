@@ -11,4 +11,6 @@ public interface IReportService
     /// Получение отчета по идентификатору обработки
     /// </summary>
     public Task<ReportModel> GetByCommitId(Guid commitId);
+
+    public Task<IEnumerable<CommitModel>> GetAllCommits();
 }

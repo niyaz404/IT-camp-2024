@@ -17,8 +17,4 @@
       <ProjectReference Include="..\DAL.Implementation\DAL.Implementation.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Enums\" />
-    </ItemGroup>
-
 </Project>

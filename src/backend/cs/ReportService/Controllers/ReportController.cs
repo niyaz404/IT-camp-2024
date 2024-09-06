@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ReportService.BLL.Services.Interface;
+using ReportService.Models;
 
 namespace ReportService.Controllers
 {
@@ -31,7 +31,7 @@ namespace ReportService.Controllers
             {
                 var report = await _reportService.GetByCommitId(commitId);
                 
-                return Ok(report);
+                return Ok(_mapper.Map<ReportDto>(report));
             }
             catch (Exception e)
             {

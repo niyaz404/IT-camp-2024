@@ -14,6 +14,18 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         
+        builder.Services.AddCors(options =>  
+        {  
+            options.AddDefaultPolicy(
+                policy  =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });  
+        });
+        
         ConfigureService(builder.Services);
        
         
@@ -53,20 +65,22 @@ public class Program
         var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
                                "Host=localhost;Port=5432;Username=postgres;Password=password;Database=postgres;";
         
-        services.AddScoped<ICommitRepository>(_ =>  new CommitRepository(connectionString));
         services.AddScoped<IReportRepository>(_ => new ReportRepository(connectionString));
         services.AddScoped<IDefectToCommitRepository>(_ => new DefectToCommitRepository(connectionString));
         services.AddScoped<IStructuralElementToCommitRepository>(_ =>
             new StructuralElementToCommitRepository(connectionString));
+        services.AddScoped<ICommitRepository>(_ =>  new CommitRepository(connectionString));
         services.AddScoped<IDefectRepository>(p
             => new DefectRepository(connectionString, p.GetRequiredService<IDefectToCommitRepository>()));
         services.AddScoped<IStructuralElementRepository>(p
             => new StructuralElementRepository(connectionString, p.GetRequiredService<IStructuralElementToCommitRepository>()));
+        services.AddScoped<ICommitService, CommitService>();
         services.AddScoped<IReportService, FileReportService>();
         services.AddScoped<IReportGenerator, PdfReportGenerator>();
         
         services.AddAutoMapper(
-            typeof(MappingProfile).Assembly
+            typeof(MappingProfile).Assembly,
+            typeof(ReportService.BLL.Mappings.MappingProfile).Assembly
         );
     }
 }
