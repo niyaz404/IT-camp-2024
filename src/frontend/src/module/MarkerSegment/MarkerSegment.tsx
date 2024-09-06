@@ -20,6 +20,11 @@ export const MarkerSegment: FC<MarkerSegmentProps> = ({
     setWidth(Math.abs(rightCoordinate - leftCoordinate));
   }, [leftCoordinate, rightCoordinate]);
 
+  useEffect(() => {
+    setCoordinate("left", element.leftCoordinateX * 4);
+    setCoordinate("right", element.rightCoordinateX * 4);
+  }, [element]);
+
   const setCoordinate = (side: MarkerSide, coordinate: number) => {
     if (side === "left") {
       setLeftCoordinate(coordinate);
@@ -54,7 +59,9 @@ export const MarkerSegment: FC<MarkerSegmentProps> = ({
 
       <MarkerBackground
         color={element.markerColor}
-        leftOffset={leftCoordinate}
+        leftOffset={
+          leftCoordinate < rightCoordinate ? leftCoordinate : rightCoordinate
+        }
         width={width}
         type={element.type}
       />

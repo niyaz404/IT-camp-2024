@@ -1,4 +1,4 @@
-import { getRandomColor } from "../../utils";
+import { formatCoordinate, getRandomColor } from "../../utils";
 import { getMagnetogramInfo, saveNewMagnetogram } from "../../api";
 import {
   Defect,
@@ -35,22 +35,21 @@ export const loadMagnetogramById =
       dispatch(
         magnetogramSlice.actions.replaceProcessedMagnetogramImage(
           // `data:image/jpeg;base64,${data.processedImage}`
-          "https://psv4.userapi.com/c909618/u181754921/docs/d59/5c7bd20217eb/magnetogram_output.png?extra=TtuI8C_oP4kLOnRAMyOsLd-G7XmPklOE-MmUBB8QAExs5qlywJZR3Gk2CWs9p_nuEXF4r1PpxdK73Z9xbcUCoAUBu76fycQl2Hw2u8jZs4apJNXf7o3XnHeeJl6dctwU3tvp5Skle9cGj0RZE__eQ0aAAg"
+          "https://psv4.userapi.com/c909628/u181754921/docs/d2/8e788a45ca20/magnetogram_output.png?extra=xHS1L4ScAeKZTx3iUM_Opaq1Y8szqK5ceTOuXC3L2PSIHkUySG50jdprdMsDq4XqGhJhl22Dt293LZAaz5uIBxuJfo38uKMWSJfxQ6QrVekhi_lo1CdVb_DrBj7NtXGGHKA9ycE6sKizbpR1zDEGig6C4Ek"
         )
       );
-      dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
 
-      dispatch(сalculateDefectInfo(data.defects));
-
-      dispatch(
+      await dispatch(
         magnetogramSlice.actions.replaceStructuralElements(
           data.structuralElements
         )
       );
 
-      setTimeout(() => {
-        dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
-      }, 5000);
+      await dispatch(magnetogramSlice.actions.replaceDefects(data.defects));
+
+      await dispatch(сalculateDefectInfo(data.defects));
+
+      dispatch(magnetogramSlice.actions.replaceIsMagnetogramLoading(false));
     } catch (error) {
       alert("Ошибка загрузки данных");
       console.error(error);
@@ -73,7 +72,7 @@ export const addMagnetogramElement =
     description?: string,
     structuralElementType?: StructuralElementType
   ) =>
-  (dispatch: AppDispatch, getState: () => RootState) => {
+  async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
     const { defects, structuralElements } = magnetogramSelector(state);
 
@@ -82,27 +81,29 @@ export const addMagnetogramElement =
         id: "",
         description: description ?? "",
         type: type,
-        leftCoordinateX: leftCoordinateX,
-        rightCoordinateX: rightCoordinateX,
+        leftCoordinateX: formatCoordinate(leftCoordinateX),
+        rightCoordinateX: formatCoordinate(rightCoordinateX),
         markerColor: getRandomColor(),
         isEditable: false,
       };
-      dispatch(
+      await dispatch(
         magnetogramSlice.actions.replaceDefects([...defects, newDefect])
       );
+      await dispatch(coordinatesCorrection(newDefect));
+      dispatch(сalculateDefectInfo([newDefect]));
     } else {
       const newStructuralElement: StructuralElement = {
         id: "",
         type: type,
-        leftCoordinateX: leftCoordinateX,
-        rightCoordinateX: rightCoordinateX,
+        leftCoordinateX: formatCoordinate(leftCoordinateX),
+        rightCoordinateX: formatCoordinate(rightCoordinateX),
         markerColor: getRandomColor(),
         isEditable: false,
         structuralElementType:
           structuralElementType ?? StructuralElementTypes[0],
       };
-
-      dispatch(
+      await dispatch(coordinatesCorrection(newStructuralElement));
+      await dispatch(
         magnetogramSlice.actions.replaceStructuralElements([
           ...structuralElements,
           newStructuralElement,
@@ -125,7 +126,7 @@ export const updateElementCoordinates =
     coordinateX: number,
     side: MarkerSide
   ) =>
-  (dispatch: AppDispatch, getState: () => RootState) => {
+  async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
     const { defects, structuralElements } = magnetogramSelector(state);
 
@@ -141,14 +142,23 @@ export const updateElementCoordinates =
           side === "left"
             ? {
                 ...currentDefect,
-                leftCoordinateX: coordinateX,
+                // rightCoordinateX: formatCoordinate(
+                //   currentDefect.leftCoordinateX
+                // ),
+                leftCoordinateX: formatCoordinate(coordinateX),
               }
             : {
                 ...currentDefect,
-                rightCoordinateX: coordinateX,
+                // leftCoordinateX: formatCoordinate(
+                //   currentDefect.rightCoordinateX
+                // ),
+                rightCoordinateX: formatCoordinate(coordinateX),
               };
-        dispatch(magnetogramSlice.actions.replaceDefect(newCurrentDefect));
-        dispatch(coordinatesCorrection(newCurrentDefect));
+        await dispatch(coordinatesCorrection(newCurrentDefect));
+        await dispatch(
+          magnetogramSlice.actions.replaceDefect(newCurrentDefect)
+        );
+        dispatch(сalculateDefectInfo([newCurrentDefect]));
       }
     }
 
@@ -164,21 +174,28 @@ export const updateElementCoordinates =
           side === "left"
             ? {
                 ...currentStructuralElement,
-                leftCoordinateX: coordinateX,
+                // rightCoordinateX: formatCoordinate(
+                //   currentStructuralElement.leftCoordinateX
+                // ),
+                leftCoordinateX: formatCoordinate(coordinateX),
               }
             : {
                 ...currentStructuralElement,
-                rightCoordinateX: coordinateX,
+                // leftCoordinateX: formatCoordinate(
+                //   currentStructuralElement.rightCoordinateX
+                // ),
+                rightCoordinateX: formatCoordinate(coordinateX),
               };
-        dispatch(
+
+        await dispatch(coordinatesCorrection(newCurrentStructuralElement));
+        await dispatch(
           magnetogramSlice.actions.replaceStructuralElement(
             newCurrentStructuralElement
           )
         );
-        dispatch(coordinatesCorrection(newCurrentStructuralElement));
+        dispatch(сalculateDefectInfo(defects));
       }
     }
-    dispatch(сalculateDefectInfo(defects));
   };
 
 /**
@@ -214,12 +231,22 @@ export const setIsDefectsVisible =
  * Сохраняет измененеия пользователя для создания новой версии магнитограммы
  */
 export const saveMagnetogram =
-  () => (dispatch: AppDispatch, getState: () => RootState) => {
+  () => async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
     const { defects, id, processedImage, structuralElements, name } =
       magnetogramSelector(state);
     const { currentUser } = authSelector(state);
     try {
+      await defects.forEach((defect) => {
+        dispatch(coordinatesCorrection(defect));
+      });
+
+      await structuralElements.forEach((structuralElement) => {
+        dispatch(coordinatesCorrection(structuralElement));
+      });
+
+      await dispatch(сalculateDefectInfo(defects));
+
       saveNewMagnetogram(
         id,
         new Date(),
@@ -243,7 +270,7 @@ export const saveMagnetogram =
  */
 export const removeMagnetogramElement =
   (magnetogramElementId: string, type: MagnetogramElementType) =>
-  (dispatch: AppDispatch, getState: () => RootState) => {
+  async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
     const { defects, structuralElements } = magnetogramSelector(state);
 
@@ -251,18 +278,27 @@ export const removeMagnetogramElement =
       const filtredDefects = defects.filter(
         (defect) => defect.id !== magnetogramElementId
       );
-      dispatch(magnetogramSlice.actions.replaceDefects(filtredDefects));
+      await dispatch(magnetogramSlice.actions.replaceDefects(filtredDefects));
     }
     if (type === "structuralElement") {
       const filtredStructuralElements = structuralElements.filter(
         (structuralElement) => structuralElement.id !== magnetogramElementId
       );
-      dispatch(
+      await dispatch(
         magnetogramSlice.actions.replaceStructuralElements(
           filtredStructuralElements
         )
       );
     }
+
+    await defects.forEach((defect) => {
+      dispatch(coordinatesCorrection(defect));
+    });
+
+    await structuralElements.forEach((structuralElement) => {
+      dispatch(coordinatesCorrection(structuralElement));
+    });
+
     dispatch(сalculateDefectInfo(defects));
   };
 
@@ -351,7 +387,6 @@ export const сalculateDefectInfo =
     });
 
     dispatch(magnetogramSlice.actions.replaceDefects(newDefects));
-    newDefects;
   };
 
 /**
@@ -375,27 +410,35 @@ const calculateCount = (
  */
 export const coordinatesCorrection =
   (magnetogramElement: StructuralElement | Defect) =>
-  (dispatch: AppDispatch) => {
+  async (dispatch: AppDispatch) => {
     if (
       magnetogramElement.leftCoordinateX > magnetogramElement.rightCoordinateX
     ) {
       if (magnetogramElement.type === "defect") {
         const newCurrentDefect: Defect = {
           ...(magnetogramElement as Defect),
-          leftCoordinateX: magnetogramElement.rightCoordinateX,
-          rightCoordinateX: magnetogramElement.leftCoordinateX,
+          leftCoordinateX: formatCoordinate(
+            magnetogramElement.rightCoordinateX
+          ),
+          rightCoordinateX: formatCoordinate(
+            magnetogramElement.leftCoordinateX
+          ),
         };
-
-        dispatch(magnetogramSlice.actions.replaceDefect(newCurrentDefect));
+        await dispatch(
+          magnetogramSlice.actions.replaceDefect(newCurrentDefect)
+        );
       }
       if (magnetogramElement.type === "structuralElement") {
         const newCurrentStructuralElement: StructuralElement = {
           ...(magnetogramElement as StructuralElement),
-          leftCoordinateX: magnetogramElement.rightCoordinateX,
-          rightCoordinateX: magnetogramElement.leftCoordinateX,
+          leftCoordinateX: formatCoordinate(
+            magnetogramElement.rightCoordinateX
+          ),
+          rightCoordinateX: formatCoordinate(
+            magnetogramElement.leftCoordinateX
+          ),
         };
-
-        dispatch(
+        await dispatch(
           magnetogramSlice.actions.replaceStructuralElement(
             newCurrentStructuralElement
           )
