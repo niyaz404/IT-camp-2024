@@ -2,6 +2,9 @@ import base64
 import io
 import pickle
 import uuid
+import torch
+import torch.nn as nn
+import os
 
 import numpy as np
 from PIL import Image
@@ -19,7 +22,7 @@ class Processor(base_processor.AbstractProcessor):
         """
         Инициализировать переменные
         """
-
+        self.model: None
         self._magnetogram_pickle: bytes | None = None
 
     def _get_array_from_pickle(self) -> np.array:
@@ -88,6 +91,61 @@ class Processor(base_processor.AbstractProcessor):
         Обработать магнитограмму
         :return: списки дефектов и структурных элементов
         """
+
+        # Класс ----------------------------------------------------------------------------
+        class MultiTaskModel(nn.Module):
+            def __init__(self):
+                super(MultiTaskModel, self).__init__()
+                # Циклический паддинг по вертикальной оси Y (цикл)
+                self.cyclic_padding = nn.ReflectionPad2d((0, 0, 1, 1))
+
+                # Одномерные свертки по оси X (временная ось)/
+                self.conv1d_1 = nn.Conv1d(130, 64, kernel_size=3, padding=1)  # Увеличили размер входных каналов
+                self.conv1d_2 = nn.Conv1d(64, 128, kernel_size=3, padding=1)
+                self.conv1d_3 = nn.Conv1d(128, 128, kernel_size=3, padding=1)
+
+                # BatchNorm и Dropout
+                self.bn1 = nn.BatchNorm1d(64)
+                self.bn2 = nn.BatchNorm1d(128)
+                self.dropout = nn.Dropout(p=0.3)
+                
+                self.lstm = nn.LSTM(128, 128, batch_first=True, bidirectional=True)
+
+                self.fc = nn.Linear(128 * 2, 5)
+                self.fc_defects = nn.Linear(128 * 2, 2)
+                
+                self.elu = nn.ELU()
+
+            def forward(self, x):
+                x = self.cyclic_padding(x)  # [batch_size, 1, 130, 4096]
+                
+                x = x.view(x.size(0), 130, -1)  # [batch_size, 130, 4096]
+                
+                # Одномерные свертки с активацией и нормализацией
+                x = self.elu(self.bn1(self.conv1d_1(x)))  # [batch_size, 64, 4096]
+                x = self.elu(self.bn2(self.conv1d_2(x)))  # [batch_size, 128, 4096]
+                x = self.elu(self.conv1d_3(x))            # [batch_size, 128, 4096]
+                
+                # Применение Dropout
+                x = self.dropout(x)  # batch_size, 128, 4096]
+                
+                x, _ = self.lstm(x.permute(0, 2, 1))  # [batch_size, 4096, 256]
+                
+                out_elements = self.fc(x)
+                out_defects = self.fc_defects(x)  
+                
+                return out_elements, out_defects # [batch_size, 4096, 5]
+        # ------------------------------------------------------------------------------------
+
+        model_path = os.path.join(os.path.dirname(__file__), "model_photonchikk.pth")
+        self.model = MultiTaskModel()
+        self.model.load_state_dict(torch.load(model_path, map_location = torch.device('cpu')))
+        self.model.eval()
+        print('Модель загружена и готова к предикту модели')
+
+        self.get_processed_image()
+
+        # input_tensor = torch.tensor()
 
         defects = [
             ai_dto.Defect(
@@ -179,7 +237,51 @@ class Processor(base_processor.AbstractProcessor):
         :return: изображение в формате base64
         """
 
-        image_array = self._get_array_from_pickle()
+        mag = self._get_array_from_pickle()
+        if mag.shape[1] > 4096:
+            mag = mag[:, :4096]
+            
+        image = mag[np.newaxis, :, :]  # (1, 128, 4096)
+        image = image.astype(np.float32)
+        image = torch.tensor(image)
+        
+        ### предикт
+        input_image = image.clone().detach().to(torch.float32).to(device)
+        input_image = input_image.unsqueeze(0)
+
+        self.model.eval()
+        with torch.inference_mode():
+            output, defects = self.model(input_image)  # torch.Size([1, 4096, 5]) torch.Size([1, 4096, 2])
+
+        ### обработать предсказания
+
+        def to_one_hot(labels, num_classes=5):
+            labels = labels.cpu()  
+            one_hot_labels = np.zeros((labels.size(0), num_classes), dtype=np.uint8)
+            one_hot_labels[np.arange(labels.size(0)), labels.numpy()] = 1
+            return one_hot_labels
+
+        predicted_labels = torch.argmax(output, dim=-1)  # Размер станет [1, 4096]
+        predicted_labels = predicted_labels.squeeze(0)  # Размер станет [4096]
+
+        if predicted_labels.is_cuda:
+            predicted_labels = predicted_labels.cpu()
+
+        predicted_one_hot = to_one_hot(predicted_labels.squeeze(0))
+
+        predicted_defects = torch.argmax(defects, dim=-1)  # Размер станет [1, 4096]
+        predicted_defects = predicted_defects.squeeze(0)  # Размер станет [4096]
+
+        if predicted_defects.is_cuda:
+            predicted_defects = predicted_defects.cpu()
+
+        predicted_one_hot_defects = to_one_hot(predicted_defects.squeeze(0), num_classes=2)
+        print(predicted_one_hot_defects)
+        print(predicted_one_hot)
+        print(predicted_one_hot_defects.shape)
+
+
+        ##################################
         image_array = (image_array * 255).astype(np.uint8)
         image = Image.fromarray(image_array)
         buffered_image = io.BytesIO()
