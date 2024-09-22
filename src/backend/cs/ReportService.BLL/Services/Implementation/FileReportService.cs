@@ -52,10 +52,4 @@ public class FileReportService : IReportService
 
         return report;
     }
-
-
-    public async Task<IEnumerable<CommitModel>> GetAllCommits()
-    {
-        return _mapper.Map<IEnumerable<CommitModel>>(await _reportRepository.SelectAllCommits());
-    }
 }

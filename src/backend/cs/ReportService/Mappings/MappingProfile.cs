@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ReportService.BLL.Models;
 using ReportService.Models;
-using StructuralElementTypeDto = ReportService.BLL.Models.StructuralElementTypeDto;
 
 namespace ReportService.Mappings;
 
@@ -17,6 +16,9 @@ public class MappingProfile : Profile
         
         CreateMap<DefectModel, DefectDto>();
         CreateMap<DefectDto, DefectModel>();
+        
+        CreateMap<StructuralElementTypeModel, StructuralElementTypeDto>();
+        CreateMap<StructuralElementTypeDto, StructuralElementTypeModel>();
         
         CreateMap<StructuralElementModel, StructuralElementDto>();
         CreateMap<StructuralElementDto, StructuralElementModel>();

@@ -33,20 +33,20 @@ public class CommitDto
     /// <summary>
     /// Наличие дефектов в магнитограмме
     /// </summary>
-    public bool IsDefective => Defects?.Any() ?? false;
+    public bool IsDefective { get; set; }
 
     /// <summary>
     /// Список дефектов
     /// </summary>
-    public List<DefectDto> Defects { get; set; } = new ();
+    public List<DefectDto> Defects { get; set; }
 
     /// <summary>
     /// Список конструктивных элементов
     /// </summary>
-    public List<StructuralElementDto> StructuralElements { get; set; } = new ();
+    public List<StructuralElementDto> StructuralElements { get; set; }
     
     /// <summary>
     /// Обработанная магнитограмма
     /// </summary>
-    public string ProcessedImage { get; set; }
+    public byte[] ProcessedImage { get; set; }
 }

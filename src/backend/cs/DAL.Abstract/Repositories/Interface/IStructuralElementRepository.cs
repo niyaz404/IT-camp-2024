@@ -11,4 +11,9 @@ public interface IStructuralElementRepository
     /// Получение структурных элементов по идентификаторов обработки
     /// </summary>
     public Task<IEnumerable<StructuralElementEntity>> SelectByCommitId(Guid commitId);
+    
+    /// <summary>
+    /// Добавление структурного элемента в таблицу
+    /// </summary>
+    public Task<Guid> Insert(StructuralElementEntity element);
 }

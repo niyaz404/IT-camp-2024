@@ -11,4 +11,9 @@ public interface IDefectRepository
     /// Получение дефектов по идентификатору обработки
     /// </summary>
     public Task<IEnumerable<DefectEntity>> SelectByCommitId(Guid commitId);
+    
+    /// <summary>
+    /// Добавление дефекта в таблицу
+    /// </summary>
+    public Task<Guid> Insert(DefectEntity defect);
 }

@@ -29,8 +29,15 @@ public class CommitController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> Save([FromBody]CommitDto commitDto)
     {
-        await _commitService.Save(_mapper.Map<CommitModel>(commitDto));
-        return Ok();
+        try
+        {
+            await _commitService.Save(_mapper.Map<CommitModel>(commitDto));
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
     
     /// <summary>
@@ -40,10 +47,17 @@ public class CommitController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<CommitDto>> Get(Guid commitId)
     {
-        var commit = _mapper.Map<CommitDto>(await _commitService.Get(commitId));
-        commit.ProcessedImage =
-            "https://psv4.userapi.com/c909628/u181754921/docs/d2/8e788a45ca20/magnetogram_output.png?extra=xHS1L4ScAeKZTx3iUM_Opaq1Y8szqK5ceTOuXC3L2PSIHkUySG50jdprdMsDq4XqGhJhl22Dt293LZAaz5uIBxuJfo38uKMWSJfxQ6QrVekhi_lo1CdVb_DrBj7NtXGGHKA9ycE6sKizbpR1zDEGig6C4Ek";
-        return Ok(commit);
+        try
+        {
+            var commit = _mapper.Map<CommitDto>(await _commitService.Get(commitId));
+            commit.ProcessedImage =
+                "https://sun9-23.userapi.com/impg/kJ22PWyYRcZ0V-Lkww_tFPZnLLgt8gI5RBJISw/YRQLsjAcg9Y.jpg?size=2560x80&quality=96&sign=6e3186a60a5911af4c61da750079c477&type=album";
+            return Ok(commit);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
     
     /// <summary>
@@ -53,8 +67,15 @@ public class CommitController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CommitDto>>> GetAll()
     {
-        var result = _mapper.Map<IEnumerable<CommitDto>>(await _commitService.GetAll());
-        return Ok(result);
+        try
+        {
+            var result = _mapper.Map<IEnumerable<CommitDto>>(await _commitService.GetAll());
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
     
     /// <summary>
@@ -63,9 +84,17 @@ public class CommitController : ControllerBase
     /// <param name="commitId">Идентификатор обработки</param>
     /// <returns>Статус операции</returns>
     [HttpDelete]
-    public async Task<ActionResult<bool>> Delete(string commitId)
+    public async Task<ActionResult<bool>> Delete(Guid commitId)
     {
-        return Ok(true);
+        try
+        {
+            await _commitService.Delete(commitId);
+            return Ok(true);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }
 

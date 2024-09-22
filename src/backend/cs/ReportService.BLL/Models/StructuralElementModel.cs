@@ -13,7 +13,7 @@ public class StructuralElementModel
     /// <summary>
     /// Тип структурного элемента
     /// </summary>
-    public StructuralElementTypeDto TypeDto { get; set; }
+    public StructuralElementTypeModel Type { get; set; }
     
     /// <summary>
     /// Х-координата начала области

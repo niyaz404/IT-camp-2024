@@ -18,4 +18,27 @@ public class DefectToCommitRepository(string connectionString) : Repository(conn
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryAsync<Guid>(sql, new { commitId });
     }
+
+    public async Task<Guid> Insert(Guid commitId, Guid defectId)
+    {
+        var sql = $@"insert into {_mainTableName} 
+                    (commitid, defectid) 
+                    VALUES (:commitId, :defectId) 
+                    returning id;";
+        
+        await using var connection = new NpgsqlConnection(_connectionString);
+        return await connection.ExecuteScalarAsync<Guid>(sql, new
+        {
+            commitId, defectId
+        });
+    }
+
+    public async Task DeleteByCommitId(Guid commitId)
+    {
+        var sql = $@"delete from {_mainTableName} 
+                    where commitid = :commitId;";
+        
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.ExecuteAsync(sql, new { commitId });
+    }
 }

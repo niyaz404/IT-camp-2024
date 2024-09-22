@@ -3,7 +3,7 @@
 /// <summary>
 /// Модель типа структурного элемента
 /// </summary>
-public class StructuralElementTypeDto
+public class StructuralElementTypeModel
 {
     /// <summary>
     /// Идентификатор типа

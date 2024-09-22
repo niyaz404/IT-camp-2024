@@ -24,6 +24,7 @@ public class StructuralElementRepository : Repository, IStructuralElementReposit
         
     public async Task<IEnumerable<StructuralElementEntity>> SelectByCommitId(Guid commitId)
     {
+        //Хз зачем я это сюда засунул TODO: объединить запрос
         var structuralElementIds = await _structuralElementToCommitRepository.SelectStructuralElementIdsByCommitIds(commitId);
         
         var sql = $@"
@@ -38,5 +39,19 @@ public class StructuralElementRepository : Repository, IStructuralElementReposit
     
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryAsync<StructuralElementEntity>(sql, new { structuralElementIds });
+    }
+
+    public async Task<Guid> Insert(StructuralElementEntity element)
+    {
+        var sql = $@"insert into {_mainTableName} 
+                    (elementtypeid, startx, endx) 
+                    VALUES (:typeid, :startxcoordinate, :endxcoordinate) 
+                    returning id;";
+        
+        await using var connection = new NpgsqlConnection(_connectionString);
+        return await connection.ExecuteScalarAsync<Guid>(sql, new
+        {
+            element.TypeId, element.StartXCoordinate, element.EndXCoordinate
+        });
     }
 }

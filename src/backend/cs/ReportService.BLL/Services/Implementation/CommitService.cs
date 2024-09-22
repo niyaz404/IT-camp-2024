@@ -14,22 +14,45 @@ public class CommitService : ICommitService
     private readonly ICommitRepository _commitRepository;
     private readonly IDefectRepository _defectRepository;
     private readonly IStructuralElementRepository _structuralElementRepository;
+    private readonly IDefectToCommitRepository _defectToCommitRepository;
+    private readonly IStructuralElementToCommitRepository _structuralElementToCommitRepository;
+    private readonly IReportRepository _reportRepository;
     private readonly IMapper _mapper;
 
     public CommitService(ICommitRepository commitRepository, 
         IDefectRepository defectRepository,
         IStructuralElementRepository structuralElementRepository, 
+        IDefectToCommitRepository defectToCommitRepository,
+        IStructuralElementToCommitRepository structuralElementToCommitRepository,
+        IReportRepository reportRepository,
         IMapper mapper)
     {
         _commitRepository = commitRepository;
         _defectRepository = defectRepository;
         _structuralElementRepository = structuralElementRepository;
+        _defectToCommitRepository = defectToCommitRepository;
+        _structuralElementToCommitRepository = structuralElementToCommitRepository;
+        _reportRepository = reportRepository;
         _mapper = mapper;
     }
     
     public async Task<Guid> Save(CommitModel commit)
     {
-        return await _commitRepository.Insert(_mapper.Map<CommitEntity>(commit));
+        var commitId = await _commitRepository.Insert(_mapper.Map<CommitEntity>(commit));
+
+        foreach (var defect in commit.Defects)
+        {
+            var defectId = await _defectRepository.Insert(_mapper.Map<DefectEntity>(defect));
+            await _defectToCommitRepository.Insert(commitId, defectId);
+        }
+        
+        foreach (var element in commit.StructuralElements)
+        {
+            var elementId = await _structuralElementRepository.Insert(_mapper.Map<StructuralElementEntity>(element));
+            await _structuralElementToCommitRepository.Insert(commitId, elementId);
+        }
+        
+        return commitId;
     }
 
     public async Task<CommitModel> GetById(Guid commitId)
@@ -39,17 +62,23 @@ public class CommitService : ICommitService
         commit.Defects = _mapper.Map<List<DefectModel>>(await _defectRepository.SelectByCommitId(commitId));
         commit.StructuralElements = _mapper.Map<List<StructuralElementModel>>(await _structuralElementRepository.SelectByCommitId(commitId));
 
-        return _mapper.Map<CommitModel>(commitEntity);
+        return commit;
     }
 
     public async Task<IEnumerable<CommitModel>> GetAll()
     {
         var commitEntities = await _commitRepository.Select();
+        
         return _mapper.Map<IEnumerable<CommitModel>>(commitEntities);
     }
 
     public async Task Delete(Guid commitId)
     {
+        //TODO: остаются мусорные дефекты и элементы, тоже нужно удалить
+        //TODO: + засунуть в транзакцию
+        await _defectToCommitRepository.DeleteByCommitId(commitId);
+        await _structuralElementToCommitRepository.DeleteByCommitId(commitId);
+        await _reportRepository.DeleteByCommitId(commitId);
         await _commitRepository.Delete(commitId);
     }
 }

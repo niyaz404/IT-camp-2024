@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using WebApi.BLL.Enums;
 using WebApi.BLL.Models.Implementation.Auth;
 using WebApi.BLL.Models.Implementation.Commit;
 using WebApi.BLL.Models.Implementation.Magnetogram;
@@ -22,14 +23,19 @@ public class MappingProfile : Profile
         
         CreateMap<DefectEntity, DefectModel>();
         CreateMap<DefectModel, DefectEntity>();
-        
-        CreateMap<StructuralElementEntity, StructuralElementModel>();
-        CreateMap<StructuralElementModel, StructuralElementEntity>();
+
+        CreateMap<StructuralElementEntity, StructuralElementModel>()
+            .ForMember(dest => dest.Type, opt => opt.Ignore())
+            .ForMember(dest => dest.StructuralElementType, opt => opt.MapFrom(src => (StructuralElementType)src.Type.Id));
+
+        CreateMap<StructuralElementModel, StructuralElementEntity>()
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => new StructuralElementTypeEntity { Id = (int)src.StructuralElementType }));
 
         CreateMap<CommitEntity, CommitModel>();
         CreateMap<CommitModel, CommitEntity>()
             .ForMember(dest => dest.ProcessedImage, opt => opt.MapFrom(src => Convert2(src.ProcessedImage)
-            ));;
+            ));
+        ;
         
         CreateMap<MagnetogramEntity, MagnetogramModel>();
         CreateMap<MagnetogramModel, MagnetogramEntity>()
@@ -56,5 +62,10 @@ public class MappingProfile : Profile
             // Обработка ошибки в случае некорректной строки Base64
             return null;
         }
+    }
+
+    public string Get(StructuralElementModel src)
+    {
+        return src.StructuralElementType.ToString();
     }
 }

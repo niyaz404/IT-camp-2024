@@ -36,4 +36,9 @@ public class CommitEntity : BaseEntity
     /// Файл обработанной магнитограммы
     /// </summary>
     public byte[] ProcessedImage { get; set; }
+    
+    /// <summary>
+    /// Наличие дефектов
+    /// </summary>
+    public bool IsDefective { get; set; }
 }

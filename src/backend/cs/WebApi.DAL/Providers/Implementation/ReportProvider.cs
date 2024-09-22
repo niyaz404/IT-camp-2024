@@ -67,9 +67,6 @@ public class ReportProvider : IReportProvider
         {
             throw new Exception(response.ReasonPhrase);
         }
-            
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var commitEntity = JsonConvert.DeserializeObject<CommitEntity>(responseContent); 
     }
 
     public async Task DeleteCommit(Guid commitId)

@@ -43,7 +43,6 @@ public class PdfReportGenerator : IReportGenerator
         gfx.DrawString($"Общее количество дефектов: {commit.Defects.Count}", font, XBrushes.Black,
             new XRect(startPoint.X, startPoint.Y + rowHeight, page.Width, rowHeight), XStringFormats.CenterLeft);
 
-        document.Save("f.pdf");
         // Сохранение PDF в поток
         using (MemoryStream stream = new MemoryStream())
         {
@@ -131,7 +130,7 @@ public class PdfReportGenerator : IReportGenerator
             new XRect(startPoint.X + numberWidth + typeWidth, startPoint.Y, coordinateWidth, rowHeight),
             XStringFormats.Center);
         
-        var groupedElements = elements.GroupBy(e => e.TypeDto.Id);
+        var groupedElements = elements.GroupBy(e => e.Type.Id);
         // Рисуем структурные элементы
         foreach (var group in groupedElements)
         {
@@ -144,7 +143,7 @@ public class PdfReportGenerator : IReportGenerator
                     XStringFormats.Center);
         
                 gfx.DrawRectangle(XPens.Black, startPoint.X + numberWidth, startPoint.Y + rowHeight * i, typeWidth, rowHeight);
-                gfx.DrawString($"{groupArray[i - 1].TypeDto.Name}", font, XBrushes.Black,
+                gfx.DrawString($"{groupArray[i - 1].Type.Name}", font, XBrushes.Black,
                     new XRect(startPoint.X + numberWidth, startPoint.Y + rowHeight * i, typeWidth, rowHeight),
                     XStringFormats.Center);
 
@@ -206,7 +205,7 @@ public class PdfReportGenerator : IReportGenerator
             
             // Смотрим левые координаты текущего дефекта и структурного элемента
             var elements = commit.StructuralElements
-                .Select(d => new { X = d.StartXCoordinate, TypeId = d.TypeDto.Id }).ToList();
+                .Select(d => new { X = d.StartXCoordinate, TypeId = d.Type.Id }).ToList();
             var currentCoordinate = commit.Defects[i].StartXCoordinate;
             
             gfx.DrawRectangle(XPens.Black, startPoint.X, startPoint.Y + deltaHeight, numberWidth, rowHeight * 2);

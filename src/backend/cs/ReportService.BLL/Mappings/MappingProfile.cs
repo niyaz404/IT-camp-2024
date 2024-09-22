@@ -26,8 +26,8 @@ public class MappingProfile : Profile
         
         CreateMap<StructuralElementModel, StructuralElementEntity>();
         CreateMap<StructuralElementEntity, StructuralElementModel>()
-            .ForMember(dest => dest.TypeDto,
-                opt => opt.MapFrom(src => new StructuralElementTypeDto { Id = src.TypeId, Name = src.TypeName }));
+            .ForMember(dest => dest.Type,
+                opt => opt.MapFrom(src => new StructuralElementTypeModel { Id = src.TypeId, Name = src.TypeName }));
 
         
         CreateMap<ReportModel, ReportEntity>();

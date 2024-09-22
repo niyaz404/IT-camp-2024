@@ -15,7 +15,7 @@ public class StructuralElementEntity : BaseEntity
     /// <summary>
     /// Тип структурного элемента
     /// </summary>
-    public int StructuralElementTypeId { get; set; }
+    public StructuralElementTypeEntity Type { get; set; }
     
     /// <summary>
     /// Х-координата начала области

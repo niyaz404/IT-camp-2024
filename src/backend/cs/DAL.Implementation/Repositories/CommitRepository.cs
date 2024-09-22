@@ -15,13 +15,16 @@ public class CommitRepository(string connectionString) : Repository(connectionSt
     public async Task<IEnumerable<CommitEntity>> Select()
     {
         var sql = $@"
-            select id,
+            select c.id,
                 magnetogramid,
                 name,
                 createdat,
                 createdby,
-                processedimage
-            from {_mainTableName}";
+                processedimage,
+                count(dc.id) as isdefective
+            from {_mainTableName} c
+            join itcamp.defect_commit dc on dc.commitid = c.id
+            group by c.id, magnetogramid, name, createdat, createdby, processedimage";
 
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryAsync<CommitEntity>(sql);
@@ -30,14 +33,17 @@ public class CommitRepository(string connectionString) : Repository(connectionSt
     public async Task<CommitEntity> SelectById(Guid commitId)
     {
         var sql = $@"
-            select id,
+            select c.id,
                 magnetogramid,
                 name,
                 createdat,
                 createdby,
-                processedimage
-            from {_mainTableName} 
-            where id=:commitId";
+                processedimage,
+                count(dc.id) as isdefective
+            from {_mainTableName} c
+            join itcamp.defect_commit dc on dc.commitid = c.id 
+            where c.id=:commitId
+            group by c.id, magnetogramid, name, createdat, createdby, processedimage";
 
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryFirstOrDefaultAsync<CommitEntity>(sql, new { commitId });

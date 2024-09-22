@@ -35,15 +35,13 @@ public class ReportRepository(string connectionString) : Repository(connectionSt
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryFirstOrDefaultAsync<ReportEntity>(sql, new { commitId });
     }
-    
-    
-    public async Task<IEnumerable<CommitEntity>> SelectAllCommits()
-    {
-        var sql = $@"
-            select *
-            from itcamp.commit";
 
+    public async Task DeleteByCommitId(Guid commitId)
+    {
+        var sql = $@"delete from {_mainTableName} 
+                    where commitid = :commitId;";
+        
         await using var connection = new NpgsqlConnection(_connectionString);
-        return await connection.QueryAsync<CommitEntity>(sql);
+        await connection.ExecuteAsync(sql, new { commitId });
     }
 }

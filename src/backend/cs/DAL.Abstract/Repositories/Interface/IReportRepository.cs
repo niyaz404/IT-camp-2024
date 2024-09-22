@@ -19,6 +19,9 @@ public interface IReportRepository
     /// </summary>
     /// <param name="report"></param>
     public Task Insert(ReportEntity report);
-
-    public Task<IEnumerable<CommitEntity>> SelectAllCommits();
+    
+    /// <summary>
+    /// Удаляет запись по идентификатору обработки
+    /// </summary>
+    public Task DeleteByCommitId(Guid commitId);
 }

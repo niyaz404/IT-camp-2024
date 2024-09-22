@@ -11,4 +11,14 @@ public interface IStructuralElementToCommitRepository
     /// Получение списка идентификаторов структурных элементов по идентификатору обработки
     /// </summary>
     public Task<IEnumerable<Guid>> SelectStructuralElementIdsByCommitIds(Guid commitId);
+    
+    /// <summary>
+    /// Добавление записи в таблицу
+    /// </summary>
+    public Task<Guid> Insert(Guid commitId, Guid elementId);
+    
+    /// <summary>
+    /// Удаляет запись по идентификатору обработки
+    /// </summary>
+    public Task DeleteByCommitId(Guid commitId);
 }

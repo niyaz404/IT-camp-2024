@@ -33,7 +33,7 @@ public class CommitModel
     /// <summary>
     /// Наличие дефектов в магнитограмме
     /// </summary>
-    public bool IsDefective => Defects.Any();
+    public bool IsDefective { get; set; }
     
     /// <summary>
     /// Список дефектов

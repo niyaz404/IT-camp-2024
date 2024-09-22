@@ -21,8 +21,6 @@ public class CommitEntity : BaseEntity
     /// Наименование фиксации
     /// </summary>
     public string Name { get; set; }
-    
-    private DateTime _createdAt;
 
     /// <summary>
     /// Дата загрузки обработка магнитограммы
@@ -35,14 +33,19 @@ public class CommitEntity : BaseEntity
     public string CreatedBy { get; set; }
     
     /// <summary>
-    /// Список идентификаторов дефектов
+    /// Список дефектов
     /// </summary>
-    public Guid[] DefectIds { get; set; }
+    public List<DefectEntity> Defects { get; set; }
     
     /// <summary>
-    /// Список идентификаторов конструктивных элементов
+    /// Наличие дефектов в магнитограмме
     /// </summary>
-    public Guid[] StructuralElementIds { get; set; }
+    public bool IsDefective { get; set; }
+
+    /// <summary>
+    /// Список конструктивных элементов
+    /// </summary>
+    public List<StructuralElementEntity> StructuralElements { get; set; }
     
     /// <summary>
     /// Файл обработанной магнитограммы

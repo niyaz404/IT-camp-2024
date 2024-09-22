@@ -39,6 +39,6 @@ public class CommitService : ICommitService
 
     public async Task Delete(Guid commitId)
     {
-        return;
+        await _reportProvider.DeleteCommit(commitId);
     }
 }

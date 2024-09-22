@@ -13,5 +13,5 @@ public class StructuralElementModel : MagnetogramElementModel
     /// <summary>
     /// Тип конструктивного элемента
     /// </summary>
-    public StructuralElementType StructuralElementTypeType { get; set; }
+    public StructuralElementType StructuralElementType { get; set; }
 }

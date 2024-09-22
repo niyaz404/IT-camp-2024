@@ -35,4 +35,18 @@ public class DefectRepository : Repository, IDefectRepository
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.QueryAsync<DefectEntity>(sql, new { defectIds });
     }
+
+    public async Task<Guid> Insert(DefectEntity defect)
+    {
+        var sql = $@"insert into {_mainTableName} 
+                    (description, startx, endx) 
+                    VALUES (:description, :startxcoordinate, :endxcoordinate) 
+                    returning id;";
+        
+        await using var connection = new NpgsqlConnection(_connectionString);
+        return await connection.ExecuteScalarAsync<Guid>(sql, new
+        {
+            defect.Description, defect.StartXCoordinate, defect.EndXCoordinate
+        });
+    }
 }
