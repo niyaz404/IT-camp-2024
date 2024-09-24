@@ -42,8 +42,8 @@ class MagnetogramRepository(base_repository.AbstractRepository):
             VALUES ($1, $2, $3, $4)
         """
         insert_commit_query = """
-            INSERT INTO itcamp.commit (id, magnetogramid, name, createdat, createdby)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO itcamp.commit (id, magnetogramid, name, createdat, createdby, processedimage, originalimage)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
         """
         insert_defects_query = """
             INSERT INTO itcamp.defect (id, description, startx, endx)
@@ -98,13 +98,17 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                     magnetogram_model.user_name
                 )
 
+                print("oppaAAAAAAAAAAAAAAAAAAAAAAAAA")
+
                 await connection.execute(
                     insert_commit_query,
                     commit_id,
                     magnetogram_model.id,
                     magnetogram_model.name,
                     magnetogram_model.created_at,
-                    magnetogram_model.user_name
+                    magnetogram_model.user_name,
+                    magnetogram_model.processed_magnetogram,
+                    magnetogram_model.den_magnetogram
                 )
 
                 await connection.executemany(
@@ -143,6 +147,7 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                 c.magnetogramid,
                 m.file file_name,
                 c.processedimage,
+                c.originalimage,
                 d.id defect_id,
                 d.description defect_description,
                 d.startx defect_startx,
@@ -199,7 +204,8 @@ class MagnetogramRepository(base_repository.AbstractRepository):
             id=rows[0]["id"],
             user_name=rows[0]["createdby"],
             name=rows[0]["file_name"],
-            processed_magnetogram=rows[0]["processedimage"],
+            processed_magnetogram=rows[0]["originalimage"],
+            den_magnetogram=rows[0]["processedimage"],
             created_at=rows[0]["createdat"],
             defects=list(unique_defects.values()),
             structural_units=list(unique_structural_elements.values())

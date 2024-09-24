@@ -50,8 +50,8 @@ public class CommitController : ControllerBase
         try
         {
             var commit = _mapper.Map<CommitDto>(await _commitService.Get(commitId));
-            commit.ProcessedImage =
-                "https://sun9-23.userapi.com/impg/kJ22PWyYRcZ0V-Lkww_tFPZnLLgt8gI5RBJISw/YRQLsjAcg9Y.jpg?size=2560x80&quality=96&sign=6e3186a60a5911af4c61da750079c477&type=album";
+            //commit.ProcessedImage =
+                // "https://sun9-23.userapi.com/impg/kJ22PWyYRcZ0V-Lkww_tFPZnLLgt8gI5RBJISw/YRQLsjAcg9Y.jpg?size=2560x80&quality=96&sign=6e3186a60a5911af4c61da750079c477&type=album";
             return Ok(commit);
         }
         catch (Exception e)

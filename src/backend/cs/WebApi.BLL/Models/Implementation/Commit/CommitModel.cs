@@ -48,5 +48,10 @@ public class CommitModel
     /// <summary>
     /// Обработанная магнитограмма
     /// </summary>
-    public string ProcessedImage { get; set; }
+    public byte[] ProcessedImage { get; set; }
+    
+    /// <summary>
+    /// Файл исходной магнитограммы
+    /// </summary>
+    public byte[] OriginalImage { get; set; }
 }

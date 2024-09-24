@@ -29,11 +29,17 @@ public class MappingProfile : Profile
         CreateMap<StructuralElementModel, StructuralElementDto>();
 
         CreateMap<CommitDto, CommitModel>()
-            //.ForMember(dest => dest.ProcessedImage,
-            // opt => opt.MapFrom(src => Convert.FromBase64String(src.ProcessedImage)));
+            .ForMember(dest => dest.ProcessedImage,
+             opt => opt.MapFrom(src => Convert.FromBase64String(src.ProcessedImage.Replace("data:image/jpeg;base64,", ""))))
+            .ForMember(dest => dest.OriginalImage,
+            opt => opt.MapFrom(src => Convert.FromBase64String(src.OriginalImage.Replace("data:image/jpeg;base64,", ""))));
+        ;
+        CreateMap<CommitModel, CommitDto>()
+            .ForMember(dest => dest.ProcessedImage,
+                opt => opt.MapFrom(src => Convert.ToBase64String(src.ProcessedImage)))
+            .ForMember(dest => dest.OriginalImage,
+                opt => opt.MapFrom(src => Convert.ToBase64String(src.OriginalImage)))
             ;
-        CreateMap<CommitModel, CommitDto>();
-
         CreateMap<MagnetogramDto, MagnetogramModel>()
             .ForMember(dest => dest.File,
                 opt => opt.MapFrom(src => ConvertFormFileToBase64(src.File)));

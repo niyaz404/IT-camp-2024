@@ -32,10 +32,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => new StructuralElementTypeEntity { Id = (int)src.StructuralElementType }));
 
         CreateMap<CommitEntity, CommitModel>();
-        CreateMap<CommitModel, CommitEntity>()
-            .ForMember(dest => dest.ProcessedImage, opt => opt.MapFrom(src => Convert2(src.ProcessedImage)
-            ));
-        ;
+        CreateMap<CommitModel, CommitEntity>();
         
         CreateMap<MagnetogramEntity, MagnetogramModel>();
         CreateMap<MagnetogramModel, MagnetogramEntity>()

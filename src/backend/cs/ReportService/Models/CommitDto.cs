@@ -49,4 +49,9 @@ public class CommitDto
     /// Обработанная магнитограмма
     /// </summary>
     public byte[] ProcessedImage { get; set; }
+    
+    /// <summary>
+    /// Файл исходной магнитограммы
+    /// </summary>
+    public byte[] OriginalImage { get; set; }
 }

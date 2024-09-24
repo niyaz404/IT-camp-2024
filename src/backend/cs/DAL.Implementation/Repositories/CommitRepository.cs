@@ -21,6 +21,7 @@ public class CommitRepository(string connectionString) : Repository(connectionSt
                 createdat,
                 createdby,
                 processedimage,
+                originalimage,
                 count(dc.id) as isdefective
             from {_mainTableName} c
             join itcamp.defect_commit dc on dc.commitid = c.id
@@ -39,6 +40,7 @@ public class CommitRepository(string connectionString) : Repository(connectionSt
                 createdat,
                 createdby,
                 processedimage,
+                originalimage,
                 count(dc.id) as isdefective
             from {_mainTableName} c
             join itcamp.defect_commit dc on dc.commitid = c.id 
@@ -52,14 +54,15 @@ public class CommitRepository(string connectionString) : Repository(connectionSt
     public async Task<Guid> Insert(CommitEntity commit)
     {
         var sql = $@"insert into {_mainTableName} 
-                    (magnetogramid, name, createdat, createdby, processedimage) 
-                    VALUES (:magnetogramId, :name, :createdat, :createdby, :processedimage) 
+                    (magnetogramid, name, createdat, createdby, processedimage, originalimage) 
+                    VALUES (:magnetogramId, :name, :createdat, :createdby, :processedimage, :originalimage) 
                     returning id;";
         
         await using var connection = new NpgsqlConnection(_connectionString);
         return await connection.ExecuteScalarAsync<Guid>(sql, new
         {
-            commit.MagnetogramId, commit.Name, commit.CreatedAt, commit.CreatedBy, processedimage = commit.ProcessedImage.Length > 0 ? commit.ProcessedImage : null
+            commit.MagnetogramId, commit.Name, commit.CreatedAt, commit.CreatedBy, processedimage = commit.ProcessedImage.Length > 0 ? commit.ProcessedImage : null,
+            originalimage = commit.OriginalImage.Length > 0 ? commit.OriginalImage : null
         });
     }
 

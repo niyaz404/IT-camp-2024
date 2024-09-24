@@ -12,9 +12,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<CommitModel, CommitEntity>()
-            .ForMember(dest => dest.ProcessedImage, opt => opt.MapFrom(src => Convert2(src.ProcessedImage)
-            ));;
+        CreateMap<CommitModel, CommitEntity>();
         CreateMap<CommitEntity, CommitModel>()
             .ForMember(dest => dest.Defects, opt => opt.MapFrom(src => new List<DefectModel>()))
             .ForMember(dest => dest.StructuralElements,

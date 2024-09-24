@@ -51,4 +51,9 @@ public class CommitEntity : BaseEntity
     /// Файл обработанной магнитограммы
     /// </summary>
     public byte[] ProcessedImage { get; set; }
+    
+    /// <summary>
+    /// Файл исходной магнитограммы
+    /// </summary>
+    public byte[] OriginalImage { get; set; }
 }
