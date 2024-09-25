@@ -30,6 +30,7 @@ export const castMagnetogram = (res: CommitDto): Magnetogram => {
       ? res.structuralElements.map(castStructuralElementToLocal)
       : [],
     processedImage: res.processedImage,
+    originalImage: res.originalImage,
   };
   return result;
 };

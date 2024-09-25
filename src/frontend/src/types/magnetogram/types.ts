@@ -61,4 +61,5 @@ export type Magnetogram = {
   defects: Defect[];
   structuralElements: StructuralElement[];
   processedImage: string | undefined;
+  originalImage: string | undefined;
 };

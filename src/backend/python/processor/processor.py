@@ -5,6 +5,13 @@ import uuid
 import torch
 import torch.nn as nn
 import os
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+
+import pywt
+from scipy.ndimage import gaussian_filter
+from scipy.signal import correlate
+from scipy.fft import fft2, ifft2, fftshift, ifftshift
 
 import numpy as np
 from PIL import Image
@@ -99,7 +106,7 @@ class Processor(base_processor.AbstractProcessor):
                 # Циклический паддинг по вертикальной оси Y (цикл)
                 self.cyclic_padding = nn.ReflectionPad2d((0, 0, 1, 1))
 
-                # Одномерные свертки по оси X (временная ось)/
+                # Одномерные свертки по оси X (временна���� ось)/
                 self.conv1d_1 = nn.Conv1d(130, 64, kernel_size=3, padding=1)  # Увеличили размер входных каналов
                 self.conv1d_2 = nn.Conv1d(64, 128, kernel_size=3, padding=1)
                 self.conv1d_3 = nn.Conv1d(128, 128, kernel_size=3, padding=1)
@@ -146,82 +153,102 @@ class Processor(base_processor.AbstractProcessor):
         self.get_processed_image()
 
         # input_tensor = torch.tensor()
+        mag = self._get_array_from_pickle()
+        if mag.shape[1] > 4096:
+            mag = mag[:, :4096]
+        
+        mag_den = self.filter_sorted()
 
-        defects = [
-            ai_dto.Defect(
-                id=uuid.uuid4(),
-                description="Вау, дефект",
-                startx=1,
-                endx=2
-            ),
-            ai_dto.Defect(
-                id=uuid.uuid4(),
-                description="Еще дефект",
-                startx=1,
-                endx=2
-            ),
-            ai_dto.Defect(
-                id=uuid.uuid4(),
-                startx=1,
-                endx=2
-            ),
-            ai_dto.Defect(
-                id=uuid.uuid4(),
-                description="Пупупу...",
-                startx=1,
-                endx=2
-            ),
-            ai_dto.Defect(
-                id=uuid.uuid4(),
-                startx=1,
-                endx=2
-            ),
-            ai_dto.Defect(
-                id=uuid.uuid4(),
-                description="Дефектик",
-                startx=1,
-                endx=2
-            )
-        ]
+        image = mag[np.newaxis, :, :]  # (1, 128, 4096)
+        image = image.astype(np.float32)
+        image = torch.tensor(image)
+        
+        ### предикт
+        input_image = image.clone().detach().to(torch.float32).to('cpu')
+        input_image = input_image.unsqueeze(0)
 
-        structural_units = [
-            ai_dto.StructuralUnit(
+        self.model.eval()
+        with torch.inference_mode():
+            output, defects = self.model(input_image)  # torch.Size([1, 4096, 5]) torch.Size([1, 4096, 2])
+
+        ### обработать предсказания
+
+        predicted_labels = torch.argmax(output, dim=-1)  # Размер станет [1, 4096]
+        predicted_labels = predicted_labels.squeeze(0)  # Размер станет [4096]
+
+        if predicted_labels.is_cuda:
+            predicted_labels = predicted_labels.cpu()
+
+        print(predicted_labels)
+
+
+        predicted_defects = torch.argmax(defects, dim=-1)  # Размер станет [1, 4096]
+        predicted_defects = predicted_defects.squeeze(0)  # Размер станет [4096]
+
+        if predicted_defects.is_cuda:
+            predicted_defects = predicted_defects.cpu()
+        
+        indices = torch.where(predicted_defects == 1)[0]
+
+        if len(indices) > 0:
+            # Найти блоки 1: начало и конец
+            blocks = []
+            start = indices[0]  # Начальный индекс блока
+            for i in range(1, len(indices)):
+                if indices[i] != indices[i-1] + 1:  # Если не подряд, то конец блока
+                    end = indices[i-1]
+                    blocks.append((start.item(), end.item()))
+                    start = indices[i]  # Новый старт следующего блока
+            blocks.append((start.item(), indices[-1].item()))  # Добавляем последний блок
+        
+        defects = []
+        for i in range(0, len(blocks)):
+            start,end = blocks[i]
+            defects.append(ai_dto.Defect(
                 id=uuid.uuid4(),
-                type_id=enums.StructuralElement.JOINT.id,
-                startx=5,
-                endx=6
-            ),
-            ai_dto.StructuralUnit(
-                id=uuid.uuid4(),
-                type_id=enums.StructuralElement.JOINT.id,
-                startx=5,
-                endx=6
-            ),
-            ai_dto.StructuralUnit(
-                id=uuid.uuid4(),
-                type_id=enums.StructuralElement.PATCH.id,
-                startx=5,
-                endx=6
-            ),
-            ai_dto.StructuralUnit(
-                id=uuid.uuid4(),
-                type_id=enums.StructuralElement.PATCH.id,
-                startx=5,
-                endx=6
-            ),
-            ai_dto.StructuralUnit(
-                id=uuid.uuid4(),
-                type_id=enums.StructuralElement.PATCH.id,
-                startx=5,
-                endx=6
-            ),
-            ai_dto.StructuralUnit(
-                id=uuid.uuid4(),
-                type_id=enums.StructuralElement.BRANCHING.id,
-                startx=5,
-                endx=6
-            )
-        ]
+                description=f"Дефект {i}",
+                startx = start,
+                endx = end
+            ))
+
+
+        ##########################################################################################################
+        # Находим уникальные метки (0, 1, 2, 3, 4)
+        unique_labels = torch.unique(predicted_labels)
+        print("Уникальные предсказанные метки:", unique_labels.cpu().numpy())
+
+        # Для каждого уникального значения ищем блоки
+        blocks = {}
+
+        for label in unique_labels:
+            # Находим индексы всех элементов, где predicted_labels == label
+            indices = torch.where(predicted_labels == label)[0]
+
+            if len(indices) > 0:
+                label_blocks = []
+                start = indices[0]  # Начальный индекс блока
+                for i in range(1, len(indices)):
+                    if indices[i] != indices[i-1] + 1:  # Если не подряд, то конец блока
+                        end = indices[i-1]
+                        label_blocks.append((start.item(), end.item()))
+                        start = indices[i]  # Новый старт следующего блока
+                label_blocks.append((start.item(), indices[-1].item()))  # Добавляем последний блок
+                
+                blocks[label.item()] = label_blocks
+
+        # Вывод блоков для каждого уникального значения
+        structural_units = []
+        for label, label_blocks in blocks.items():
+            if label != 0:
+                for element in label_blocks:
+                    print(element)
+                    start,end = element
+                    structural_units.append(ai_dto.StructuralUnit(
+                        id=uuid.uuid4(),
+                        type_id=label,
+                        startx=start,
+                        endx=end
+                    ))
 
         formatted_defects = self._truncate(defects)
         formatted_structured_units = self._truncate(structural_units)
@@ -230,6 +257,86 @@ class Processor(base_processor.AbstractProcessor):
             defects=formatted_defects,
             structural_units=formatted_structured_units
         )
+
+
+    # Вейвлет-фильтрация
+    def wavelet_filtering(self, data, wavelet='db4', level=1):
+        coeffs = pywt.wavedec2(data, wavelet, mode='periodization', level=level)
+        
+        coeffs_filtered = [coeffs[0]]  # Сохраняем только аппроксимацию
+        coeffs_filtered += [tuple(np.zeros_like(detail) for detail in details) for details in coeffs[1:]]
+
+        data_filtered = pywt.waverec2(coeffs_filtered, wavelet, mode='periodization')
+        
+        return data_filtered
+
+    def estimate_y_shift(self, row1, row2):
+        correlation = correlate(row1, row2, mode='full')
+        displacement = np.argmax(correlation) - (row1.size - 1)
+        return displacement
+
+    def correct_rotation(self, data):
+        corrected_data = np.copy(data)
+        shifts = []
+
+        for i in range(1, corrected_data.shape[0]):
+            shift = self.estimate_y_shift(corrected_data[i - 1], corrected_data[i])
+            shifts.append(shift)
+            corrected_data[i] = np.roll(corrected_data[i], -shift)
+
+        return corrected_data, shifts
+
+    def remove_periodic_noise(self, data, cutoff_radius=150):
+        # Прямое Фурье-преобразование
+        data_fft = fft2(data)
+        data_fft_shifted = fftshift(data_fft)
+        
+        # Создание маски для удаления низкочастотных шумов
+        rows, cols = data.shape
+        crow, ccol = rows // 2, cols // 2
+        mask = np.ones((rows, cols), np.uint8)
+        
+        for u in range(rows):
+            for v in range(cols):
+                distance = np.sqrt((u - crow) ** 2 + (v - ccol) ** 2)
+                if distance < cutoff_radius:
+                    mask[u, v] = 0
+        
+        # Применение маски к данным
+        data_fft_shifted_filtered = data_fft_shifted * mask
+        
+        # Обратное Фурье-преобразование
+        data_filtered = ifft2(ifftshift(data_fft_shifted_filtered))
+        
+        # Преобразование в реальное изображение
+        data_filtered_real = np.real(data_filtered)
+        
+        return data_filtered_real
+
+    def filter_sorted(self, **kwargs) -> bytes:
+        # if isinstance(magnetogram_data, np.ndarray):
+        data = self._get_array_from_pickle()
+        if data.shape[1] > 4096:
+            data = data[:, :4096]
+
+        blurred_data = np.array([gaussian_filter(row, sigma=2) for row in data])
+
+        wavelet = 'db4' 
+        level = 1  
+        filtered_data = self.wavelet_filtering(blurred_data, wavelet, level)
+        corrected_data, estimated_shifts = self.correct_rotation(filtered_data)
+        final_data = (data-self.remove_periodic_noise(corrected_data))
+        mag_normalized = (final_data - np.min(final_data)) / (np.max(final_data) - np.min(final_data))  # Нормализация
+        colored_mag = cm.viridis(mag_normalized)  # Применение цветовой карты
+    
+        # Преобразование в изображение
+        colored_mag = (colored_mag[:, :, :3] * 255).astype(np.uint8)  # Удаление альфа-канала и преобразование в uint8
+        image = Image.fromarray(colored_mag)
+        buffered_image = io.BytesIO()
+        image.save(buffered_image, format="PNG")
+        image_byte = buffered_image.getvalue()
+
+        return image_byte
 
     def get_processed_image(self) -> bytes:
         """
@@ -249,46 +356,18 @@ class Processor(base_processor.AbstractProcessor):
         input_image = image.clone().detach().to(torch.float32).to('cpu')
         input_image = input_image.unsqueeze(0)
 
-        self.model.eval()
-        with torch.inference_mode():
-            output, defects = self.model(input_image)  # torch.Size([1, 4096, 5]) torch.Size([1, 4096, 2])
-
-        ### обработать предсказания
-
-        def to_one_hot(labels, num_classes=5):
-            labels = labels.cpu()  
-            one_hot_labels = np.zeros((labels.size(0), num_classes), dtype=np.uint8)
-            one_hot_labels[np.arange(labels.size(0)), labels.numpy()] = 1
-            return one_hot_labels
-
-        predicted_labels = torch.argmax(output, dim=-1)  # Размер станет [1, 4096]
-        predicted_labels = predicted_labels.squeeze(0)  # Размер станет [4096]
-
-        if predicted_labels.is_cuda:
-            predicted_labels = predicted_labels.cpu()
-
-        predicted_one_hot = to_one_hot(predicted_labels.squeeze(0))
-
-        predicted_defects = torch.argmax(defects, dim=-1)  # Размер станет [1, 4096]
-        predicted_defects = predicted_defects.squeeze(0)  # Размер станет [4096]
-
-        if predicted_defects.is_cuda:
-            predicted_defects = predicted_defects.cpu()
-
-        predicted_one_hot_defects = to_one_hot(predicted_defects.squeeze(0), num_classes=2)
-        print(predicted_one_hot_defects)
-        print(predicted_one_hot)
-        print(predicted_one_hot_defects.shape)
-
-
         ##################################
-        mag = (mag * 255).astype(np.uint8)
-        image = Image.fromarray(mag)
+        mag_normalized = (mag - np.min(mag)) / (np.max(mag) - np.min(mag))  # Нормализация
+        colored_mag = cm.viridis(mag_normalized)  # Применение цветовой карты
+    
+        # Преобразование в изображение
+        colored_mag = (colored_mag[:, :, :3] * 255).astype(np.uint8)  # Удаление альфа-канала и преобразование в uint8
+        image = Image.fromarray(colored_mag)
         buffered_image = io.BytesIO()
         image.save(buffered_image, format="PNG")
         image_byte = buffered_image.getvalue()
 
-        return base64.b64encode(image_byte)
+        return image_byte
 
     @property
     def magnetogram_pickle(self) -> bytes:

@@ -33,16 +33,16 @@ export const loadMagnetogramById =
       dispatch(magnetogramSlice.actions.replaceName(data.name));
       dispatch(
         magnetogramSlice.actions.replaceOriginalMagnetogramImage(
-          // `data:image/jpeg;base64,${data.processedImage}`
+           `data:image/jpeg;base64,${data.originalImage}`
           // "https://sun9-23.userapi.com/impg/kJ22PWyYRcZ0V-Lkww_tFPZnLLgt8gI5RBJISw/YRQLsjAcg9Y.jpg?size=1280x40&quality=96&sign=eab5cf28aac95eed962d744252f68ffa&type=album"
-          "https://sun9-29.userapi.com/impg/NTJDGnhj-1aBEUJ9z0jT8zc5i4Uis8bk5TRoeQ/wAlso5jESrY.jpg?size=1280x40&quality=96&sign=e27f53dd0274d91594e1650708a0a80a&type=album"
+          //"https://sun9-29.userapi.com/impg/NTJDGnhj-1aBEUJ9z0jT8zc5i4Uis8bk5TRoeQ/wAlso5jESrY.jpg?size=1280x40&quality=96&sign=e27f53dd0274d91594e1650708a0a80a&type=album"
         )
       );
       dispatch(
         magnetogramSlice.actions.replaceProcessedMagnetogramImage(
-          // `data:image/jpeg;base64,${data.processedImage}`
+           `data:image/jpeg;base64,${data.processedImage}`
           // "https://sun9-56.userapi.com/impg/1tRq08Du23PXRx6UsctCe_brx_bo5QU86fT1IA/CvVXmCbNBz0.jpg?size=1280x40&quality=96&sign=76263c9cbaa6e5b1edc0b6bf049de726&type=album"
-          "https://psv4.userapi.com/c909628/u181754921/docs/d2/8e788a45ca20/magnetogram_output.png?extra=xHS1L4ScAeKZTx3iUM_Opaq1Y8szqK5ceTOuXC3L2PSIHkUySG50jdprdMsDq4XqGhJhl22Dt293LZAaz5uIBxuJfo38uKMWSJfxQ6QrVekhi_lo1CdVb_DrBj7NtXGGHKA9ycE6sKizbpR1zDEGig6C4Ek"
+          //"https://psv4.userapi.com/c909628/u181754921/docs/d2/8e788a45ca20/magnetogram_output.png?extra=xHS1L4ScAeKZTx3iUM_Opaq1Y8szqK5ceTOuXC3L2PSIHkUySG50jdprdMsDq4XqGhJhl22Dt293LZAaz5uIBxuJfo38uKMWSJfxQ6QrVekhi_lo1CdVb_DrBj7NtXGGHKA9ycE6sKizbpR1zDEGig6C4Ek"
         )
       );
 
@@ -230,6 +230,7 @@ export const saveMagnetogram =
     const {
       defects,
       processedImage,
+        originalImage,
       structuralElements,
       name,
       commitId,
@@ -258,7 +259,8 @@ export const saveMagnetogram =
         !!defects.length,
         defects.map(castDefect),
         structuralElements.map(castStructuralElement),
-        processedImage
+        processedImage,
+          originalImage
       );
     } catch (error) {
       alert("Ошибка сохранения изменений");

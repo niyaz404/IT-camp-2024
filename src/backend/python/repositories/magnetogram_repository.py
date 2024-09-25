@@ -1,5 +1,6 @@
 import uuid
 import pytz
+import base64
 
 import asyncpg
 
@@ -107,8 +108,8 @@ class MagnetogramRepository(base_repository.AbstractRepository):
                     magnetogram_model.name,
                     magnetogram_model.created_at,
                     magnetogram_model.user_name,
-                    magnetogram_model.processed_magnetogram,
-                    magnetogram_model.den_magnetogram
+                    base64.b64decode(magnetogram_model.processed_magnetogram),
+                    base64.b64decode(magnetogram_model.den_magnetogram)
                 )
 
                 await connection.executemany(

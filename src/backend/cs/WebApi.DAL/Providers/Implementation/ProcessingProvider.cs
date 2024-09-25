@@ -27,6 +27,7 @@ public class ProcessingProvider : IProcessingProvider
     /// <returns>Идентификатор обработки (Commit)</returns>
     public async Task<string> SaveMagnetogram(MagnetogramEntity magnetogram)
     {
+        Console.WriteLine($"{_url}/ai/load");
         var settings = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver()

@@ -29,7 +29,7 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       INTERNAL_PORT: ${ML_SERVICE_PORT}
     ports:
-      - "${ML_SERVICE_PORT}:8080"
+      - "8080:8080"
     networks:
       - itcamp_network
 
@@ -70,10 +70,10 @@ services:
       context: /../../
       dockerfile: /ci/dockerfiles/WebApi.Dockerfile
     environment:    
-      FRONTEND_URL: ${FRONT_HOST}:${FRONT_PORT}
-      AUTH_SERVICE_URL: ${AUTH_SERVICE_HOST}:${AUTH_SERVICE_PORT}
-      REPORT_SERVICE_URL: ${REPORT_SERVICE_HOST}:${REPORT_SERVICE_HOST}
-      ML_SERVICE_URL: ${ML_SERVICE_HOST}:${ML_SERVICE_PORT}
+      FRONTEND_URL: http://${FRONT_HOST}:${FRONT_PORT}
+      AUTH_SERVICE_URL: http://${AUTH_SERVICE_HOST}:${AUTH_SERVICE_PORT}
+      REPORT_SERVICE_URL: http://${REPORT_SERVICE_HOST}:${REPORT_SERVICE_PORT}
+      ML_SERVICE_URL: http://${ML_SERVICE_HOST}:8080
     ports:
       - "${BFF_PORT}:${BFF_PORT}"
     networks:

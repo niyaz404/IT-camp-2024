@@ -18,6 +18,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build app/bin/Release/net8.0 .
 
-ENV ASPNETCORE_URLS=http://+:8010
+ENV ASPNETCORE_URLS=http://+:8003
 
 ENTRYPOINT ["dotnet", "ReportService.dll"]

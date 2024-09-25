@@ -35,7 +35,10 @@ namespace PostgresMigrator.Migrations
                     .WithColumnDescription("ФИО пользователя, запустившего обработку магнитограммы")
 
                     .WithColumn("processedimage").AsBinary().Nullable()
-                    .WithColumnDescription("Файл обработанной магнитограммы");
+                    .WithColumnDescription("Файл обработанной магнитограммы")
+
+                    .WithColumn("originalimage").AsBinary().Nullable()
+                    .WithColumnDescription("Файл исходной магнитограммы");
             }
         }
 

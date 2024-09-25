@@ -35,6 +35,8 @@ namespace ReportService.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
                 return BadRequest(e.Message);
             }
         }

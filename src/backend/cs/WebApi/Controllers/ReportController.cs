@@ -28,11 +28,19 @@ public class ReportController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> Get(Guid commitId)
     {
-        var report = await _reportService.Get(commitId);
-        var file = File(report.File, "application/pdf", "report.pdf");
+        try
+        {
+            var report = await _reportService.Get(commitId);
+            var file = File(report.File, "application/pdf", "report.pdf");
 
-
-        return file;
+            return file;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.StackTrace);
+            Console.WriteLine(e.Message);
+            return BadRequest(e.Message);
+        }
     }
 }
 

@@ -96,7 +96,8 @@ export const saveNewMagnetogram = (
   isDefective: boolean,
   defects: DefectDto[] | undefined,
   structuralElements: StructuralElementDto[] | undefined,
-  processedImage: string | undefined
+  processedImage: string | undefined,
+  originalImage: string | undefined
 ) => {
   const client = getClient(BffClients.commitClient);
   const newMagnetogram = new CommitDto({
@@ -109,6 +110,7 @@ export const saveNewMagnetogram = (
     defects,
     structuralElements,
     processedImage,
+    originalImage
   });
 
   return client.save(newMagnetogram);
@@ -127,9 +129,9 @@ export const removeMagnetogram = (reportRowId: string) => {
  * Получаем отчет по конкретной строке
  * @returns
  */
-export const downloadReportById = (reportRowId: string) => {
+export const downloadReportById = async (reportRowId: string) => {
   const client = getClient(BffClients.reportClient);
-  return client.get2(reportRowId);
+  return await client.get2(reportRowId);
 };
 
 /**

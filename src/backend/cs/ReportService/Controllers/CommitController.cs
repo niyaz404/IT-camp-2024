@@ -18,8 +18,16 @@ namespace ReportService.Controllers
     
         public CommitController(ICommitService commitService, IMapper mapper)
         {
-            _commitService = commitService;
-            _mapper = mapper;
+            try
+            {
+                _commitService = commitService;
+                _mapper = mapper;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
+            }
         }
         
         /// <summary>
@@ -36,6 +44,8 @@ namespace ReportService.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -55,6 +65,8 @@ namespace ReportService.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -74,6 +86,8 @@ namespace ReportService.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -92,6 +106,8 @@ namespace ReportService.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
                 return BadRequest(e.Message);
             }
         }

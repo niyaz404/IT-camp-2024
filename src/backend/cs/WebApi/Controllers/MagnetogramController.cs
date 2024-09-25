@@ -20,8 +20,16 @@ public class MagnetogramController : ControllerBase
 
     public MagnetogramController(IMagnetogramService magnetogramService, IMapper mapper)
     {
-        _magntogramService = magnetogramService;
-        _mapper = mapper;
+        try
+        {
+            _magntogramService = magnetogramService;
+            _mapper = mapper;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.StackTrace);
+            Console.WriteLine(e.Message);
+        }
     }
     
     /// <summary>
@@ -32,7 +40,16 @@ public class MagnetogramController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<string>> Save(MagnetogramDto magnetogramDto)
     {
-        var magnetogramId = await _magntogramService.SaveMagnetogram(_mapper.Map<MagnetogramModel>(magnetogramDto));
-        return Ok(magnetogramId);
+        try
+        {
+            var magnetogramId = await _magntogramService.SaveMagnetogram(_mapper.Map<MagnetogramModel>(magnetogramDto));
+            return Ok(magnetogramId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.StackTrace);
+            Console.WriteLine(e.Message);
+            return BadRequest(e.Message);
+        }
     }
 }

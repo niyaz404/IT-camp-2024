@@ -90,10 +90,11 @@ class MagnetogramProcessed(Magnetogram):
     """
 
     processed_magnetogram: bytes = Field(description="Магнитограмма в формате png")
+    den_magnetogram: bytes = Field(description="Магнитограмма без шума в формате png")
 
     @field_validator("processed_magnetogram", mode="after")
     @classmethod
-    def convert_magnetogram_to_base64(cls, magnetogram: bytes) -> str:
+    def convert_magnetogram_to_base64(cls, magnetogram: bytes) -> bytes:
         """
         Конвертировать магнитограмму в формате байтовой строки в base64
         :param magnetogram: магнитограмма в формате байтовой строки
@@ -112,6 +113,7 @@ class Commit(base_model.BaseModel):
     user_name: str = Field(description="Имя пользователя", alias="createdBy")
     name: str = Field(description="Название файла")
     processed_magnetogram: bytes = Field(description="Магнитограмма в формате png", alias="proccessedMagnetogram")
+    den_magnetogram: bytes = Field(description="Магнитограмма без шума в формате png", alias="den_magnetogram")
     created_at: datetime.datetime = Field(
         description="Дата создания магнитограммы",
         alias="createdAt"

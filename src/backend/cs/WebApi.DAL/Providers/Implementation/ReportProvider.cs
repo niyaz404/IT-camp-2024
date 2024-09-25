@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Channels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using WebApi.DAL.Models.Implementation.Commit;
@@ -26,10 +27,14 @@ public class ReportProvider : IReportProvider
     /// </summary>
     public async Task<ReportEntity> GetReport(Guid commitId)
     {
+        Console.WriteLine($"{_url}/report/get?commitId={commitId}");
         var response = await _httpClient.GetAsync($"{_url}/report/get?commitId={commitId}");
         
         if(!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"{_url}/report/get?commitId={commitId}");
             throw new Exception(response.StatusCode.ToString());
+        }
         
         var responseContent = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<ReportEntity>(responseContent);
@@ -37,10 +42,14 @@ public class ReportProvider : IReportProvider
 
     public async Task<IEnumerable<CommitEntity>> GetAllCommits()
     {
+        Console.WriteLine($"{_url}/commit/getall");
         var response = await _httpClient.GetAsync($"{_url}/commit/getall");
         
         if(!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"{_url}/commit/getall");
             throw new Exception(response.StatusCode.ToString());
+        }
         
         var responseContent = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<IEnumerable<CommitEntity>>(responseContent);
@@ -48,10 +57,14 @@ public class ReportProvider : IReportProvider
 
     public async Task<CommitEntity> GetCommitById(Guid commitId)
     {
+        Console.WriteLine($"{_url}/commit/get?commitid={commitId}");
         var response = await _httpClient.GetAsync($"{_url}/commit/get?commitid={commitId}");
         
         if(!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"{_url}/commit/get?commitid={commitId}");
             throw new Exception(response.StatusCode.ToString());
+        }
         
         var responseContent = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<CommitEntity>(responseContent);
@@ -59,24 +72,28 @@ public class ReportProvider : IReportProvider
 
     public async Task SaveCommit(CommitEntity commit)
     {
+        Console.WriteLine($"{_url}/commit/save");
         var requestContent = new StringContent(JsonConvert.SerializeObject(commit), Encoding.UTF8,
             "application/json");
         var response = await _httpClient.PostAsync($"{_url}/commit/save", requestContent);
             
         if (!response.IsSuccessStatusCode)
         {
+            Console.WriteLine($"{_url}/commit/save");
             throw new Exception(response.ReasonPhrase);
         }
     }
 
     public async Task DeleteCommit(Guid commitId)
     {
+        Console.WriteLine($"{_url}/commit/delete?commitid={commitId}");
         var requestContent = new StringContent(JsonConvert.SerializeObject(commitId), Encoding.UTF8,
             "application/json");
         var response = await _httpClient.DeleteAsync($"{_url}/commit/delete?commitid={commitId}");
             
         if (!response.IsSuccessStatusCode)
         {
+            Console.WriteLine($"{_url}/commit/delete?commitid={commitId}");
             throw new Exception(response.ReasonPhrase);
         } 
     }

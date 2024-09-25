@@ -14,6 +14,7 @@ public class CommitRepository(string connectionString) : Repository(connectionSt
 {
     public async Task<IEnumerable<CommitEntity>> Select()
     {
+        Console.WriteLine(_connectionString);
         var sql = $@"
             select c.id,
                 magnetogramid,

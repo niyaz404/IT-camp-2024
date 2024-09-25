@@ -25,7 +25,7 @@ export class AuthClient {
 
     /**
      * Метод авторизации
-     * @param body (optional) 
+     * @param body (optional)
      * @return OK
      */
     login(body?: UserCredentialsDto | undefined, cancelToken?: CancelToken): Promise<string> {
@@ -70,8 +70,8 @@ export class AuthClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+
             return Promise.resolve<string>(result200);
 
         } else if (status !== 200 && status !== 204) {
@@ -97,7 +97,7 @@ export class CommitClient {
 
     /**
      * Сохранение обработки магнитограммы
-     * @param body (optional) 
+     * @param body (optional)
      * @return OK
      */
     save(body?: CommitDto | undefined, cancelToken?: CancelToken): Promise<string> {
@@ -142,8 +142,8 @@ export class CommitClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+
             return Promise.resolve<string>(result200);
 
         } else if (status !== 200 && status !== 204) {
@@ -316,8 +316,8 @@ export class CommitClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+
             return Promise.resolve<boolean>(result200);
 
         } else if (status !== 200 && status !== 204) {
@@ -383,8 +383,8 @@ export class HealthClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+
             return Promise.resolve<string>(result200);
 
         } else if (status !== 200 && status !== 204) {
@@ -473,8 +473,8 @@ export class MagnetogramClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+
             return Promise.resolve<string>(result200);
 
         } else if (status !== 200 && status !== 204) {
@@ -503,7 +503,7 @@ export class ReportClient {
      * @param commitId (optional) Идентификатор обработки
      * @return OK
      */
-    get2(commitId?: string | undefined, cancelToken?: CancelToken): Promise<ReportDto> {
+    get2(commitId?: string | undefined, cancelToken?: CancelToken): Promise<void> {
         let url_ = this.baseUrl + "/api/Report/Get?";
         if (commitId === null)
             throw new Error("The parameter 'commitId' cannot be null.");
@@ -515,7 +515,6 @@ export class ReportClient {
             method: "GET",
             url: url_,
             headers: {
-                "Accept": "text/plain"
             },
             cancelToken
         };
@@ -531,7 +530,7 @@ export class ReportClient {
         });
     }
 
-    protected processGet2(response: AxiosResponse): Promise<ReportDto> {
+    protected processGet2(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -543,16 +542,13 @@ export class ReportClient {
         }
         if (status === 200) {
             const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ReportDto.fromJS(resultData200);
-            return Promise.resolve<ReportDto>(result200);
+            return Promise.resolve<void>(null as any);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ReportDto>(null as any);
+        return Promise.resolve<void>(null as any);
     }
 }
 
@@ -576,6 +572,8 @@ export class CommitDto implements ICommitDto {
     structuralElements!: StructuralElementDto[] | undefined;
     /** Обработанная магнитограмма */
     processedImage!: string | undefined;
+    /** Файл исходной магнитограммы */
+    originalImage!: string | undefined;
 
     constructor(data?: ICommitDto) {
         if (data) {
@@ -605,6 +603,7 @@ export class CommitDto implements ICommitDto {
                     this.structuralElements!.push(StructuralElementDto.fromJS(item));
             }
             this.processedImage = _data["processedImage"];
+            this.originalImage = _data["originalImage"];
         }
     }
 
@@ -634,6 +633,7 @@ export class CommitDto implements ICommitDto {
                 data["structuralElements"].push(item.toJSON());
         }
         data["processedImage"] = this.processedImage;
+        data["originalImage"] = this.originalImage;
         return data;
     }
 }
@@ -658,6 +658,8 @@ export interface ICommitDto {
     structuralElements: StructuralElementDto[] | undefined;
     /** Обработанная магнитограмма */
     processedImage: string | undefined;
+    /** Файл исходной магнитограммы */
+    originalImage: string | undefined;
 }
 
 /** Dto дефекта */
@@ -726,46 +728,6 @@ export interface IDefectDto {
 export enum ElementType {
     _1 = 1,
     _2 = 2,
-}
-
-/** Dto отчета */
-export class ReportDto implements IReportDto {
-    /** Файл отчета */
-    file!: string | undefined;
-
-    constructor(data?: IReportDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.file = _data["file"];
-        }
-    }
-
-    static fromJS(data: any): ReportDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ReportDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["file"] = this.file;
-        return data;
-    }
-}
-
-/** Dto отчета */
-export interface IReportDto {
-    /** Файл отчета */
-    file: string | undefined;
 }
 
 /** Dto конструктивного элемента */
